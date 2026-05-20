@@ -1,0 +1,1 @@
+"C:\Users\장원철\AppData\Roaming\uv\python\cpython-3.14.5-windows-x86_64-none\python.exe" -m pip install customtkinter tkinterdnd2-universal

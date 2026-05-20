@@ -1,0 +1,12 @@
+{
+  "build": {
+    "env": {
+      "VERCEL_IGNORE_BUILD_COMMAND": "false"
+    }
+  },
+  "functions": {
+    "api/chat.py": {
+      "runtime": "vercel-python@4.0.0"
+    }
+  }
+}
