@@ -4,6 +4,9 @@ import supabase
 import base64
 import json
 from openai import OpenAI
+from dotenv import load_dotenv # 1. 추가
+
+load_dotenv() # 2. 추가
 
 # 서버 설정 (환경 변수에서 호출하도록 수정)
 SUPABASE_URL = os.environ.get("SUPABASE_URL")

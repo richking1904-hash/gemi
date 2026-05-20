@@ -2,6 +2,9 @@ import os
 import requests
 import time
 from supabase import create_client, Client
+from dotenv import load_dotenv # 1. 추가
+
+load_dotenv() # 2. 추가
 
 # 서버 설정 (환경 변수에서 호출)
 SUPABASE_URL = os.environ.get("SUPABASE_URL")

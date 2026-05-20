@@ -2,6 +2,9 @@ import customtkinter as ctk
 from tkinter import filedialog
 import os
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # 환경 변수에서 설정값 호출 (API 키를 코드 내에 직접 적지 않음)
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")

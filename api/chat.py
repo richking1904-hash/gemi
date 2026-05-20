@@ -4,18 +4,22 @@ import os
 print("DEBUG: API가 호출되었습니다!")
 import urllib.request
 from supabase import create_client
-import os
 import sys
+from dotenv import load_dotenv # 추가된 부분
+
+# Vercel 환경 및 로컬 환경 모두에서 .env 파일을 읽도록 설정
+load_dotenv()
 sys.path.append(os.getcwd())
 
-# 설정 (환경 변수에서 호출하도록 확실하게 구성)
+# 설정 (환경 변수에서 호출)
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") # 전역으로 이동
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Vercel이 호출할 핵심 함수
 def handler(request):
-    api_key = os.environ.get("OPENROUTER_API_KEY")
+    api_key = OPENROUTER_API_KEY
     if not api_key:
         return {"reply": "API Key가 설정되지 않았습니다."}, 500
 

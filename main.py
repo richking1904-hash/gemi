@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv # 이 줄 추가!
 import requests
 import subprocess
 import webbrowser

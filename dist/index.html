@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>슈파 - ㅇㅇㅇ</title>
+    <title>dd - dd</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
@@ -31,21 +31,21 @@
     <div class="centered-card">
         <div id="mainPage" class="w-full h-full flex flex-col">
             <div class="card-image-wrapper">
-                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T223306.404_1779268945.png" class="w-full h-full object-cover grayscale-[20%]">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a15_1779298168.jpg" class="w-full h-full object-cover grayscale-[20%]">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
                 <div class="text-center mb-6">
-                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">슈파</h1>
-                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px]">ㅇㅇㅇ</p>
+                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">dd</h1>
+                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px]">dd</p>
                 </div>
                 <div class="flex justify-center gap-6 text-[11px] text-stone-400 mb-6">
-                    <a href="tel:s982283">📞 s982283</a>
-                    <span>✉️ 289238928</span>
+                    <a href="tel:dd">📞 dd</a>
+                    <span>✉️ dd</span>
                 </div>
                 <div class="smart-grid mb-6" style="display: flex;">
-                    <a href="3282398" target="_blank" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Instagram</a>
-                    <a href="238923983" target="_blank" style="display: flex;" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Naver Blog</a>
+                    <a href="dd" target="_blank" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Instagram</a>
+                    <a href="dd" target="_blank" style="display: flex;" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Naver Blog</a>
                 </div>
                 <div class="smart-grid">
                     <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-4 rounded-2xl border border-white/5 tracking-widest uppercase">Portfolio</button>
@@ -61,8 +61,8 @@
             </div>
             <div class="sub-page-content">
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T223121.550_1779268941.png" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T223220.713_1779268944.png" class="rounded-2xl border border-white/5 shadow-2xl"></div>
-                    <div class="space-y-4 pt-8"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T223201.309_1779268943.png" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe" class="rounded-2xl border border-white/5 shadow-2xl"></div>
+                    <div class="space-y-4"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a12_1779298165.jpg" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a14_1779298167.jpg" class="rounded-2xl border border-white/5 shadow-2xl"></div>
+                    <div class="space-y-4 pt-8"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a13_1779298167.jpg" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe" class="rounded-2xl border border-white/5 shadow-2xl"></div>
                 </div>
             </div>
         </div>
@@ -106,8 +106,16 @@
             const btn = document.getElementById('submitBtn');
             const data = { name: document.getElementById('formClientName').value, phone: document.getElementById('formClientPhone').value, type: document.getElementById('formProjectType').value, budget: document.getElementById('formBudget').value, desc: document.getElementById('formProjectDesc').value };
             btn.innerText = "SENDING...";
-            await fetch("https://bjbpjkeahkupmeuvfwys.supabase.co/rest/v1/gemi_customer_inquiry", { method: "POST", headers: { "apikey": "sb_publishable_yHPGOhKSEPAehg-sin-7IQ_nHtfYBWU", "Authorization": "Bearer sb_publishable_yHPGOhKSEPAehg-sin-7IQ_nHtfYBWU", "Content-Type": "application/json" }, body: JSON.stringify({ customer_name: data.name, customer_contact: data.phone, inquiry_type: data.type, message: `[예산: ${data.budget}] ${data.desc}` }) });
-            await fetch("https://api.telegram.org/bot8634715913:AAFViFIFDLaj-WsSvvuGUXmK1KMvjWOjNyE/sendMessage", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: "859745575", text: `신규 의뢰: ${data.name}\n${data.phone}\n타입: ${data.type}\n예산: ${data.budget}\n내용: ${data.desc}`, parse_mode: "Markdown" }) });
+            
+            // Vercel 환경 변수에서 값을 가져오는 처리는 보통 서버 사이드에서 이루어지므로, 
+            // 클라이언트 코드인 여기서 직접 키를 호출하기보다 서버 API를 활용해야 합니다.
+            // 아래는 예시 구조이며, 실제로는 서버(api/chat.py 등)로 데이터를 보내고 거기서 키를 사용하세요.
+            await fetch('/api/submit-inquiry', { 
+                method: "POST", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify({ customer_name: data.name, customer_contact: data.phone, inquiry_type: data.type, message: `[예산: ${data.budget}] ${data.desc}` }) 
+            });
+            
             alert("전송되었습니다!"); btn.innerText = "SUBMIT BRIEF"; switchPage('mainPage');
         }
 
