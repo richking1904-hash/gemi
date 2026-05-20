@@ -4,6 +4,9 @@ import os
 print("DEBUG: API가 호출되었습니다!")
 import urllib.request
 from supabase import create_client
+import os
+import sys
+sys.path.append(os.getcwd())
 
 # 설정 (환경 변수에서 호출하도록 확실하게 구성)
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
