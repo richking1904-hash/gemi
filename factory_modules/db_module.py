@@ -20,10 +20,21 @@ def initialize_db_factory():
     return
 
 def send_telegram_alert(text: str):
+    if not TELEGRAM_BOT_TOKEN:
+        print("❌ [Telegram] 에러: TELEGRAM_TOKEN 환경 변수가 설정되지 않았습니다.")
+        return
+    
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "Markdown"}
-    try: requests.post(url, json=payload, timeout=5)
-    except: pass
+    
+    try:
+        response = requests.post(url, json=payload, timeout=5)
+        if response.status_code == 200:
+            print("✅ [Telegram] 알림 전송 성공.")
+        else:
+            print(f"❌ [Telegram] 전송 실패 (상태코드 {response.status_code}): {response.text}")
+    except Exception as e:
+        print(f"❌ [Telegram] 전송 중 예외 발생: {e}")
 
 def save_client_data_v2(payload: dict, image_paths: list) -> dict:
     print("🔓 [Storage] 가이드라인 포함 파일 통합 동기화 엔진 가동...")
