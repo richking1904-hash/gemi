@@ -10,8 +10,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# 🚨 CORS 보안 설정을 완벽하게 허용하여 버셀과의 통신 차단을 막습니다.
-CORS(app, resources={r"/*": {"origins": "*"}})
+
+# 🚨 CORS 보안 정책을 한 번에 깔끔하게 열어줍니다.
+CORS(app, resources={r"/*": {
+    "origins": "*",
+    "methods": ["GET", "POST", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"]
+}})
 
 # 환경 변수 호출
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -61,7 +66,7 @@ def chat():
         payload = {
             "model": "google/gemini-2.0-flash-001",
             "messages": [
-                {"role": "system", "content": "너는 브랜드 전문 상담원이야. 제공된 가이드라인을 바탕으로 친절하게 답변해."},
+                {"role": "system", "content": "너는 brand 전문 상담원이야. 제공된 가이드라인을 바탕으로 친절하게 답변해."},
                 {"role": "user", "content": user_message}
             }
         }
@@ -84,14 +89,15 @@ def chat():
     except Exception as e:
         return jsonify({"reply": f"서버 실행 오류: {str(e)}"}), 500
 
+
+# 🚨 OPTIONS와 POST를 하나의 함수로 묶어 중복 증발 버그를 근본적으로 치료합니다.
 @app.route('/api/submit-inquiry', methods=['POST', 'OPTIONS'])
 def submit_inquiry():
-    # 예비 요청(OPTIONS) 처리로 CORS 차단 원천 봉쇄
+    # 브라우저가 먼저 찔러보는 보안 예비 요청(OPTIONS) 바로 200 OK 패스
     if request.method == 'OPTIONS':
         return jsonify({"success": True}), 200
         
     try:
-        # 데이터가 json이든 form 형태든 상관없이 안전하게 가져오도록 보완
         body = request.get_json(silent=True) or {}
         if not body:
             body = request.form.to_dict()
@@ -101,7 +107,6 @@ def submit_inquiry():
         inquiry_type = body.get("inquiry_type", "").strip()
         message = body.get("message", "").strip()
 
-        # 데이터가 비어있을 경우 예외 처리
         if not customer_name:
             customer_name = "미입력 고객"
 
@@ -117,8 +122,7 @@ def submit_inquiry():
         # 텔레그램 알림 발송
         send_telegram_alert(alert_text)
         
-        response = jsonify({"success": True, "message": "Inquiry submitted successfully"})
-        return response
+        return jsonify({"success": True, "message": "Inquiry submitted successfully"}), 200
         
     except Exception as e:
         print(f"❌ [Inquiry Error]: {str(e)}")
