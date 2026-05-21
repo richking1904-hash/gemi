@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app) # 프론트엔드에서의 접근 허용
+# 🚨 CORS 보안 설정을 완벽하게 허용하여 버셀과의 통신 차단을 막습니다.
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # 환경 변수 호출
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -38,14 +39,17 @@ def send_telegram_alert(text: str):
     except Exception as e:
         print(f"❌ [Telegram] 전송 중 예외 발생: {e}")
 
-@app.route('/chat', methods=['POST'])
+@app.route('/chat', methods=['POST', 'OPTIONS'])
 def chat():
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+
     api_key = OPENROUTER_API_KEY
     if not api_key:
         return jsonify({"reply": "API Key가 설정되지 않았습니다."}), 500
 
     try:
-        body = request.get_json()
+        body = request.get_json() or {}
         user_message = body.get("message", "").strip()
 
         # Supabase 캐시 확인
@@ -80,14 +84,26 @@ def chat():
     except Exception as e:
         return jsonify({"reply": f"서버 실행 오류: {str(e)}"}), 500
 
-@app.route('/api/submit-inquiry', methods=['POST'])
+@app.route('/api/submit-inquiry', methods=['POST', 'OPTIONS'])
 def submit_inquiry():
+    # 예비 요청(OPTIONS) 처리로 CORS 차단 원천 봉쇄
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+        
     try:
-        body = request.get_json()
+        # 데이터가 json이든 form 형태든 상관없이 안전하게 가져오도록 보완
+        body = request.get_json(silent=True) or {}
+        if not body:
+            body = request.form.to_dict()
+
         customer_name = body.get("customer_name", "").strip()
         customer_contact = body.get("customer_contact", "").strip()
         inquiry_type = body.get("inquiry_type", "").strip()
         message = body.get("message", "").strip()
+
+        # 데이터가 비어있을 경우 예외 처리
+        if not customer_name:
+            customer_name = "미입력 고객"
 
         # 텔레그램 메시지 포맷팅
         alert_text = (
@@ -101,8 +117,11 @@ def submit_inquiry():
         # 텔레그램 알림 발송
         send_telegram_alert(alert_text)
         
-        return jsonify({"success": True, "message": "Inquiry submitted successfully"})
+        response = jsonify({"success": True, "message": "Inquiry submitted successfully"})
+        return response
+        
     except Exception as e:
+        print(f"❌ [Inquiry Error]: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == '__main__':
