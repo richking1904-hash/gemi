@@ -1,3 +1,5 @@
-openai
+flask
+flask-cors
 supabase
 requests
+python-dotenv
