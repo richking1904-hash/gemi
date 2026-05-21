@@ -11,12 +11,14 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# 🚨 CORS 보안 정책을 한 번에 깔끔하게 열어줍니다.
-CORS(app, resources={r"/*": {
-    "origins": "*",
-    "methods": ["GET", "POST", "OPTIONS"],
-    "allow_headers": ["Content-Type", "Authorization"]
-}})
+# CORS 설정을 명확한 딕셔너리 구조로 선증언하여 문법 오류를 차단합니다.
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # 환경 변수 호출
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -68,7 +70,7 @@ def chat():
             "messages": [
                 {"role": "system", "content": "너는 brand 전문 상담원이야. 제공된 가이드라인을 바탕으로 친절하게 답변해."},
                 {"role": "user", "content": user_message}
-            }
+            ]
         }
         
         req = urllib.request.Request(
@@ -90,10 +92,9 @@ def chat():
         return jsonify({"reply": f"서버 실행 오류: {str(e)}"}), 500
 
 
-# 🚨 OPTIONS와 POST를 하나의 함수로 묶어 중복 증발 버그를 근본적으로 치료합니다.
+# 중복 증발 문제 및 문법 에러가 나지 않도록 깔끔하게 설계된 라우터입니다.
 @app.route('/api/submit-inquiry', methods=['POST', 'OPTIONS'])
 def submit_inquiry():
-    # 브라우저가 먼저 찔러보는 보안 예비 요청(OPTIONS) 바로 200 OK 패스
     if request.method == 'OPTIONS':
         return jsonify({"success": True}), 200
         
