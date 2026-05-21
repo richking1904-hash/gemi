@@ -35,9 +35,10 @@
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
-                <div class="text-center mb-6">
+                <div class="text-center mb-4">
                     <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">${user_name}</h1>
-                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px]">${brand_name}</p>
+                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-3">${brand_name}</p>
+                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep">${INTRODUCTION}</p>
                 </div>
                 <div class="flex justify-center gap-6 text-[11px] text-stone-400 mb-6">
                     <a href="tel:${PHONE}">📞 ${PHONE}</a>
@@ -124,7 +125,25 @@
             btn.disabled = true;
             
             try {
-                await fetch('https://gemi-5vfl.onrender.com/api/submit-inquiry', { 
+                // 1. ⚡ [초고속 직통 적재] Supabase REST API를 사용하여 리모컨처럼 다이렉트로 즉시 적재
+                await fetch('${SUPABASE_URL}/rest/v1/gemi_customer_inquiry', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "apikey": "${SUPABASE_KEY}",
+                        "Authorization": "Bearer ${SUPABASE_KEY}"
+                    },
+                    body: JSON.stringify({
+                        brand_name: "${brand_name}",
+                        customer_name: data.name,
+                        customer_contact: data.phone,
+                        inquiry_type: data.type,
+                        message: `[예산: ${data.budget}] ${data.desc}`
+                    })
+                });
+
+                // 2. 🔔 [비동기 알림 위임] 랜더 서버에는 신호만 툭 던지고, 완료를 기다리지 않고 바로 다음으로 통과!
+                fetch('https://gemi-5vfl.onrender.com/api/submit-inquiry', { 
                     method: "POST", 
                     headers: { "Content-Type": "application/json" }, 
                     body: JSON.stringify({ 
@@ -135,6 +154,7 @@
                     }) 
                 });
                 
+                // 3. 🎉 대기 시간 제로! 즉시 전송 완료 팝업 노출
                 alert("전송되었습니다!");
             } catch (error) {
                 alert("전송 중 오류가 발생했습니다: " + error.message);
