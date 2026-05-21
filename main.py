@@ -27,8 +27,9 @@ def init_supabase_tables_automatically():
 def auto_git_push_hybrid(url_name, final_html_code):
     clean_url = "".join(c.lower() for c in url_name if c.isalnum() or c in ["-", "_"]).strip()
     
+    # 👑 [주소 교정 완료] 형규님의 진짜 버셀 도메인 주소인 gemistudio.vercel.app 규칙 반영
     if not clean_url:
-        final_deployed_url = "https://gemi-webcard.vercel.app"
+        final_deployed_url = "https://gemistudio.vercel.app"
     else:
         final_deployed_url = f"https://{clean_url}.vercel.app"
 

@@ -95,4 +95,26 @@ def generate_webcard_code(gui_payload: dict) -> str:
     rendered_code = rendered_code.replace("${SNS1_DISPLAY}", "display: flex;" if sns1_url != "#" else "display: none !important;")
     rendered_code = rendered_code.replace("${SNS2_DISPLAY}", "display: flex;" if sns2_url != "#" else "display: none !important;")
 
+    # 👑 [수정 연결 완료] 리모컨에서 넘어온 FAQ 1, 2, 3 텍스트 추출 및 매칭 치환 파이프라인
+    f1_q = faq_info.get("faq1_q", "").strip()
+    f1_a = faq_info.get("faq1_a", "").strip()
+    f2_q = faq_info.get("faq2_q", "").strip()
+    f2_a = faq_info.get("faq2_a", "").strip()
+    f3_q = faq_info.get("faq3_q", "").strip()
+    f3_a = faq_info.get("faq3_a", "").strip()
+
+    rendered_code = rendered_code.replace("${FAQ1_Q}", f1_q)
+    rendered_code = rendered_code.replace("${FAQ1_A}", f1_a)
+    rendered_code = rendered_code.replace("${FAQ2_Q}", f2_q)
+    rendered_code = rendered_code.replace("${FAQ2_A}", f2_a)
+    rendered_code = rendered_code.replace("${FAQ3_Q}", f3_q)
+    rendered_code = rendered_code.replace("${FAQ3_A}", f3_a)
+
+    # 자주 묻는 질문 텍스트 입력 여부에 따른 UI 세부 스위칭 필터링
+    has_any_faq = f1_q or f2_q or f3_q
+    rendered_code = rendered_code.replace("${FAQ_DISPLAY}", "display: block;" if has_any_faq else "display: none !important;")
+    rendered_code = rendered_code.replace("${FAQ1_DISPLAY}", "display: block;" if f1_q else "display: none !important;")
+    rendered_code = rendered_code.replace("${FAQ2_DISPLAY}", "display: block;" if f2_q else "display: none !important;")
+    rendered_code = rendered_code.replace("${FAQ3_DISPLAY}", "display: block;" if f3_q else "display: none !important;")
+
     return rendered_code

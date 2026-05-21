@@ -89,7 +89,16 @@
             <button id="chatToggleBtn" class="chat-toggle-btn text-xl shadow-2xl">💬</button>
             <div id="chatWindow" class="chat-window hidden absolute bottom-16 right-0">
                 <div class="bg-[#C5A059] px-4 py-3 text-black font-bold text-[10px] tracking-widest uppercase">✨ GeMi AI Assistant</div>
-                <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]"></div>
+                
+                <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]">
+                    <div class="flex flex-col gap-1.5 mb-2 p-1 border-b border-white/5 pb-3" style="${FAQ_DISPLAY}">
+                        <span class="text-[9px] text-stone-500 uppercase tracking-wider block mb-1">추천 질문 선택</span>
+                        <button onclick="clickFaqButton(this)" style="${FAQ1_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ1_Q}</button>
+                        <button onclick="clickFaqButton(this)" style="${FAQ2_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ2_Q}</button>
+                        <button onclick="clickFaqButton(this)" style="${FAQ3_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ3_Q}</button>
+                    </div>
+                </div>
+                
                 <div class="p-4 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
                     <input type="text" id="widgetInput" class="flex-1 text-[11px]" placeholder="Ask anything...">
                     <button type="button" id="sendBtn" class="bg-[#C5A059] text-black text-[11px] font-bold px-4 rounded-xl">전송</button>
@@ -103,6 +112,16 @@
         function switchPage(id) { ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
         document.getElementById('chatToggleBtn').addEventListener('click', () => document.getElementById('chatWindow').classList.toggle('hidden'));
         
+        // 👑 [추가] 챗봇 추천 질문 버튼을 눌렀을 때 자동으로 텍스트 상자에 입력하고 전송하는 함수
+        function clickFaqButton(btnElement) {
+            const questionText = btnElement.innerText.trim();
+            const inputField = document.getElementById('widgetInput');
+            if (inputField) {
+                inputField.value = questionText;
+                sendAiMessage();
+            }
+        }
+
         async function submitEstimate() {
             const btn = document.getElementById('submitBtn');
             if (!btn) return;
@@ -172,7 +191,6 @@
             input.value = '';
             
             try {
-                // 👑 [교정 완료] 가이드라인 문서 내 깨진 문자 및 개행 문자를 JSON 안전 규격으로 정제(Escape)
                 const safeGuideline = G_TXT
                     .replace(/\\/g, '\\\\')
                     .replace(/"/g, '\\"')

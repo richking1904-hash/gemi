@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>안녕하세요 - 꾸벅</title>
+    <title>장형규 - gEMI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
@@ -31,18 +31,18 @@
     <div class="centered-card">
         <div id="mainPage" class="w-full h-full flex flex-col">
             <div class="card-image-wrapper">
-                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222118.658_1779373765.png" class="w-full h-full object-cover grayscale-[20%]">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-16T232431.580_1779406888.png" class="w-full h-full object-cover grayscale-[20%]">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
                 <div class="text-center mb-4">
-                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">안녕하세요</h1>
-                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-3">꾸벅</p>
-                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep"></p>
+                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">장형규</h1>
+                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-3">gEMI</p>
+                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep">우리 모두 부자 됩시다.</p>
                 </div>
                 <div class="flex justify-center gap-6 text-[11px] text-stone-400 mb-6">
-                    <a href="tel:">📞 </a>
-                    <span>✉️ </span>
+                    <a href="tel:01034741943">📞 01034741943</a>
+                    <span>✉️ richking1904@gmail.com</span>
                 </div>
                 <div class="smart-grid mb-6" style="display: flex;">
                     <a href="" target="_blank" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Instagram</a>
@@ -62,8 +62,8 @@
             </div>
             <div class="sub-page-content">
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T221941.990_1779373761.png" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222014.865_1779373763.png" class="rounded-2xl border border-white/5 shadow-2xl"></div>
-                    <div class="space-y-4 pt-8"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222001.297_1779373762.png" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222040.747_1779373764.png" class="rounded-2xl border border-white/5 shadow-2xl"></div>
+                    <div class="space-y-4"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a1_1779406883.jpg" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a5_1779406886.jpg" class="rounded-2xl border border-white/5 shadow-2xl"></div>
+                    <div class="space-y-4 pt-8"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a4_1779406885.jpg" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a13_1779406887.jpg" class="rounded-2xl border border-white/5 shadow-2xl"></div>
                 </div>
             </div>
         </div>
@@ -89,7 +89,16 @@
             <button id="chatToggleBtn" class="chat-toggle-btn text-xl shadow-2xl">💬</button>
             <div id="chatWindow" class="chat-window hidden absolute bottom-16 right-0">
                 <div class="bg-[#C5A059] px-4 py-3 text-black font-bold text-[10px] tracking-widest uppercase">✨ GeMi AI Assistant</div>
-                <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]"></div>
+                
+                <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]">
+                    <div class="flex flex-col gap-1.5 mb-2 p-1 border-b border-white/5 pb-3" style="display: block;">
+                        <span class="text-[9px] text-stone-500 uppercase tracking-wider block mb-1">추천 질문 선택</span>
+                        <button onclick="clickFaqButton(this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">부자돼는 방법?</button>
+                        <button onclick="clickFaqButton(this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">부자되는 이유?</button>
+                        <button onclick="clickFaqButton(this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">부자되는 과정?</button>
+                    </div>
+                </div>
+                
                 <div class="p-4 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
                     <input type="text" id="widgetInput" class="flex-1 text-[11px]" placeholder="Ask anything...">
                     <button type="button" id="sendBtn" class="bg-[#C5A059] text-black text-[11px] font-bold px-4 rounded-xl">전송</button>
@@ -103,6 +112,16 @@
         function switchPage(id) { ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
         document.getElementById('chatToggleBtn').addEventListener('click', () => document.getElementById('chatWindow').classList.toggle('hidden'));
         
+        // 👑 [추가] 챗봇 추천 질문 버튼을 눌렀을 때 자동으로 텍스트 상자에 입력하고 전송하는 함수
+        function clickFaqButton(btnElement) {
+            const questionText = btnElement.innerText.trim();
+            const inputField = document.getElementById('widgetInput');
+            if (inputField) {
+                inputField.value = questionText;
+                sendAiMessage();
+            }
+        }
+
         async function submitEstimate() {
             const btn = document.getElementById('submitBtn');
             if (!btn) return;
@@ -133,7 +152,7 @@
                         "Authorization": "Bearer ${SUPABASE_KEY}"
                     },
                     body: JSON.stringify({
-                        brand_name: "꾸벅",
+                        brand_name: "gEMI",
                         customer_name: data.name,
                         customer_contact: data.phone,
                         inquiry_type: data.type,
@@ -172,7 +191,6 @@
             input.value = '';
             
             try {
-                // 👑 [교정 완료] 가이드라인 문서 내 깨진 문자 및 개행 문자를 JSON 안전 규격으로 정제(Escape)
                 const safeGuideline = G_TXT
                     .replace(/\\/g, '\\\\')
                     .replace(/"/g, '\\"')
