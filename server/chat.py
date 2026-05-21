@@ -11,7 +11,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# CORS 설정을 명확한 딕셔너리 구조로 선증언하여 문법 오류를 차단합니다.
+# CORS 보안 설정 완벽 선언 (브라우저 차단 및 문법 에러 방지)
 CORS(app, resources={
     r"/*": {
         "origins": "*",
@@ -92,7 +92,7 @@ def chat():
         return jsonify({"reply": f"서버 실행 오류: {str(e)}"}), 500
 
 
-# 중복 증발 문제 및 문법 에러가 나지 않도록 깔끔하게 설계된 라우터입니다.
+# 🚨 [최종 조정 완료] 슈파베이스의 진짜 컬럼명 규칙(customer_name, customer_contact 등)을 200% 일치시킨 대문
 @app.route('/api/submit-inquiry', methods=['POST', 'OPTIONS'])
 def submit_inquiry():
     if request.method == 'OPTIONS':
@@ -103,27 +103,34 @@ def submit_inquiry():
         if not body:
             body = request.form.to_dict()
 
-        customer_name = body.get("customer_name", "").strip()
-        customer_contact = body.get("customer_contact", "").strip()
-        inquiry_type = body.get("inquiry_type", "").strip()
-        message = body.get("message", "").strip()
+        c_name = body.get("customer_name", "").strip()
+        c_contact = body.get("customer_contact", "").strip()
+        i_type = body.get("inquiry_type", "").strip()
+        msg = body.get("message", "").strip()
 
-        if not customer_name:
-            customer_name = "미입력 고객"
+        if not c_name:
+            c_name = "미입력 고객"
 
-        # 텔레그램 메시지 포맷팅
+        # 1. 텔레그램 메시지 알림 발송
         alert_text = (
             f"🔔 *[GeMi 명함 신규 견적 문의]*\n\n"
-            f"👤 *고객/기업명:* {customer_name}\n"
-            f"📞 *연락처:* {customer_contact}\n"
-            f"📂 *프로젝트 유형:* {inquiry_type}\n"
-            f"📝 *상세 내용:* {message}"
+            f"👤 *고객/기업명:* {c_name}\n"
+            f"📞 *연락처:* {c_contact}\n"
+            f"📂 *프로젝트 유형:* {i_type}\n"
+            f"📝 *상세 내용:* {msg}"
         )
-        
-        # 텔레그램 알림 발송
         send_telegram_alert(alert_text)
         
-        return jsonify({"success": True, "message": "Inquiry submitted successfully"}), 200
+        # 2. 🚨 형규님의 진짜 컬럼명과 정확하게 1:1로 매칭하여 데이터 꽂아 넣기
+        supabase.table("gemi_customer_inquiry").insert({
+            "brand_name": "GeMi", # 기본 브랜드 아이덴티티 지정
+            "customer_name": c_name,
+            "customer_contact": c_contact,
+            "inquiry_type": i_type,
+            "message": msg
+        }).execute()
+        
+        return jsonify({"success": True, "message": "Inquiry submitted and saved successfully"}), 200
         
     except Exception as e:
         print(f"❌ [Inquiry Error]: {str(e)}")
