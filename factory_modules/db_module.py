@@ -40,11 +40,16 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
     print("🔓 [Storage] 가이드라인 포함 파일 통합 동기화 엔진 가동...")
     bucket_name = "gemi_assets"
     main_image_url = ""
-    other_image_urls = []
     guideline_txt_url = "" 
     
     selected_main_path = payload.get("main_image_path", "")
     
+    # 👑 [가변형 포트폴리오 업로드 코어] 
+    # 리모컨에서 넘겨받은 동적 포트폴리오 묶음을 안전하게 가져옵니다.
+    portfolio_items = payload.get("portfolio_items", [])
+    other_image_urls = []
+
+    # 1. 먼저 단독 자산들(명함 대문 이미지 및 guideline.txt) 업로드 파이프라인 실행
     if image_paths:
         for path in image_paths:
             if not os.path.exists(path): continue
@@ -69,19 +74,53 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
                 response = requests.post(upload_url, headers=headers, data=file_data)
                 if response.status_code in [200, 201]:
                     public_url = f"{SUPABASE_URL}/storage/v1/object/public/{bucket_name}/{file_name}"
-                    print(f"✅ [Storage] 파일 업로드 성공: {public_url}")
+                    print(f"✅ [Storage] 마스터 자산 업로드 성공: {public_url}")
                     
                     if path.endswith('.txt'):
                         guideline_txt_url = public_url
                     elif path == selected_main_path:
                         main_image_url = public_url
-                    else:
-                        other_image_urls.append(public_url)
             except Exception as e:
-                print(f"❌ [Storage] 전송 오류: {e}")
+                print(f"❌ [Storage] 마스터 자산 전송 오류: {e}")
 
+    # 👑 2. [신설] 동적으로 추가된 포트폴리오 이미지 가변 루프 업로드 공정
+    # 리모컨에서 몇 장을 추가했든 상관없이 한 땀 한 땀 안전하게 분리 동기화합니다.
+    for idx, item in enumerate(portfolio_items):
+        path = item.get("image_path", "")
+        if not path or not os.path.exists(path):
+            item["image_url"] = "" # 사진 없이 서사만 남았을 경우를 위한 방어벽
+            continue
+            
+        base_name = os.path.basename(path)
+        name_part, ext_part = os.path.splitext(base_name)
+        timestamp = int(time.time()) + idx # 타임스탬프 중복 충돌 방지 미세 버퍼
+        file_name = f"port_{name_part}_{timestamp}{ext_part}"
+        
+        try:
+            with open(path, "rb") as f: file_data = f.read()
+            upload_url = f"{SUPABASE_URL}/storage/v1/object/{bucket_name}/{file_name}"
+            c_type = "image/png" if file_name.endswith('.png') else "image/jpeg"
+            
+            headers = {
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "apiKey": SUPABASE_KEY,
+                "Content-Type": c_type
+            }
+            
+            response = requests.post(upload_url, headers=headers, data=file_data)
+            if response.status_code in [200, 201]:
+                public_url = f"{SUPABASE_URL}/storage/v1/object/public/{bucket_name}/{file_name}"
+                print(f"✅ [Storage] 포트폴리오 {idx+1}번 이미지 동기화 완료: {public_url}")
+                # 👑 로컬 컴퓨터 주소였던 자리에 갓 발급된 프리미엄 클라우드 URL을 주입해 바인딩합니다.
+                item["image_url"] = public_url
+                other_image_urls.append(public_url)
+        except Exception as e:
+            print(f"❌ [Storage] 포트폴리오 {idx+1}번 이미지 전송 실패 우회: {e}")
+            item["image_url"] = ""
+
+    # 만약 실수로 대문 이미지를 지정 안 했다면 첫 번째 작품 사진을 대문으로 강제 스왑
     if not main_image_url and other_image_urls:
-        main_image_url = other_image_urls.pop(0)
+        main_image_url = other_image_urls[0]
 
     try:
         user_info = payload.get("user_info", {})
@@ -137,5 +176,7 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
         "success": True,
         "main_image_url": main_image_url,
         "other_image_urls": other_image_urls,
-        "guideline_txt_url": guideline_txt_url 
+        "guideline_txt_url": guideline_txt_url,
+        # 👑 가변형 포트폴리오 최종 리스트 뭉치를 배포 파이프라인으로 온전히 인계해 줍니다.
+        "portfolio_items": portfolio_items
     }

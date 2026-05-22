@@ -3,15 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>안녕하세요 - 좋은하루 되세요</title>
+    <title>장형규 - GeMi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #C5A059; --dark-bg: #121314; }
         body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; }
         .serif { font-family: 'Bodoni Moda', serif; }
-        .centered-card { width: 100%; max-width: 410px; height: calc(100vh - 30px); max-height: 820px; background-color: #1a1c1e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 32px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); overflow: hidden; display: flex; flex-direction: column; position: relative; }
-        .card-image-wrapper { width: 100%; height: 60%; position: relative; overflow: hidden; flex-shrink: 0; }
+        
+        /* 👑 [높이 및 반응형 교정 완료] */
+        /* max-height를 고정값(820px) 대신 90vh로 바꾸어 컴퓨터 모니터 화면이 작아도 카드가 화면 안에 부드럽게 쏙 들어오도록 비율을 맞췄습니다. */
+        .centered-card { 
+            width: 100%; 
+            max-width: 410px; 
+            height: calc(100vh - 30px); 
+            max-height: 90vh; 
+            background-color: #1a1c1e; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 32px; 
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        
+        /* 👑 메인 페이지 내부가 카드 크기에 맞춰 자연스럽게 반응하도록 내부 스크롤망 확보 */
+        #mainPage { overflow-y: auto; }
+        #mainPage::-webkit-scrollbar { width: 0px; } /* 메인 스크롤바는 미니멀 디자인을 위해 숨김 */
+
+        .card-image-wrapper { width: 100%; height: 55%; position: relative; overflow: hidden; flex-shrink: 0; }
         .card-content-wrapper { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: center; background: #1a1c1e; }
         .sub-page-content { flex: 1; overflow-y: auto; padding: 24px; background: #0c0d0e; }
         .sub-page-content::-webkit-scrollbar { width: 3px; }
@@ -33,22 +54,22 @@
     <div class="centered-card">
         <div id="mainPage" class="w-full h-full flex flex-col">
             <div class="card-image-wrapper">
-                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T223121.550_1779423312.png" class="w-full h-full object-cover grayscale-[20%]">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222925.621_1779432449.png" class="w-full h-full object-cover grayscale-[20%]">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
                 <div class="text-center mb-4">
-                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">안녕하세요</h1>
-                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-3">좋은하루 되세요</p>
-                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep">happy day</p>
+                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">장형규</h1>
+                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-3">GeMi</p>
+                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep">Quiet Luxury 감성의 프리미엄 브랜드 및 graphic 디자인 스튜디오</p>
                 </div>
                 <div class="flex justify-center gap-6 text-[12px] text-stone-400 mb-6 items-center">
-                    <a href="tel:3243141" class="hover:text-white transition-colors bg-stone-800 w-7 h-7 flex items-center justify-center rounded-full border border-white/5 shadow-md">📞</a>
-                    <span>✉️ safafdaf</span>
+                    <a href="tel:010-0000-0000" class="hover:text-white transition-colors bg-stone-800 w-7 h-7 flex items-center justify-center rounded-full border border-white/5 shadow-md">📞</a>
+                    <span>✉️ gemi_design@naver.com</span>
                 </div>
                 <div class="smart-grid mb-6" style="display: flex;">
-                    <a href="asfdasfda" target="_blank" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Instagram</a>
-                    <a href="asfsafafs" target="_blank" style="display: flex;" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Naver Blog</a>
+                    <a href="https://instagram.com/" target="_blank" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Instagram</a>
+                    <a href="https://blog.naver.com/" target="_blank" style="display: flex;" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Naver Blog</a>
                 </div>
                 <div class="smart-grid">
                     <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-4 rounded-2xl border border-white/5 tracking-widest uppercase">Portfolio</button>
@@ -57,15 +78,49 @@
             </div>
         </div>
 
-        <div id="promoPage" class="hidden w-full h-full flex flex-col">
+        <div id="promoPage" class="hidden w-full h-full flex flex-col relative">
             <div class="px-6 py-5 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
                 <span class="text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase">Selected Pieces</span>
                 <button onclick="switchPage('mainPage')" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider">Close</button>
             </div>
             <div class="sub-page-content">
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a1_1779423308.jpg" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a9_1779423311.jpg" class="rounded-2xl border border-white/5 shadow-2xl"></div>
-                    <div class="space-y-4 pt-8"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a4_1779423310.jpg" class="rounded-2xl border border-white/5 shadow-2xl"><img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a12_1779423311.jpg" class="rounded-2xl border border-white/5 shadow-2xl"></div>
+                    <div class="space-y-4">
+            <div class="cursor-pointer group" onclick="openProjectDetail('a8', '\"빛이 스며드는 순간, 자연스러운 표정과 여유로운 포즈가 어우러져 마치 일상 속 작은 영화의 한 장면처럼 느껴진다. 꾸밈없이 담백한 분위기 속에서 오히려 더 빛나는 매력이 드러난다.\"', 'https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a8_1779432450.jpg')">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a8_1779432450.jpg" class="rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all">
+                <p class="text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors">a8</p>
+            </div>
+            
+            <div class="cursor-pointer group" onclick="openProjectDetail('a10', '\"다채로운 색감이 하나의 팔레트처럼 이어지고, 각기 다른 표정과 제스처가 그 색을 더욱 생생하게 살려낸다. 마치 패션과 감정이 함께 춤추는 듯한 자유로운 무드가 느껴진다.\"', 'https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a10_1779432453.jpg')">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a10_1779432453.jpg" class="rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all">
+                <p class="text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors">a10</p>
+            </div>
+            </div>
+                    <div class="space-y-4 pt-8">
+            <div class="cursor-pointer group" onclick="openProjectDetail('a9', '\"블랙과 화이트의 대비가 만들어내는 강렬한 무드, 절제된 실루엣과 자신감 있는 시선이 도시적인 세련됨을 완성한다. 단순함 속에서 오히려 더 큰 존재감을 발산하는 스타일.\"', 'https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a9_1779432452.jpg')">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a9_1779432452.jpg" class="rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all">
+                <p class="text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors">a9</p>
+            </div>
+            
+            <div class="cursor-pointer group" onclick="openProjectDetail('a14', '\"손끝의 움직임, 시선의 방향, 미묘한 표정의 변화까지… 작은 디테일들이 모여 전체적인 분위기를 완성한다. 순간을 포착한 듯 자연스럽지만, 동시에 치밀하게 계산된 듯한 감각적인 연출.\"', 'https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a14_1779432455.jpg')">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a14_1779432455.jpg" class="rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all">
+                <p class="text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors">a14</p>
+            </div>
+            </div>
+                </div>
+            </div>
+
+            <div id="projectDetailOverlay" class="hidden absolute inset-x-0 bottom-0 top-[60px] bg-[#0c0d0e]/95 z-50 flex flex-col p-6 border-t border-white/5">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="overlayProjectTitle" class="text-base font-bold text-[#C5A059] tracking-wider serif italic">Project Title</h3>
+                    <button onclick="closeProjectDetail()" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-widest">Back</button>
+                </div>
+                <div class="flex-1 overflow-y-auto space-y-4">
+                    <img id="overlayProjectImg" src="" class="w-full rounded-2xl border border-white/5 shadow-xl object-cover max-h-[220px]">
+                    <div class="space-y-2">
+                        <span class="text-[9px] text-[#C5A059] font-bold uppercase tracking-[2px] block">Design Concept & Strategy</span>
+                        <p id="overlayProjectDesc" class="text-xs text-stone-400 font-light leading-relaxed break-keep">Project Description</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,14 +145,14 @@
         <div class="floating-chat-widget">
             <button id="chatToggleBtn" class="chat-toggle-btn text-xl shadow-2xl">💬</button>
             <div id="chatWindow" class="chat-window hidden absolute bottom-16 right-0">
-                <div class="bg-[#C5A059] px-4 py-3 text-black font-bold text-[10px] tracking-widest uppercase">✨ 좋은하루 되세요 AI Assistant</div>
+                <div class="bg-[#C5A059] px-4 py-3 text-black font-bold text-[10px] tracking-widest uppercase">✨ GeMi AI Assistant</div>
                 
                 <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]">
                     <div class="flex flex-col gap-1.5 mb-2 p-1 border-b border-white/5 pb-3" style="display: block;">
                         <span class="text-[9px] text-stone-500 uppercase tracking-wider block mb-1">추천 질문 선택</span>
-                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">오늘은 어떤일이 있을까요</button>
-                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">내일은 어떤일이 있을까요</button>
-                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">내일모레는 어떤일이 있을까요</button>
+                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">포트폴리오 제작 기간이 얼마나 걸리나요?</button>
+                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">상세페이지 디자인 단가가 궁금합니다.</button>
+                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">작업 의뢰는 어떻게 신청하나요?</button>
                     </div>
                 </div>
                 
@@ -111,7 +166,22 @@
     <script>
         const encodedData = "error";
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
-        function switchPage(id) { ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+        function switchPage(id) { 
+            ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); 
+            document.getElementById(id).classList.remove('hidden'); 
+            if(id !== 'promoPage') closeProjectDetail();
+        }
+        
+        // 👑 [오버레이 활성화 제어 브릿지 엔진]
+        function openProjectDetail(title, desc, imgUrl) {
+            document.getElementById('overlayProjectTitle').innerText = title;
+            document.getElementById('overlayProjectDesc').innerText = desc;
+            document.getElementById('overlayProjectImg').src = imgUrl;
+            document.getElementById('projectDetailOverlay').classList.remove('hidden');
+        }
+        function closeProjectDetail() {
+            document.getElementById('projectDetailOverlay').classList.add('hidden');
+        }
         
         let isWelcomeInserted = false;
         document.getElementById('chatToggleBtn').addEventListener('click', () => {
@@ -123,7 +193,7 @@
                 const welcomeHtml = `
                     <div id="gemiWelcomeMsg" class="flex flex-col items-start mb-2 order-first">
                         <div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white leading-relaxed break-keep">
-                            안녕하세요! 디렉터 \${"안녕하세요"}님의 프로젝트 안내를 보조하는 AI 팀원입니다. ✨<br><br>전체적인 포트폴리오 안내 및 견적 문의에 대해 성심성의껏 안내해 드릴게요. 궁금한 점을 편하게 말씀해 주세요!
+                            안녕하세요! 디렉터 장형규님의 프로젝트 안내를 보조하는 AI 팀원입니다. ✨<br><br>전체적인 포트폴리오 안내 및 견적 문의에 대해 성심성의껏 안내해 드릴게요. 궁금한 점을 편하게 말씀해 주세요!
                         </div>
                     </div>
                 `;
@@ -181,7 +251,7 @@
                         "Authorization": "Bearer ${SUPABASE_KEY}"
                     },
                     body: JSON.stringify({
-                        brand_name: "좋은하루 되세요",
+                        brand_name: "GeMi",
                         customer_name: data.name,
                         customer_contact: data.phone,
                         inquiry_type: data.type,
@@ -220,7 +290,6 @@
             document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-end mb-2"><div class="bg-[#C5A059] p-3 rounded-2xl text-[11px] text-black">${text}</div></div>`);
             input.value = '';
             
-            // 👑 [교정 1] 내 질문 말풍선이 꽂힌 뒤 0.05초 비동기 지연을 주어 스크롤이 무조건 하단에 달라붙게 고정합니다.
             setTimeout(() => {
                 const msgZone = document.getElementById('widgetMsgZone');
                 if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;
@@ -240,7 +309,7 @@
                     body: JSON.stringify({ 
                         message: text, 
                         guideline_txt: safeGuideline,
-                        brand_name: "좋은하루 되세요"
+                        brand_name: "GeMi"
                     })
                 });
                 const data = await response.json();
@@ -253,7 +322,6 @@
 
                 document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-start mb-2"><div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white break-keep leading-relaxed">${data.reply || data.error}</div></div>`);
                 
-                // 👑 [교정 2] AI 답변이 생성되어 꽂혔을 때도 정확히 0.05초 후에 대화창을 맨 밑으로 밀어내어 꺼짐 현상을 방지합니다.
                 setTimeout(() => {
                     const msgZone = document.getElementById('widgetMsgZone');
                     if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;

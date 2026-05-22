@@ -24,7 +24,6 @@ def generate_webcard_code(gui_payload: dict) -> str:
     ai_custom_requests = gui_payload.get("ai_custom_requests", {})
 
     main_image_url = gui_payload.get("main_image_url", "")
-    other_image_urls = gui_payload.get("other_image_urls", [])
     guideline_txt_url = gui_payload.get("guideline_txt_url", "")
     
     # 👑 [수정] 가이드라인을 Base64로 인코딩하여 JS 문법 오류 완벽 차단
@@ -68,13 +67,64 @@ def generate_webcard_code(gui_payload: dict) -> str:
     rendered_code = rendered_code.replace("${INTRODUCTION}", refined_intro)
     rendered_code = rendered_code.replace("${GUIDELINE_TXT_URL}", guideline_text)
     
-    # 이미지 바인딩
+    # 대문 이미지 바인딩
     default_img = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe"
     rendered_code = rendered_code.replace("${main_image_url}", main_image_url if main_image_url else default_img)
     
-    for i in range(4):
-        img_url = other_image_urls[i] if i < len(other_image_urls) else default_img
-        rendered_code = rendered_code.replace(f"${{SUB_IMAGE_URL_{i+1}}}", img_url)
+    # 👑 [신설: 하이브리드 가변형 포트폴리오 소스코드 마스터 빌더]
+    # 장부(`db_module.py`)를 거쳐 고화질 스토리지 주소가 입력된 가변 작품 배열을 가져옵니다.
+    portfolio_items = gui_payload.get("portfolio_items", [])
+    
+    left_column_html = ""   # 1, 3, 5... 홀수 번호 카드가 누적될 왼쪽 열
+    right_column_html = ""  # 2, 4, 6... 짝수 번호 카드가 누적될 오른쪽 열
+
+    for idx, item in enumerate(portfolio_items):
+        img_url = item.get("image_url", "").strip()
+        desc_text = item.get("description", "").strip()
+        
+        # 만약 사용자가 사진 선택을 누락했다면 언스플래시 프리미엄 템플릿 기본 컷으로 자동 방어
+        if not img_url:
+            img_url = default_img
+            
+        # 자바스크립트 함수 인자로 문자열이 안전하게 넘어갈 수 있도록 백틱 및 따옴표 기호 가공
+        safe_desc = desc_text.replace("'", "\\'").replace('"', '\\"').replace("\n", " ")
+        
+        # 파일 경로에서 순수 이름만 추출하여 타이틀 명명 규칙 적용
+        raw_name = item.get("image_name", "")
+        project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+        if project_title.startswith("port_"):
+            project_title = project_title.replace("port_", "", 1)
+            
+        # 👑 하이브리드 판별식: 서사(기획의도)의 존재 유무에 따라 HTML 테그 구조 정밀 변형
+        if desc_text:
+            # 서사가 있다면: 클릭 시 상세 오버레이 팝업창이 열리는 고급 하이브리드 카드 생성
+            card_html = f"""
+            <div class="cursor-pointer group" onclick="openProjectDetail('{project_title}', '{safe_desc}', '{img_url}')">
+                <img src="{img_url}" class="rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all">
+                <p class="text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors">{project_title}</p>
+            </div>
+            """
+        else:
+            # 서사가 없다면: 터치 반응이 아예 없고 캡션도 노출되지 않는 정갈한 미니멀 순수 갤러리 카드 생성
+            card_html = f"""
+            <div class="group">
+                <img src="{img_url}" class="rounded-2xl border border-white/5 shadow-2xl transition-all">
+            </div>
+            """
+
+        # 좌우 비대칭 균형 밸런스에 맞춰 홀수/짝수 배치 분할 누적
+        if (idx + 1) % 2 != 0:
+            left_column_html += card_html
+        else:
+            right_column_html += card_html
+
+    # 만약 사용자가 포nt폴리오를 단 한 개도 등록 안 했을 때를 위한 방어벽
+    if not left_column_html and not right_column_html:
+        left_column_html = f'<div class="group"><img src="{default_img}" class="rounded-2xl border border-white/5 shadow-2xl"></div>'
+
+    # 템플릿의 고정된 구멍 대신 좌우 가변형 기둥 코드 구역으로 통째로 스왑 치환
+    rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", left_column_html)
+    rendered_code = rendered_code.replace("${PORTFOLIO_RIGHT_COLUMN}", right_column_html)
 
     # 연락처 및 기타 정보 (바인딩 로직 강화)
     rendered_code = rendered_code.replace("${PHONE}", contact_info.get("phone", ""))
@@ -91,11 +141,11 @@ def generate_webcard_code(gui_payload: dict) -> str:
     rendered_code = rendered_code.replace("${SNS2_TYPE}", sns2_type)
     rendered_code = rendered_code.replace("${SNS2_URL}", sns2_url)
     
-    # SNS 표시 여부 설정 (URL이 있으면 flex, 없으면 none)
+    # SNS 표시 여부 설정
     rendered_code = rendered_code.replace("${SNS1_DISPLAY}", "display: flex;" if sns1_url != "#" else "display: none !important;")
     rendered_code = rendered_code.replace("${SNS2_DISPLAY}", "display: flex;" if sns2_url != "#" else "display: none !important;")
 
-    # 👑 [수정 연결 완료] 리모컨에서 넘어온 FAQ 1, 2, 3 텍스트 추출 및 매칭 치환 파이프라인
+    # FAQ 1, 2, 3 텍스트 추출 및 매칭 치환 파이프라인
     f1_q = faq_info.get("faq1_q", "").strip()
     f1_a = faq_info.get("faq1_a", "").strip()
     f2_q = faq_info.get("faq2_q", "").strip()
