@@ -84,7 +84,8 @@ def generate_webcard_code(gui_payload: dict) -> str:
         if not img_url:
             img_url = default_img
             
-        safe_desc = desc_text.replace("'", "\\'").replace('"', '\\"').replace("\n", " ")
+        # 👑 [SyntaxError 박멸] 자바스크립트 인라인 인자 충돌 방지를 위해 이스케이프 및 줄바꿈 공백 정밀 치환
+        safe_desc = desc_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"').replace("\n", "\\n").replace("\r", "")
         
         # 파일 경로에서 이름 추출 및 가공
         raw_name = item.get("image_name", "")
@@ -92,24 +93,25 @@ def generate_webcard_code(gui_payload: dict) -> str:
         if project_title.startswith("port_"):
             project_title = project_title.replace("port_", "", 1)
             
-        # 👑 [하이브리드 비주얼 필터링 정밀 교정 구역]
+        safe_title = project_title.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
+
+        # 하이브리드 비주얼 필터링 분기
         if desc_text:
-            # 1. 서사가 있다면: 하단에 가독성 높은 캡션 이름표를 붙이고 클릭 시 우아한 스토리 팝업 발동
+            # 서사가 있다면: 클릭 이벤트를 바인딩하고 가독성 높은 이름표 노출
             card_html = f"""
-            <div class="cursor-pointer group mb-4" onclick="openProjectDetail('{project_title}', '{safe_desc}', '{img_url}')">
+            <div class="cursor-pointer group mb-4" onclick="openProjectDetail('{safe_title}', '{safe_desc}', '{img_url}')">
                 <img src="{img_url}" class="rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all">
                 <p class="text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors">{project_title}</p>
             </div>
             """
         else:
-            # 2. 서사가 없다면: 글자 이름표를 1px도 노출하지 않고 터치 이벤트를 완전히 비워둔 순수 미니멀 이미지 그 자체로 빌드
+            # 서사가 없다면: 자바스크립트 호출 인터페이스(onclick)를 완전히 배제하여 이중 토큰 충돌을 원천 차단하고 순수 이미지만 출력
             card_html = f"""
             <div class="group mb-4">
                 <img src="{img_url}" class="rounded-2xl border border-white/5 shadow-2xl transition-all">
             </div>
             """
 
-        # 비대칭 레이아웃 분할 배치 (기존 패딩 상충 분리 위해 구조 정렬)
         if (idx + 1) % 2 != 0:
             left_column_html += card_html
         else:
