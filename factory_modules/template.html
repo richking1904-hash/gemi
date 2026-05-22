@@ -11,7 +11,7 @@
         body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; overflow: hidden; }
         .serif { font-family: 'Bodoni Moda', serif; }
         
-        /* 👑 [사각 테두리 규격 순정 유지 + 내부 공간 최적화] */
+        /* 👑 사각 테두리 규격 및 사이즈 100% 순정 유지 */
         .centered-card { 
             width: 100%; 
             max-width: 410px; 
@@ -30,9 +30,11 @@
         #mainPage { overflow-y: auto; }
         #mainPage::-webkit-scrollbar { width: 0px; } 
 
-        /* 👑 [하단 가림 원천 해결 단추] 이미지 높이 비중을 55% -> 45%로 컴팩트 조율 */
-        .card-image-wrapper { width: 100%; height: 45%; position: relative; overflow: hidden; flex-shrink: 0; }
-        .card-content-wrapper { flex: 1; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; background: #1a1c1e; }
+        /* 👑 이미지 높이 비중 원본대로 55% 고정 */
+        .card-image-wrapper { width: 100%; height: 55%; position: relative; overflow: hidden; flex-shrink: 0; }
+        
+        /* 👑 하단 여백 정밀 다이어트 세팅 */
+        .card-content-wrapper { flex: 1; padding: 16px 20px 20px 20px; display: flex; flex-direction: column; justify-content: space-between; background: #1a1c1e; }
         
         .sub-page-content { flex: 1; overflow-y: auto; padding: 24px; background: #0c0d0e; }
         .sub-page-content::-webkit-scrollbar { width: 3px; }
@@ -40,7 +42,7 @@
         
         .smart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
         
-        /* 👑 [유동형 드래그 챗봇 레이어] 초기 고정 배치를 풀고 터치 간섭 현상을 차단 */
+        /* 👑 유동형 드래그 챗봇 레이어 */
         .floating-chat-widget { position: absolute; bottom: 24px; right: 24px; z-index: 100; touch-action: none; user-select: none; }
         .chat-toggle-btn { width: 52px; height: 52px; background-color: #ffffff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 2px solid var(--gold); cursor: grab; transition: transform 0.2s, border-color 0.2s; }
         .chat-toggle-btn:active { cursor: grabbing; transform: scale(0.95); }
@@ -53,6 +55,10 @@
         input, textarea { background: #1a1c1e !important; border: 1px solid #333 !important; color: white !important; border-radius: 12px !important; padding: 12px !important; width: 100%; outline: none; }
         input:focus, textarea:focus { border-color: var(--gold) !important; }
         .gold-btn { background: var(--gold); color: #000; font-weight: 700; border-radius: 14px; padding: 14px; width: 100%; transition: 0.3s; }
+
+        /* 👑 SNS 오리지널 아이콘 컬러 팩 */
+        .insta-color { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); }
+        .naver-color { color: #03C75A; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); }
     </style>
 </head>
 <body class="antialiased font-sans text-stone-200">
@@ -63,27 +69,27 @@
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
-                <div class="text-center">
-                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">${user_name}</h1>
-                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-2.5">${brand_name}</p>
-                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep mb-3">${INTRODUCTION}</p>
+                <div class="text-center mt-1">
+                    <h1 class="text-2xl font-bold tracking-tight text-white mb-0.5 serif italic">${user_name}</h1>
+                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-2">${brand_name}</p>
+                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep mb-2">${INTRODUCTION}</p>
                 </div>
                 
-                <div class="flex flex-col items-center gap-3 bg-white/5 py-3 px-4 rounded-2xl border border-white/5 mb-4">
-                    <div class="flex justify-center gap-5 text-[11px] text-stone-300 items-center w-full border-b border-white/5 pb-2">
+                <div class="flex flex-col items-center gap-2 bg-white/5 py-2 px-4 rounded-2xl border border-white/5 mb-3">
+                    <div class="flex justify-center gap-5 text-[11px] text-stone-300 items-center w-full border-b border-white/5 pb-1.5">
                         <a href="tel:${PHONE}" class="hover:text-white transition-colors flex items-center gap-1.5"><span>📞</span> <span class="font-medium tracking-wider">Call</span></a>
                         <span class="text-stone-600">|</span>
                         <span class="tracking-wide">✉️ ${EMAIL}</span>
                     </div>
-                    <div class="flex justify-center gap-6 items-center" style="${SNS1_DISPLAY}">
-                        <a href="${SNS1_URL}" target="_blank" id="snsIconBtn1" class="text-stone-400 hover:text-white transition-colors" title="${SNS1_TYPE}"></a>
-                        <a href="${SNS2_URL}" target="_blank" id="snsIconBtn2" style="${SNS2_DISPLAY}" class="text-stone-400 hover:text-white transition-colors" title="${SNS2_TYPE}"></a>
+                    <div class="flex justify-center gap-6 items-center py-0.5" style="${SNS1_DISPLAY}">
+                        <a href="${SNS1_URL}" target="_blank" id="snsIconBtn1" class="transition-transform hover:scale-110" title="${SNS1_TYPE}"></a>
+                        <a href="${SNS2_URL}" target="_blank" id="snsIconBtn2" style="${SNS2_DISPLAY}" class="transition-transform hover:scale-110" title="${SNS2_TYPE}"></a>
                     </div>
                 </div>
 
                 <div class="smart-grid">
-                    <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3.5 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors">Portfolio</button>
-                    <button onclick="switchPage('contactPage')" class="gold-btn text-[11px] py-3.5 tracking-widest uppercase shadow-xl hover:opacity-90 transition-opacity">Contact</button>
+                    <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors">Portfolio</button>
+                    <button onclick="switchPage('contactPage')" class="gold-btn text-[11px] py-3 tracking-widest uppercase shadow-xl hover:opacity-90 transition-opacity">Contact</button>
                 </div>
             </div>
         </div>
@@ -143,14 +149,15 @@
         const encodedData = "${GUIDELINE_TXT_URL}";
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
         
-        // 👑 [SNS 로고 아이콘 분기 주입 필터]
+        // 👑 [네이버 공식 오리지널 N 심볼 로고로 긴급 수정 교체 구역]
         function renderSnsLogos() {
             const snsTypes = ["${SNS1_TYPE}".toUpperCase(), "${SNS2_TYPE}".toUpperCase()];
             const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2')];
             
-            // 인스타그램 & 네이버 블로그 공식 SVG 데이터
-            const svgInsta = `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`;
-            const svgBlog = `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.167 0H4.833C2.163 0 0 2.163 0 4.833v14.334C0 21.837 2.163 24 4.833 24h14.334C21.837 24 24 21.837 24 19.167V4.833C24 2.163 21.837 0 19.167 0zM8.51 16.735H6.282V7.79h2.227v8.945zm6.98-4.473c0 1.242-.39 2.193-1.173 2.852-.782.66-1.892.99-3.328.99H9.46V7.79h1.53c2.793 0 4.19.98 4.19 2.943v1.529zm4.228-2.68c-.372.4-.908.6-1.606.6H17.21v1.64h1.168c.575 0 1.008.139 1.298.419.29.28.435.689.435 1.229v1.01h-2.9v-1.127H15.11v3.125h5.002c1.242 0 1.863-.618 1.863-1.854v-3.3c0-1.114-.523-1.745-1.568-1.892.682-.244 1.023-.748 1.023-1.512V9.824c0-1.603-.846-2.404-2.538-2.404h-4.902v3.124h4.902c.692 0 1.038.347 1.038 1.042v.997zM11.687 10.45c0-.419-.24-.628-.718-.628H9.46v1.312h1.51c.477 0 .717-.228.717-.684v-.001z"/></svg>`;
+            const svgInsta = `<svg class="w-6 h-6 insta-color" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`;
+            
+            // 👑 진짜 네이버 스퀘어 공식 'N' 로고 패스 데이터 반영
+            const svgBlog = `<svg class="w-6 h-6 naver-color" viewBox="0 0 24 24" fill="currentColor"><path d="M16.2 10.5V24h-4.75V13.5L6.6 24H2.4V0h4.75v10.5L12 0h4.2v10.5z"/></svg>`;
             const defaultIcon = `📁`;
 
             targets.forEach((btn, index) => {
@@ -162,7 +169,7 @@
                     btn.innerHTML = svgBlog;
                 } else {
                     btn.innerText = defaultIcon;
-                    btn.className += " text-xs font-bold bg-stone-800 px-2.5 py-1 rounded-xl border border-white/5";
+                    btn.className += " text-xs font-bold bg-stone-800 px-2.5 py-1 rounded-xl border border-white/5 text-stone-300";
                 }
             });
         }
@@ -174,7 +181,6 @@
         
         let isWelcomeInserted = false;
         document.getElementById('chatToggleBtn').addEventListener('click', (e) => {
-            // 드래그 직후 토글 클릭 방출을 막는 디바운싱 레이어
             if (document.getElementById('draggableChatWidget').hasAttribute('data-dragged')) {
                 document.getElementById('draggableChatWidget').removeAttribute('data-dragged');
                 return;
@@ -197,12 +203,11 @@
             }
         });
 
-        // 👑 [하이브리드 터치/마우스 완벽 드래그 앤 드롭 자바스크립트 엔진]
         function initDraggableWidget() {
             const widget = document.getElementById('draggableChatWidget');
             const handle = document.getElementById('chatToggleBtn');
             let isDragging = false;
-            let startX, startY, initialLeft, initialRight, initialBottom, initialTop;
+            let startX, startY, initialRight, initialBottom;
 
             function dragStart(e) {
                 isDragging = true;
@@ -228,7 +233,6 @@
                 const deltaX = startX - clientX;
                 const deltaY = startY - clientY;
                 
-                // 새로운 좌표를 우하단 기준 마진(Right/Bottom)으로 동적 연산 제어
                 widget.style.right = (initialRight + deltaX) + 'px';
                 widget.style.bottom = (initialBottom + deltaY) + 'px';
             }
@@ -237,7 +241,6 @@
                 isDragging = false;
             }
 
-            // 모바일 터치 및 PC 마우스 이벤트 듀얼 바인딩
             handle.addEventListener('mousedown', dragStart);
             document.addEventListener('mousemove', dragMove, { passive: false });
             document.addEventListener('mouseup', dragEnd);
@@ -376,7 +379,6 @@
             }
         }
         
-        // 👑 마스터 초기화 훅
         window.addEventListener('DOMContentLoaded', () => {
             renderSnsLogos();
             initDraggableWidget();
