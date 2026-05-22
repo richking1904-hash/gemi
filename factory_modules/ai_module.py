@@ -84,7 +84,7 @@ def generate_webcard_code(gui_payload: dict) -> str:
         if not img_url:
             img_url = default_img
             
-        # 👑 [SyntaxError 박멸] 자바스크립트 인라인 인자 충돌 방지를 위해 이스케이프 및 줄바꿈 공백 정밀 치환
+        # 자바스크립트 인라인 인자 충돌 방지를 위한 안전한 가공 프로세스
         safe_desc = desc_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"').replace("\n", "\\n").replace("\r", "")
         
         # 파일 경로에서 이름 추출 및 가공
@@ -95,22 +95,23 @@ def generate_webcard_code(gui_payload: dict) -> str:
             
         safe_title = project_title.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
 
-        # 하이브리드 비주얼 필터링 분기
+        # 👑 [하이브리드 비주얼 텍스트 압축 패치 구역]
+        # HTML 텍스트 문자열 내부의 모든 개행(\n)과 불필요한 공백을 완전히 압축하여 자바스크립트 토큰 오류를 원천 차단합니다.
         if desc_text:
-            # 서사가 있다면: 클릭 이벤트를 바인딩하고 가독성 높은 이름표 노출
-            card_html = f"""
-            <div class="cursor-pointer group mb-4" onclick="openProjectDetail('{safe_title}', '{safe_desc}', '{img_url}')">
-                <img src="{img_url}" class="rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all">
-                <p class="text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors">{project_title}</p>
-            </div>
-            """
+            # 1. 서사가 있다면: 클릭 스토리 팝업 및 하단 캡션 이름표 생성
+            card_html = (
+                f"<div class=\"cursor-pointer group mb-4\" onclick=\"openProjectDetail('{safe_title}', '{safe_desc}', '{img_url}')\">"
+                f"<img src=\"{img_url}\" class=\"rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all\">"
+                f"<p class=\"text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors\">{project_title}</p>"
+                f"</div>"
+            )
         else:
-            # 서사가 없다면: 자바스크립트 호출 인터페이스(onclick)를 완전히 배제하여 이중 토큰 충돌을 원천 차단하고 순수 이미지만 출력
-            card_html = f"""
-            <div class="group mb-4">
-                <img src="{img_url}" class="rounded-2xl border border-white/5 shadow-2xl transition-all">
-            </div>
-            """
+            # 2. 서사가 없다면: 글자 이름표와 onclick 속성을 1px도 생성하지 않는 완벽한 순수 미니멀 이미지 레이아웃 빌드
+            card_html = (
+                f"<div class=\"group mb-4\">"
+                f"<img src=\"{img_url}\" class=\"rounded-2xl border border-white/5 shadow-2xl transition-all\">"
+                f"</div>"
+            )
 
         if (idx + 1) % 2 != 0:
             left_column_html += card_html
@@ -118,7 +119,7 @@ def generate_webcard_code(gui_payload: dict) -> str:
             right_column_html += card_html
 
     if not left_column_html and not right_column_html:
-        left_column_html = f'<div class="group"><img src="{default_img}" class="rounded-2xl border border-white/5 shadow-2xl"></div>'
+        left_column_html = f'<div class="group mb-4"><img src="{default_img}" class="rounded-2xl border border-white/5 shadow-2xl"></div>'
 
     # 템플릿 코드 치환
     rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", left_column_html)
