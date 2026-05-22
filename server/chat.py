@@ -61,19 +61,20 @@ def chat():
         body = request.get_json() or {}
         user_message = body.get("message", "").strip()
         guideline_data = body.get("guideline_txt", "")
+        # 👑 [교정 추가] 프론트엔드 명함 페이지에서 전송한 고유 브랜드 서랍 정보 수신
+        brand_name = body.get("brand_name", "GeMi").strip()
 
         if not user_message:
             return jsonify({"reply": "질문 내용이 비어있습니다."}), 200
 
-        # 👑 [최적화 교정 - 1순위] 리모컨 고정 FAQ 데이터를 장부에서 최우선 매칭 (AI 절대 차단)
-        # 중요: 새로 유입된 질문이 장부에 중복 적재되기 전에 완전 매칭되는 진짜 답변을 먼저 리턴하고 함수를 끝냅니다.
+        # 👑 [최적화 교정 - 1순위] 내 브랜드 서랍(brand_name)과 질문(question)을 동시 대조하여 완벽 격리 조회
         try:
-            cache = supabase.table("gemi_chat_cache").select("answer").eq("question", user_message).execute()
+            cache = supabase.table("gemi_chat_cache").select("answer").eq("brand_name", brand_name).eq("question", user_message).execute()
             if cache.data and len(cache.data) > 0:
                 # 리모컨으로 등록한 기존 답변 배열 중 가장 온전한 데이터를 선택하여 즉시 반환
                 for item in cache.data:
                     if item.get("answer") and "[가이드라인 문서]" not in item["answer"]:
-                        print(f"✅ [FAQ 매칭 성공] 고정 장부 답변 즉시 리턴: {user_message}")
+                        print(f"✅ [FAQ 매칭 성공] {brand_name} 전용 장부 답변 즉시 리턴: {user_message}")
                         return jsonify({"reply": item["answer"]}), 200
         except Exception as cache_err:
             print(f"ℹ️ 캐시 장부 매칭 패스: {cache_err}")
@@ -86,7 +87,7 @@ def chat():
             }), 200
 
         # 👑 [최적화 교정 - 3순위] 순수 실시간 질문만 가이드라인 기반 AI 작동
-        print(f"🤖 [순수 AI 호출 진행]: {user_message}")
+        print(f"🤖 [순수 AI 호출 진행]: {user_message} (브랜드: {brand_name})")
         system_instruction = (
             "Answering user inquiries strictly based on the provided [Guidelines].\n"
             "DO NOT echo or repeat the entire [Guidelines] text in your answer.\n"
@@ -112,10 +113,9 @@ def chat():
             res_data = json.loads(res.read().decode('utf-8'))
             reply = res_data["choices"][0]["message"]["content"].strip()
 
-        # 👑 [중복 저장 방지] 실시간 AI가 답변한 순수 결과물만 장부에 사후 적재 처리
-        # 리모컨으로 심은 고정 FAQ 질문이 아니라면 안전하게 캐시 장부에 추가합니다.
+        # 👑 [중복 저장 방지] 사후 캐시 적재 시에도 brand_name을 명시하여 저장함으로써 타 명함 간의 캐시 충돌 원천 차단
         try:
-            supabase.table("gemi_chat_cache").insert({"question": user_message, "answer": reply}).execute()
+            supabase.table("gemi_chat_cache").insert({"brand_name": brand_name, "question": user_message, "answer": reply}).execute()
         except Exception: pass
 
         return jsonify({"reply": reply})
