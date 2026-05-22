@@ -97,6 +97,11 @@ def main_pipeline():
     gui_payload["main_image_url"] = upload_result.get("main_image_url", "")
     gui_payload["other_image_urls"] = upload_result.get("other_image_urls", [])
     gui_payload["guideline_txt_url"] = upload_result.get("guideline_txt_url", "")
+    
+    # 👑 [유실 차단 연결 브릿지 안착]
+    # db_module에서 가공되어 나온 '이미지 스토리지 주소 + 기획 서사' 매칭 세트 목록을 
+    # AI 엔진이 정상적으로 읽어 갈 수 있도록 동적 데이터 주머니(payload)에 유실 없이 합쳐줍니다.
+    gui_payload["portfolio_items"] = upload_result.get("portfolio_items", [])
 
     print("\n🤖 3단계: Gemini AI 완전 동적 코딩 가동...")
     final_html_code = generate_webcard_code(gui_payload)
