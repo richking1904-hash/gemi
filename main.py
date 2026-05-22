@@ -62,10 +62,18 @@ def auto_git_push_hybrid(url_name, final_html_code):
         print(f"❌ [Auto Git] 배포 중 에러 발생: {e}")
         return False
 
+# 👑 [UX 정밀 교정 구역] 
+# 기존의 일방통행형 showinfo 대신 askokcancel을 사용하여 [확인]을 누를 때만 브라우저가 열리게 고쳤습니다.
 def show_completion_dialog(url):
-    msg = f"축하합니다! GeMi 모바일 웹명함 공정이 완벽하게 끝났습니다.\n\n🌐 완성된 주소:\n{url}\n\n[확인]을 누르시면 인터넷 창이 자동으로 열립니다."
-    messagebox.showinfo("🎉 GeMi Factory 공정 완공 완료!", msg)
-    webbrowser.open(url)
+    msg = f"축하합니다! GeMi 모바일 웹명함 공정이 완벽하게 끝났습니다.\n\n🌐 완성된 주소:\n{url}\n\n[확인]을 누르시면 인터넷 창이 자동으로 열리며,\n[취소] 또는 우측 상단 [X] 단추를 누르면 이동하지 않고 창만 닫힙니다."
+    
+    # 사용자가 [확인]을 누르면 True, [취소]나 [X]를 누르면 False가 반환됩니다.
+    confirm_move = messagebox.askokcancel("🎉 GeMi Factory 공정 완공 완료!", msg)
+    
+    if confirm_move:
+        webbrowser.open(url)
+    else:
+        print("ℹ️ 디렉터 요청에 의해 배포 주소 브라우저 자동 연결을 패스합니다.")
 
 def main_pipeline():
     print("🏭 [GeMi 마스터 스위치] 모바일 반응형 웹명함 공장 가동 시작...")

@@ -42,8 +42,8 @@
                     <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-3">${brand_name}</p>
                     <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep">${INTRODUCTION}</p>
                 </div>
-                <div class="flex justify-center gap-6 text-[11px] text-stone-400 mb-6">
-                    <a href="tel:${PHONE}">📞 ${PHONE}</a>
+                <div class="flex justify-center gap-6 text-[12px] text-stone-400 mb-6 items-center">
+                    <a href="tel:${PHONE}" class="hover:text-white transition-colors bg-stone-800 w-7 h-7 flex items-center justify-center rounded-full border border-white/5 shadow-md">📞</a>
                     <span>✉️ ${EMAIL}</span>
                 </div>
                 <div class="smart-grid mb-6" style="${SNS1_DISPLAY}">
@@ -99,7 +99,7 @@
                         <button onclick="clickFaqButton(event, this)" style="${FAQ2_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ2_Q}</button>
                         <button onclick="clickFaqButton(event, this)" style="${FAQ3_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ3_Q}</button>
                     </div>
-                    </div>
+                </div>
                 
                 <div class="p-4 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
                     <input type="text" id="widgetInput" class="flex-1 text-[11px]" placeholder="Ask anything...">
@@ -113,7 +113,6 @@
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
         function switchPage(id) { ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
         
-        // 👑 [교정 및 보강] 챗봇 창을 토글할 때 최초 1회만 자기소개/인삿말 카드를 완벽하게 동적 인서트하는 시스템
         let isWelcomeInserted = false;
         document.getElementById('chatToggleBtn').addEventListener('click', () => {
             const chatWin = document.getElementById('chatWindow');
@@ -197,7 +196,7 @@
                         customer_name: data.name, 
                         customer_contact: data.phone, 
                         inquiry_type: data.type, 
-                        message: `[예산: ${data.budget}] ${data.desc}` 
+                        message: `[예산: {budget_val}] {msg}` 
                     }) 
                 });
                 
@@ -220,6 +219,12 @@
             
             document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-end mb-2"><div class="bg-[#C5A059] p-3 rounded-2xl text-[11px] text-black">${text}</div></div>`);
             input.value = '';
+            
+            // 👑 [교정 1] 내 질문 말풍선이 꽂힌 뒤 0.05초 비동기 지연을 주어 스크롤이 무조건 하단에 달라붙게 고정합니다.
+            setTimeout(() => {
+                const msgZone = document.getElementById('widgetMsgZone');
+                if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;
+            }, 50);
             
             try {
                 const safeGuideline = G_TXT
@@ -247,7 +252,13 @@
                 }
 
                 document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-start mb-2"><div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white break-keep leading-relaxed">${data.reply || data.error}</div></div>`);
-                document.getElementById('widgetMsgZone').scrollTop = document.getElementById('widgetMsgZone').scrollHeight;
+                
+                // 👑 [교정 2] AI 답변이 생성되어 꽂혔을 때도 정확히 0.05초 후에 대화창을 맨 밑으로 밀어내어 꺼짐 현상을 방지합니다.
+                setTimeout(() => {
+                    const msgZone = document.getElementById('widgetMsgZone');
+                    if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;
+                }, 50);
+
             } catch(e) {
                 document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="text-[10px] text-red-500">통신 실패: ${e.message}</div>`);
             }
