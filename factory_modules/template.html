@@ -21,6 +21,8 @@
         .chat-toggle-btn { width: 56px; height: 56px; background-color: #ffffff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 2px solid var(--gold); cursor: pointer; transition: 0.3s; }
         .chat-window { width: 320px; height: 450px; background: #191b1d; border: 1px solid var(--gold); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; }
         .widget-msg-zone { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .widget-msg-zone::-webkit-scrollbar { width: 3px; }
+        .widget-msg-zone::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         .hidden { display: none !important; }
         input, textarea { background: #1a1c1e !important; border: 1px solid #333 !important; color: white !important; border-radius: 12px !important; padding: 12px !important; width: 100%; outline: none; }
         input:focus, textarea:focus { border-color: var(--gold) !important; }
@@ -88,7 +90,7 @@
         <div class="floating-chat-widget">
             <button id="chatToggleBtn" class="chat-toggle-btn text-xl shadow-2xl">💬</button>
             <div id="chatWindow" class="chat-window hidden absolute bottom-16 right-0">
-                <div class="bg-[#C5A059] px-4 py-3 text-black font-bold text-[10px] tracking-widest uppercase">✨ GeMi AI Assistant</div>
+                <div class="bg-[#C5A059] px-4 py-3 text-black font-bold text-[10px] tracking-widest uppercase">✨ ${brand_name} AI Assistant</div>
                 
                 <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]">
                     <div class="flex flex-col gap-1.5 mb-2 p-1 border-b border-white/5 pb-3" style="${FAQ_DISPLAY}">
@@ -97,7 +99,7 @@
                         <button onclick="clickFaqButton(event, this)" style="${FAQ2_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ2_Q}</button>
                         <button onclick="clickFaqButton(event, this)" style="${FAQ3_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ3_Q}</button>
                     </div>
-                </div>
+                    </div>
                 
                 <div class="p-4 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
                     <input type="text" id="widgetInput" class="flex-1 text-[11px]" placeholder="Ask anything...">
@@ -110,7 +112,27 @@
         const encodedData = "${GUIDELINE_TXT_URL}";
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
         function switchPage(id) { ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-        document.getElementById('chatToggleBtn').addEventListener('click', () => document.getElementById('chatWindow').classList.toggle('hidden'));
+        
+        // 👑 [교정 및 보강] 챗봇 창을 토글할 때 최초 1회만 자기소개/인삿말 카드를 완벽하게 동적 인서트하는 시스템
+        let isWelcomeInserted = false;
+        document.getElementById('chatToggleBtn').addEventListener('click', () => {
+            const chatWin = document.getElementById('chatWindow');
+            chatWin.classList.toggle('hidden');
+            
+            if (!chatWin.classList.contains('hidden') && !isWelcomeInserted) {
+                const msgZone = document.getElementById('widgetMsgZone');
+                const welcomeHtml = `
+                    <div id="gemiWelcomeMsg" class="flex flex-col items-start mb-2 order-first">
+                        <div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white leading-relaxed break-keep">
+                            안녕하세요! 디렉터 \${"${user_name}"}님의 프로젝트 안내를 보조하는 AI 팀원입니다. ✨<br><br>전체적인 포트폴리오 안내 및 견적 문의에 대해 성심성의껏 안내해 드릴게요. 궁금한 점을 편하게 말씀해 주세요!
+                        </div>
+                    </div>
+                `;
+                msgZone.insertAdjacentHTML('beforeend', welcomeHtml);
+                isWelcomeInserted = true;
+                msgZone.scrollTop = msgZone.scrollHeight;
+            }
+        });
         
         function clickFaqButton(e, btnElement) {
             const questionText = btnElement.innerText.trim();
@@ -213,11 +235,18 @@
                     body: JSON.stringify({ 
                         message: text, 
                         guideline_txt: safeGuideline,
-                        brand_name: "${brand_name}" // 👑 [교정 완료] 어떤 명함의 서랍을 열어야 하는지 식별값을 백엔드로 정확하게 전송
+                        brand_name: "${brand_name}"
                     })
                 });
                 const data = await response.json();
-                document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-start mb-2"><div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white">${data.reply || data.error}</div></div>`);
+                
+                if (data.reply && data.reply.includes("오늘 준비된 대화 개수")) {
+                    input.placeholder = "대화 한도가 소진되었습니다.";
+                    input.disabled = true;
+                    document.getElementById('sendBtn').disabled = true;
+                }
+
+                document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-start mb-2"><div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white break-keep leading-relaxed">${data.reply || data.error}</div></div>`);
                 document.getElementById('widgetMsgZone').scrollTop = document.getElementById('widgetMsgZone').scrollHeight;
             } catch(e) {
                 document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="text-[10px] text-red-500">통신 실패: ${e.message}</div>`);
