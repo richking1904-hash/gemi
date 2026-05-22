@@ -2,17 +2,16 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>장형규 - GeMi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #C5A059; --dark-bg: #121314; }
-        body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; }
+        body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; overflow: hidden; }
         .serif { font-family: 'Bodoni Moda', serif; }
         
-        /* 👑 [높이 및 반응형 교정 완료] */
-        /* max-height를 고정값(820px) 대신 90vh로 바꾸어 컴퓨터 모니터 화면이 작아도 카드가 화면 안에 부드럽게 쏙 들어오도록 비율을 맞췄습니다. */
+        /* 👑 [사각 테두리 규격 순정 유지 + 내부 공간 최적화] */
         .centered-card { 
             width: 100%; 
             max-width: 410px; 
@@ -28,19 +27,25 @@
             position: relative; 
         }
         
-        /* 👑 메인 페이지 내부가 카드 크기에 맞춰 자연스럽게 반응하도록 내부 스크롤망 확보 */
         #mainPage { overflow-y: auto; }
-        #mainPage::-webkit-scrollbar { width: 0px; } /* 메인 스크롤바는 미니멀 디자인을 위해 숨김 */
+        #mainPage::-webkit-scrollbar { width: 0px; } 
 
-        .card-image-wrapper { width: 100%; height: 55%; position: relative; overflow: hidden; flex-shrink: 0; }
-        .card-content-wrapper { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: center; background: #1a1c1e; }
+        /* 👑 [하단 가림 원천 해결 단추] 이미지 높이 비중을 55% -> 45%로 컴팩트 조율 */
+        .card-image-wrapper { width: 100%; height: 45%; position: relative; overflow: hidden; flex-shrink: 0; }
+        .card-content-wrapper { flex: 1; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; background: #1a1c1e; }
+        
         .sub-page-content { flex: 1; overflow-y: auto; padding: 24px; background: #0c0d0e; }
         .sub-page-content::-webkit-scrollbar { width: 3px; }
         .sub-page-content::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+        
         .smart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
-        .floating-chat-widget { position: absolute; bottom: 24px; right: 24px; z-index: 100; }
-        .chat-toggle-btn { width: 56px; height: 56px; background-color: #ffffff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 2px solid var(--gold); cursor: pointer; transition: 0.3s; }
-        .chat-window { width: 320px; height: 450px; background: #191b1d; border: 1px solid var(--gold); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* 👑 [유동형 드래그 챗봇 레이어] 초기 고정 배치를 풀고 터치 간섭 현상을 차단 */
+        .floating-chat-widget { position: absolute; bottom: 24px; right: 24px; z-index: 100; touch-action: none; user-select: none; }
+        .chat-toggle-btn { width: 52px; height: 52px; background-color: #ffffff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 2px solid var(--gold); cursor: grab; transition: transform 0.2s, border-color 0.2s; }
+        .chat-toggle-btn:active { cursor: grabbing; transform: scale(0.95); }
+        .chat-window { width: 310px; height: 410px; background: #191b1d; border: 1px solid var(--gold); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; }
+        
         .widget-msg-zone { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
         .widget-msg-zone::-webkit-scrollbar { width: 3px; }
         .widget-msg-zone::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -54,64 +59,69 @@
     <div class="centered-card">
         <div id="mainPage" class="w-full h-full flex flex-col">
             <div class="card-image-wrapper">
-                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222542.476_1779459988.png" class="w-full h-full object-cover grayscale-[20%]">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-16T231805.483_1779461777.png" class="w-full h-full object-cover grayscale-[20%]">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
-                <div class="text-center mb-4">
+                <div class="text-center">
                     <h1 class="text-3xl font-bold tracking-tight text-white mb-1 serif italic">장형규</h1>
-                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-3">GeMi</p>
-                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep">Quiet Luxury 감성의 프리미엄 브랜드 및 graphic 디자인 스튜디오</p>
+                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-2.5">GeMi</p>
+                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep mb-3">Quiet Luxury 감성의 프리미엄 브랜드 및 graphic 디자인 스튜디오</p>
                 </div>
-                <div class="flex justify-center gap-6 text-[12px] text-stone-400 mb-6 items-center">
-                    <a href="tel:010-0000-0000" class="hover:text-white transition-colors bg-stone-800 w-7 h-7 flex items-center justify-center rounded-full border border-white/5 shadow-md">📞</a>
-                    <span>✉️ gemi_design@naver.com</span>
+                
+                <div class="flex flex-col items-center gap-3 bg-white/5 py-3 px-4 rounded-2xl border border-white/5 mb-4">
+                    <div class="flex justify-center gap-5 text-[11px] text-stone-300 items-center w-full border-b border-white/5 pb-2">
+                        <a href="tel:010-0000-0000" class="hover:text-white transition-colors flex items-center gap-1.5"><span>📞</span> <span class="font-medium tracking-wider">Call</span></a>
+                        <span class="text-stone-600">|</span>
+                        <span class="tracking-wide">✉️ gemi_design@naver.com</span>
+                    </div>
+                    <div class="flex justify-center gap-6 items-center" style="display: flex;">
+                        <a href="https://instagram.com/" target="_blank" id="snsIconBtn1" class="text-stone-400 hover:text-white transition-colors" title="Instagram"></a>
+                        <a href="https://blog.naver.com/" target="_blank" id="snsIconBtn2" style="display: flex;" class="text-stone-400 hover:text-white transition-colors" title="Naver Blog"></a>
+                    </div>
                 </div>
-                <div class="smart-grid mb-6" style="display: flex;">
-                    <a href="https://instagram.com/" target="_blank" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Instagram</a>
-                    <a href="https://blog.naver.com/" target="_blank" style="display: flex;" class="bg-stone-800 text-stone-200 text-center font-bold text-[10px] py-2 rounded-2xl border border-white/5 uppercase">Naver Blog</a>
-                </div>
+
                 <div class="smart-grid">
-                    <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-4 rounded-2xl border border-white/5 tracking-widest uppercase">Portfolio</button>
-                    <button onclick="switchPage('contactPage')" class="gold-btn text-[11px] py-4 tracking-widest uppercase shadow-xl">Contact</button>
+                    <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3.5 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors">Portfolio</button>
+                    <button onclick="switchPage('contactPage')" class="gold-btn text-[11px] py-3.5 tracking-widest uppercase shadow-xl hover:opacity-90 transition-opacity">Contact</button>
                 </div>
             </div>
         </div>
 
         <div id="promoPage" class="hidden w-full h-full flex flex-col relative">
-            <div class="px-6 py-5 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
+            <div class="px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
                 <span class="text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase">Selected Pieces</span>
                 <button onclick="switchPage('mainPage')" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider">Close</button>
             </div>
             <div class="sub-page-content">
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4"><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a8_1779459989.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a8</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"빛이 스며드는 순간, 자연스러운 표정과 여유로운 포즈가 어우러져 마치 일상 속 작은 영화의 한 장면처럼 느껴진다. 꾸밈없이 담백한 분위기 속에서 오히려 더 빛나는 매력이 드러난다."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a10_1779459992.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a10</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"손끝의 움직임, 시선의 방향, 미묘한 표정의 변화까지… 작은 디테일들이 모여 전체적인 분위기를 완성한다. 순간을 포착한 듯 자연스럽지만, 동시에 치밀하게 계산된 듯한 감각적인 연출."</p></div></div>
-                    <div class="space-y-4 pt-8"><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a9_1779459991.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a9</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"다채로운 색감이 하나의 팔레트처럼 이어지고, 각기 다른 표정과 제스처가 그 색을 더욱 생생하게 살려낸다. 마치 패션과 감정이 함께 춤추는 듯한 자유로운 무드가 느껴진다."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a14_1779459995.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a14</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"손끝의 움직임, 시선의 방향, 미묘한 표정의 변화까지… 작은 디테일들이 모여 전체적인 분위기를 완성한다. 순간을 포착한 듯 자연스럽지만, 동시에 치밀하게 계산된 듯한 감각적인 연출."</p></div></div>
+                    <div class="space-y-4"><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a1_1779461777.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a1</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"화이트 셔츠의 담백함 위에 실버 주얼리가 더해지며, 단순한 룩이 곧 강렬한 존재감으로 변한다. 빛을 받아 반짝이는 목걸이와 반지들이 하나의 조형물처럼 느껴지고, 자연스러운 헤어와 표정이 그 화려함을 부드럽게 중화시킨다. 절제와 화려함이 공존하는 순간."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a8_1779461781.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a8</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"다채로운 색감의 재킷들이 하나의 팔레트처럼 이어지고, 각기 다른 표정과 제스처가 그 색을 더욱 생생하게 살려낸다. 노랑의 밝음, 블루의 차분함, 핑크의 발랄함이 교차하며, 마치 감정과 패션이 함께 춤추는 듯한 자유로운 무드가 완성된다."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a13_1779461784.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a13</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"그린, 베이지, 그레이의 니트가 서로 다른 톤을 지니면서도 함께 어우러져 조화로운 무드를 만든다. 세 사람이 같은 제스처를 취하며 하나의 패턴처럼 보이고, 각자의 바지 컬러가 또 다른 변주를 더한다. 개별적인 개성이 모여 집단적인 스타일을 완성하는 순간."</p></div></div>
+                    <div class="space-y-4 pt-8"><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a4_1779461779.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a4</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"화이트 셔츠와 블루 데님의 조합은 언제나 클래식하지만, 포즈와 시선이 더해지면 그 안에서 새로운 이야기가 만들어진다. 자연광이 비추는 공간 속에서 단순한 의상이 오히려 더 큰 감각을 드러내며, 일상의 편안함과 세련된 무드가 동시에 담긴다."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a9_1779461782.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a9</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"화이트 톤의 베이스 위에 블랙 크롭 재킷과 하이웨이스트 팬츠가 더해지며, 강렬한 대비가 시선을 사로잡는다. 포즈와 움직임이 옷의 구조적 라인을 더욱 돋보이게 하고, 빛과 그림자가 교차하며 스타일의 입체감을 완성한다. 도시적인 세련됨과 자신감이 느껴지는 장면."</p></div></div>
                 </div>
             </div>
         </div>
 
         <div id="contactPage" class="hidden w-full h-full flex flex-col">
-            <div class="px-6 py-5 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
+            <div class="px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
                 <span class="text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase">Consultation</span>
                 <button onclick="switchPage('mainPage')" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider">Close</button>
             </div>
-            <div class="sub-page-content space-y-5">
-                <div class="space-y-4 pt-2">
-                    <div class="space-y-1.5"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Name / Brand (필수)</label><input type="text" id="formClientName" placeholder="성함 또는 기업명을 입력하세요"></div>
-                    <div class="space-y-1.5"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Contact (필수)</label><input type="text" id="formClientPhone" placeholder="010-0000-0000"></div>
-                    <div class="space-y-1.5"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Project Type</label><input type="text" id="formProjectType" placeholder="예: 브랜딩, 상세페이지 제작"></div>
-                    <div class="space-y-1.5"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Budget Range</label><input type="text" id="formBudget" placeholder="예: 300만원"></div>
-                    <div class="space-y-1.5"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Details</label><textarea id="formProjectDesc" rows="3" placeholder="프로젝트 목표 및 요청사항을 기술해주세요."></textarea></div>
-                    <button onclick="submitEstimate()" id="submitBtn" class="gold-btn mt-4">SUBMIT BRIEF</button>
+            <div class="sub-page-content space-y-4">
+                <div class="space-y-3.5 pt-1">
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Name / Brand (필수)</label><input type="text" id="formClientName" placeholder="성함 또는 기업명을 입력하세요"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Contact (필수)</label><input type="text" id="formClientPhone" placeholder="010-0000-0000"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Project Type</label><input type="text" id="formProjectType" placeholder="예: 브랜딩, 상세페이지 제작"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Budget Range</label><input type="text" id="formBudget" placeholder="예: 300만원"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Details</label><textarea id="formProjectDesc" rows="2" placeholder="프로젝트 목표 및 요청사항을 기술해주세요."></textarea></div>
+                    <button onclick="submitEstimate()" id="submitBtn" class="gold-btn mt-2 py-3">SUBMIT BRIEF</button>
                 </div>
             </div>
         </div>
 
-        <div class="floating-chat-widget">
+        <div id="draggableChatWidget" class="floating-chat-widget">
             <button id="chatToggleBtn" class="chat-toggle-btn text-xl shadow-2xl">💬</button>
             <div id="chatWindow" class="chat-window hidden absolute bottom-16 right-0">
-                <div class="bg-[#C5A059] px-4 py-3 text-black font-bold text-[10px] tracking-widest uppercase">✨ GeMi AI Assistant</div>
+                <div class="bg-[#C5A059] px-4 py-2.5 text-black font-bold text-[10px] tracking-widest uppercase">✨ GeMi AI Assistant</div>
                 
                 <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]">
                     <div class="flex flex-col gap-1.5 mb-2 p-1 border-b border-white/5 pb-3" style="display: block;">
@@ -122,9 +132,9 @@
                     </div>
                 </div>
                 
-                <div class="p-4 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
+                <div class="p-3 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
                     <input type="text" id="widgetInput" class="flex-1 text-[11px]" placeholder="Ask anything...">
-                    <button type="button" id="sendBtn" class="bg-[#C5A059] text-black text-[11px] font-bold px-4 rounded-xl">전송</button>
+                    <button type="button" id="sendBtn" class="bg-[#C5A059] text-black text-[11px] font-bold px-3 rounded-xl">전송</button>
                 </div>
             </div>
         </div>
@@ -132,13 +142,43 @@
     <script>
         const encodedData = "error";
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
+        
+        // 👑 [SNS 로고 아이콘 분기 주입 필터]
+        function renderSnsLogos() {
+            const snsTypes = ["Instagram".toUpperCase(), "Naver Blog".toUpperCase()];
+            const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2')];
+            
+            // 인스타그램 & 네이버 블로그 공식 SVG 데이터
+            const svgInsta = `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`;
+            const svgBlog = `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.167 0H4.833C2.163 0 0 2.163 0 4.833v14.334C0 21.837 2.163 24 4.833 24h14.334C21.837 24 24 21.837 24 19.167V4.833C24 2.163 21.837 0 19.167 0zM8.51 16.735H6.282V7.79h2.227v8.945zm6.98-4.473c0 1.242-.39 2.193-1.173 2.852-.782.66-1.892.99-3.328.99H9.46V7.79h1.53c2.793 0 4.19.98 4.19 2.943v1.529zm4.228-2.68c-.372.4-.908.6-1.606.6H17.21v1.64h1.168c.575 0 1.008.139 1.298.419.29.28.435.689.435 1.229v1.01h-2.9v-1.127H15.11v3.125h5.002c1.242 0 1.863-.618 1.863-1.854v-3.3c0-1.114-.523-1.745-1.568-1.892.682-.244 1.023-.748 1.023-1.512V9.824c0-1.603-.846-2.404-2.538-2.404h-4.902v3.124h4.902c.692 0 1.038.347 1.038 1.042v.997zM11.687 10.45c0-.419-.24-.628-.718-.628H9.46v1.312h1.51c.477 0 .717-.228.717-.684v-.001z"/></svg>`;
+            const defaultIcon = `📁`;
+
+            targets.forEach((btn, index) => {
+                if(!btn) return;
+                const type = snsTypes[index];
+                if (type.includes("INSTA")) {
+                    btn.innerHTML = svgInsta;
+                } else if (type.includes("BLOG") || type.includes("NAVER")) {
+                    btn.innerHTML = svgBlog;
+                } else {
+                    btn.innerText = defaultIcon;
+                    btn.className += " text-xs font-bold bg-stone-800 px-2.5 py-1 rounded-xl border border-white/5";
+                }
+            });
+        }
+
         function switchPage(id) { 
             ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); 
             document.getElementById(id).classList.remove('hidden'); 
         }
         
         let isWelcomeInserted = false;
-        document.getElementById('chatToggleBtn').addEventListener('click', () => {
+        document.getElementById('chatToggleBtn').addEventListener('click', (e) => {
+            // 드래그 직후 토글 클릭 방출을 막는 디바운싱 레이어
+            if (document.getElementById('draggableChatWidget').hasAttribute('data-dragged')) {
+                document.getElementById('draggableChatWidget').removeAttribute('data-dragged');
+                return;
+            }
             const chatWin = document.getElementById('chatWindow');
             chatWin.classList.toggle('hidden');
             
@@ -156,6 +196,56 @@
                 msgZone.scrollTop = msgZone.scrollHeight;
             }
         });
+
+        // 👑 [하이브리드 터치/마우스 완벽 드래그 앤 드롭 자바스크립트 엔진]
+        function initDraggableWidget() {
+            const widget = document.getElementById('draggableChatWidget');
+            const handle = document.getElementById('chatToggleBtn');
+            let isDragging = false;
+            let startX, startY, initialLeft, initialRight, initialBottom, initialTop;
+
+            function dragStart(e) {
+                isDragging = true;
+                widget.removeAttribute('data-dragged');
+                const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                startX = clientX;
+                startY = clientY;
+                
+                const rect = widget.getBoundingClientRect();
+                const parentRect = widget.parentElement.getBoundingClientRect();
+                initialRight = parentRect.right - rect.right;
+                initialBottom = parentRect.bottom - rect.bottom;
+            }
+
+            function dragMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                widget.setAttribute('data-dragged', 'true');
+                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+                
+                const deltaX = startX - clientX;
+                const deltaY = startY - clientY;
+                
+                // 새로운 좌표를 우하단 기준 마진(Right/Bottom)으로 동적 연산 제어
+                widget.style.right = (initialRight + deltaX) + 'px';
+                widget.style.bottom = (initialBottom + deltaY) + 'px';
+            }
+
+            function dragEnd() {
+                isDragging = false;
+            }
+
+            // 모바일 터치 및 PC 마우스 이벤트 듀얼 바인딩
+            handle.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', dragMove, { passive: false });
+            document.addEventListener('mouseup', dragEnd);
+
+            handle.addEventListener('touchstart', dragStart, { passive: true });
+            document.addEventListener('touchmove', dragMove, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+        }
         
         function clickFaqButton(e, btnElement) {
             const questionText = btnElement.innerText.trim();
@@ -220,7 +310,7 @@
                         customer_name: data.name, 
                         customer_contact: data.phone, 
                         inquiry_type: data.type, 
-                        message: `[예산: {budget_val}] {msg}` 
+                        message: `[예산: ${data.budget}] ${data.desc}` 
                     }) 
                 });
                 
@@ -285,6 +375,13 @@
                 document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="text-[10px] text-red-500">통신 실패: ${e.message}</div>`);
             }
         }
+        
+        // 👑 마스터 초기화 훅
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSnsLogos();
+            initDraggableWidget();
+        });
+
         document.getElementById('sendBtn').addEventListener('click', sendAiMessage);
         document.getElementById('widgetInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendAiMessage(e); });
     </script>
