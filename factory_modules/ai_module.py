@@ -84,29 +84,26 @@ def generate_webcard_code(gui_payload: dict) -> str:
         if not img_url:
             img_url = default_img
             
-        # 자바스크립트 인라인 인자 충돌 방지를 위한 백슬래시 보안 이스케이프 처리
-        safe_desc = desc_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"').replace("\n", "\\n").replace("\r", "")
-        
         # 파일 경로에서 이름 추출 및 가공
         raw_name = item.get("image_name", "")
         project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
         if project_title.startswith("port_"):
             project_title = project_title.replace("port_", "", 1)
-            
-        safe_title = project_title.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
 
-        # 👑 [HTML 토큰 크래시 완벽 박멸 구역]
-        # 파이썬 문자열 조합 시 포함되던 백슬래시 이스케이프 기호(\)를 완전히 없애고, HTML 표준 싱글쿼테이션과 더블쿼테이션을 완벽하게 격리 분리했습니다.
+        # 👑 [매거진형 아키텍처 정밀 구현 구역]
+        # 문법 크래시를 유발하던 onclick 자바스크립트 문자열 처리를 100% 영구 소멸시켰습니다.
+        # HTML과 Tailwind CSS 스타일의 순수한 조합으로만 갤러리 피드를 안전하게 적재합니다.
         if desc_text:
-            # 1. 서사가 있다면: 클릭 스토리 팝업 및 하단 캡션 이름표 생성
+            # 1. 서사가 있다면: 사진 아래에 프로젝트 제목을 올리고, 그 밑에 기획 의도 서사를 잡지처럼 차분하게 출력
             card_html = (
-                "<div class='cursor-pointer group mb-4' onclick=\"openProjectDetail('" + safe_title + "', '" + safe_desc + "', '" + img_url + "')\">"
-                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl group-hover:border-[#C5A059] transition-all'>"
-                "<p class='text-[11px] text-stone-400 mt-1.5 text-center group-hover:text-white transition-colors'>" + project_title + "</p>"
+                "<div class='group mb-6'>"
+                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'>"
+                "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
+                "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
                 "</div>"
             )
         else:
-            # 2. 서사가 없다면: 역슬래시 찌꺼기가 침투할 확률을 0%로 통제한 완전 무결점 미니멀 클린 이미지 태그 가동
+            # 2. 서사가 없다면: 글자 이름표를 완벽하게 배제하고 오직 고화질 미니멀 격자 프레임 자체로만 정렬
             card_html = (
                 "<div class='group mb-4'>"
                 "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all'>"
