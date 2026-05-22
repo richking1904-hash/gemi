@@ -212,7 +212,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         message: text, 
-                        guideline_txt: safeGuideline 
+                        guideline_txt: safeGuideline,
+                        brand_name: "${brand_name}" // 👑 [교정 완료] 어떤 명함의 서랍을 열어야 하는지 식별값을 백엔드로 정확하게 전송
                     })
                 });
                 const data = await response.json();

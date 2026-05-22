@@ -106,6 +106,33 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
     except Exception as e:
         print(f"❌ [DB Factory] 새 장부 적재 실패 우회: {e}")
 
+    # 👑 [선제 캐싱 파이프라인 추가] 공장 빌드 완공 시 고정 질문/정답을 캐시 장부에 미리 등록하여 타이밍 버그 해결
+    try:
+        user_info = payload.get("user_info", {})
+        faq_info = payload.get("faq_info", {})
+        b_name = user_info.get("brand_name", "GeMi").strip()
+
+        faq_list = [
+            {"q": faq_info.get("faq1_q", "").strip(), "a": faq_info.get("faq1_a", "").strip()},
+            {"q": faq_info.get("faq2_q", "").strip(), "a": faq_info.get("faq2_a", "").strip()},
+            {"q": faq_info.get("faq3_q", "").strip(), "a": faq_info.get("faq3_a", "").strip()},
+        ]
+
+        for faq in faq_list:
+            if faq["q"] and faq["a"]:
+                # 꼬임 방지를 위해 해당 브랜드의 동일 질문 캐시 데이터가 있다면 1차 선제 삭제
+                supabase.table("gemi_chat_cache").delete().eq("brand_name", b_name).eq("question", faq["q"]).execute()
+                
+                # 브랜드 식별 서랍(brand_name)을 달아 장부에 정답 미리 적재
+                supabase.table("gemi_chat_cache").insert({
+                    "brand_name": b_name,
+                    "question": faq["q"],
+                    "answer": faq["a"]
+                }).execute()
+                print(f"📌 [Pre-Caching] {b_name} 서랍에 고정 FAQ 선제 캐싱 성공: {faq['q']}")
+    except Exception as cache_pipeline_err:
+        print(f"ℹ️ [Pre-Caching] 장부 선제 기록 패스: {cache_pipeline_err}")
+
     return {
         "success": True,
         "main_image_url": main_image_url,
