@@ -1,402 +1,309 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>${user_name} - ${brand_name}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --gold: #C5A059; --dark-bg: #121314; }
-        body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; overflow: hidden; }
-        .serif { font-family: 'Bodoni Moda', serif; }
-        
-        /* 👑 사각 테두리 규격 및 사이즈 100% 순정 유지 */
-        .centered-card { 
-            width: 100%; 
-            max-width: 410px; 
-            height: calc(100vh - 30px); 
-            max-height: 90vh; 
-            background-color: #1a1c1e; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 32px; 
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-        }
-        
-        #mainPage { overflow-y: auto; }
-        #mainPage::-webkit-scrollbar { width: 0px; } 
+import os
+import requests
+import supabase
+import base64
+import json
+from openai import OpenAI
+from dotenv import load_dotenv # 1. 추가
 
-        /* 👑 이미지 높이 비중 원본대로 55% 고정 */
-        .card-image-wrapper { width: 100%; height: 55%; position: relative; overflow: hidden; flex-shrink: 0; }
-        
-        /* 👑 하단 여백 정밀 다이어트 세팅 */
-        .card-content-wrapper { flex: 1; padding: 16px 20px 20px 20px; display: flex; flex-direction: column; justify-content: space-between; background: #1a1c1e; }
-        
-        .sub-page-content { flex: 1; overflow-y: auto; padding: 24px; background: #0c0d0e; }
-        .sub-page-content::-webkit-scrollbar { width: 3px; }
-        .sub-page-content::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-        
-        .smart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
-        
-        /* 👑 유동형 드래그 챗봇 레이어 */
-        .floating-chat-widget { position: absolute; bottom: 24px; right: 24px; z-index: 100; touch-action: none; user-select: none; }
-        .chat-toggle-btn { width: 52px; height: 52px; background-color: #ffffff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 2px solid var(--gold); cursor: grab; transition: transform 0.2s, border-color 0.2s; }
-        .chat-toggle-btn:active { cursor: grabbing; transform: scale(0.95); }
-        .chat-window { width: 310px; height: 410px; background: #191b1d; border: 1px solid var(--gold); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; }
-        
-        .widget-msg-zone { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-        .widget-msg-zone::-webkit-scrollbar { width: 3px; }
-        .widget-msg-zone::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        .hidden { display: none !important; }
-        input, textarea { background: #1a1c1e !important; border: 1px solid #333 !important; color: white !important; border-radius: 12px !important; padding: 12px !important; width: 100%; outline: none; }
-        input:focus, textarea:focus { border-color: var(--gold) !important; }
-        .gold-btn { background: var(--gold); color: #000; font-weight: 700; border-radius: 14px; padding: 14px; width: 100%; transition: 0.3s; }
+load_dotenv() # 2. 추가
 
-        /* 👑 [흑백 버그 완전 박멸 인스타 마스킹 컬러 채널 가동] */
-        .insta-icon-frame {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-            border-radius: 6px;
-            padding: 3.5px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-        }
-        /* 👑 [블로그 초록색 네모박스 컨테이너 프레임 장착] */
-        .naver-icon-frame {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            background-color: #03C75A;
-            border-radius: 5px;
-            padding: 4.5px 5px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-        }
-    </style>
+# 서버 설정 (환경 변수에서 호출하도록 수정)
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_TABLE = "gemi_chat_cache"
 
-    <style id="premiumThemeStyles">
-        ${PORTFOLIO_CUSTOM_CSS}
-    </style>
-</head>
-<body class="antialiased font-sans text-stone-200">
-    <div class="centered-card">
-        <div id="mainPage" class="w-full h-full flex flex-col">
-            <div class="card-image-wrapper">
-                <img src="${main_image_url}" class="w-full h-full object-cover grayscale-[20%]">
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
-            </div>
-            <div class="card-content-wrapper">
-                <div class="text-center mt-1">
-                    <h1 class="text-2xl font-bold tracking-tight text-white mb-0.5 serif italic">${user_name}</h1>
-                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-2">${brand_name}</p>
-                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep mb-2">${INTRODUCTION}</p>
-                </div>
+supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
+openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
+
+def generate_webcard_code(gui_payload: dict) -> str:
+    user_info = gui_payload.get("user_info", {})
+    contact_info = gui_payload.get("contact_info", {})
+    faq_info = gui_payload.get("faq_info", {})
+    design_preference = gui_payload.get("design_preference", {})
+    ai_custom_requests = gui_payload.get("ai_custom_requests", {})
+
+    main_image_url = gui_payload.get("main_image_url", "")
+    guideline_txt_url = gui_payload.get("guideline_txt_url", "")
+    
+    # 가이드라인을 Base64로 인코딩하여 JS 문법 오류 완벽 차단
+    guideline_text = "error"
+    if guideline_txt_url:
+        try:
+            res = requests.get(guideline_txt_url, timeout=5)
+            if res.status_code == 200:
+                guideline_text = base64.b64encode(res.text.encode('utf-8')).decode('utf-8')
+        except:
+            guideline_text = "error"
+
+    brand_name = user_info.get("brand_name", "GeMi")
+    director_name = user_info.get("name", "장형규")
+    introduction = user_info.get("introduction", "")
+
+    template_path = os.path.join("factory_modules", "template.html")
+    if not os.path.exists(template_path): template_path = "template.html"
+
+    with open(template_path, "r", encoding="utf-8") as f: 
+        template_code = f.read()
+
+    # AI 카피라이팅 적용
+    client_context = f"Brand: {brand_name}, Style: {design_preference.get('style')}, Note: {ai_custom_requests.get('special_notes')}"
+    refined_intro = introduction
+    try:
+        response = openai_client.chat.completions.create(
+            model="google/gemini-2.0-flash-001",
+            messages=[
+                {"role": "system", "content": "You are a premium branding copywriter. Refine the given brand introduction into a luxury, minimalist presentation phrase (in Korean). Return ONLY the refined phrase without quotes."},
+                {"role": "user", "content": f"원문: {introduction}\n컨셉: {client_context}"}
+            ]
+        )
+        refined_intro = response.choices[0].message.content.strip()
+    except: pass
+
+    # 템플릿 렌더링 시작 (치환 파이프라인 누수 완전 차단)
+    rendered_code = template_code
+    rendered_code = rendered_code.replace("${user_name}", director_name)
+    rendered_code = rendered_code.replace("${brand_name}", brand_name)
+    rendered_code = rendered_code.replace("${INTRODUCTION}", refined_intro)
+    rendered_code = rendered_code.replace("${GUIDELINE_TXT_URL}", guideline_text)
+    
+    # 대문 이미지 바인딩
+    default_img = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe"
+    rendered_code = rendered_code.replace("${main_image_url}", main_image_url if main_image_url else default_img)
+    
+    # 하이브리드 가변형 포트폴리오 소스코드 마스터 빌더
+    portfolio_items = gui_payload.get("portfolio_items", [])
+    
+    # 👑 [신설 공정] 외부 테마 주입 파이프라인 엔진 가동
+    portfolio_theme = gui_payload.get("portfolio_theme", "[명함 테마와 동기화]")
+    custom_css_content = ""
+    custom_layout_html = ""
+
+    # 테마 키워드 매핑 매치
+    theme_key = "sync"
+    if "Big Picture" in portfolio_theme:
+        theme_key = "big"
+    elif "Ethereal" in portfolio_theme:
+        theme_key = "ethereal"
+    elif "Paradigm Shift" in portfolio_theme:
+        theme_key = "paradigm"
+
+    # 외부 css 로드 파일 구역
+    if theme_key != "sync":
+        css_file_name = f"{theme_key}.css"
+        css_path = os.path.join("external_themes", css_file_name)
+        if os.path.exists(css_path):
+            with open(css_path, "r", encoding="utf-8") as css_f:
+                custom_css_content = css_f.read()
+
+    # 1. 기존 [명함 테마와 동기화] 무드 전용 마스터 루프 빌더
+    if theme_key == "sync":
+        left_column_html = ""   # 홀수 번호 카드가 누적될 왼쪽 열
+        right_column_html = ""  # 짝수 번호 카드가 누적될 오른쪽 열
+
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip()
+            desc_text = item.get("description", "").strip()
+            
+            if not img_url:
+                img_url = default_img
                 
-                <div class="flex flex-col items-center gap-2 bg-white/5 py-2 px-4 rounded-2xl border border-white/5 mb-3">
-                    <div class="flex justify-center gap-5 text-[11px] text-stone-300 items-center w-full border-b border-white/5 pb-1.5">
-                        <a href="tel:${PHONE}" class="hover:text-white transition-colors flex items-center gap-1.5"><span>📞</span> <span class="font-medium tracking-wider">Call</span></a>
-                        <span class="text-stone-600">|</span>
-                        <span class="tracking-wide">✉️ ${EMAIL}</span>
-                    </div>
-                    <div class="flex justify-center gap-6 items-center py-0.5" style="${SNS1_DISPLAY}">
-                        <a href="${SNS1_URL}" target="_blank" id="snsIconBtn1" class="transition-transform hover:scale-110 flex items-center justify-center" title="${SNS1_TYPE}"></a>
-                        <a href="${SNS2_URL}" target="_blank" id="snsIconBtn2" style="${SNS2_DISPLAY}" class="transition-transform hover:scale-110 flex items-center justify-center" title="${SNS2_TYPE}"></a>
-                    </div>
-                </div>
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
 
-                <div class="smart-grid">
-                    <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors">Portfolio</button>
-                    <button onclick="switchPage('contactPage')" class="gold-btn text-[11px] py-3 tracking-widest uppercase shadow-xl hover:opacity-90 transition-opacity">Contact</button>
-                </div>
-            </div>
-        </div>
+            if desc_text:
+                card_html = (
+                    "<div class='group mb-6'>"
+                    "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'>"
+                    "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
+                    "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
+                    "</div>"
+                )
+            else:
+                card_html = (
+                    "<div class='group mb-4'>"
+                    "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all'>"
+                    "</div>"
+                )
 
-        ${PORTFOLIO_PAGE_LAYOUT}
+            if (idx + 1) % 2 != 0:
+                left_column_html += card_html
+            else:
+                right_column_html += card_html
 
-        <div id="contactPage" class="hidden w-full h-full flex flex-col">
-            <div class="px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
-                <span class="text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase">Consultation</span>
-                <button onclick="switchPage('mainPage')" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider">Close</button>
-            </div>
-            <div class="sub-page-content space-y-4">
-                <div class="space-y-3.5 pt-1">
-                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Name / Brand (필수)</label><input type="text" id="formClientName" placeholder="성함 또는 기업명을 입력하세요"></div>
-                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Contact (필수)</label><input type="text" id="formClientPhone" placeholder="010-0000-0000"></div>
-                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Project Type</label><input type="text" id="formProjectType" placeholder="예: 브랜딩, 상세페이지 제작"></div>
-                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Budget Range</label><input type="text" id="formBudget" placeholder="예: 300만원"></div>
-                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Details</label><textarea id="formProjectDesc" rows="2" placeholder="프로젝트 목표 및 요청사항을 기술해주세요."></textarea></div>
-                    <button onclick="submitEstimate()" id="submitBtn" class="gold-btn mt-2 py-3">SUBMIT BRIEF</button>
-                </div>
-            </div>
-        </div>
+        if not left_column_html and not right_column_html:
+            left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-2xl border border-white/5 shadow-2xl'></div>"
 
-        <div id="draggableChatWidget" class="floating-chat-widget">
-            <button id="chatToggleBtn" class="chat-toggle-btn text-xl shadow-2xl">💬</button>
-            <div id="chatWindow" class="chat-window hidden absolute bottom-16 right-0">
-                <div class="bg-[#C5A059] px-4 py-2.5 text-black font-bold text-[10px] tracking-widest uppercase">✨ ${brand_name} AI Assistant</div>
-                
-                <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]">
-                    <div class="flex flex-col gap-1.5 mb-2 p-1 border-b border-white/5 pb-3" style="${FAQ_DISPLAY}">
-                        <span class="text-[9px] text-stone-500 uppercase tracking-wider block mb-1">추천 질문 선택</span>
-                        <button onclick="clickFaqButton(event, this)" style="${FAQ1_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ1_Q}</button>
-                        <button onclick="clickFaqButton(event, this)" style="${FAQ2_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ2_Q}</button>
-                        <button onclick="clickFaqButton(event, this)" style="${FAQ3_DISPLAY}" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">${FAQ3_Q}</button>
-                    </div>
-                </div>
-                
-                <div class="p-3 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
-                    <input type="text" id="widgetInput" class="flex-1 text-[11px]" placeholder="Ask anything...">
-                    <button type="button" id="sendBtn" class="bg-[#C5A059] text-black text-[11px] font-bold px-3 rounded-xl">전송</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        const encodedData = "${GUIDELINE_TXT_URL}";
-        let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "    <div class='px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center'>"
+            "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
+            "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider'>Close</button>"
+            "    </div>"
+            "    <div class='sub-page-content'>"
+            "        <div class='grid grid-cols-2 gap-4'>"
+            "            <div class='space-y-4'>" + left_column_html + "</div>"
+            "            <div class='space-y-4 pt-8'>" + right_column_html + "</div>"
+            "        </div>"
+            "    </div>"
+            "</div>"
+        )
+
+    # 2. 외부 [Big Picture] 단일 페이지 구조 프리셋 (간섭을 완전 차단하는 독립 인라인 레이아웃 조립)
+    elif theme_key == "big":
+        cards_html = ""
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip() or default_img
+            desc_text = item.get("description", "").strip()
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
+
+            cards_html += (
+                "<div class='group bg-[#161719] rounded-2xl overflow-hidden border border-white/5 shadow-xl flex flex-col' style='width:100% !important; margin-bottom:24px !important;'>"
+                "    <div style='width:100% !important; height:220px !important; overflow:hidden !important;'><img src='" + img_url + "' style='width:100% !important; height:100% !important; object-fit:cover !important;'></div>"
+                "    <div style='padding:16px 20px !important; background:#161719 !important;'>"
+                "        <h4 class='serif italic' style='font-size:13px !important; font-weight:700 !important; color:#C5A059 !important;'>" + project_title + "</h4>"
+                "        <p style='font-size:10.5px !important; color:#aaaaaa !important; line-height:1.6em !important; margin-top:6px !important; font-weight:300 !important; var(--tw-content):\"\" !important;'>" + desc_text + "</p>"
+                "    </div>"
+                "</div>"
+            )
         
-        // 👑 [인스타 그라데이션 복구 및 네이버 블로그 공식 N 스퀘어 박스 완벽 안착 구역]
-        function renderSnsLogos() {
-            const snsTypes = ["${SNS1_TYPE}".toUpperCase(), "${SNS2_TYPE}".toUpperCase()];
-            const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2')];
-            
-            // 인스타 흰색 심볼 (그라데이션 프레임 내부에 안착)
-            const svgInsta = `<span class="insta-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></span>`;
-            
-            // 네이버 블로그 하얀색 N 심볼 (초록색 스퀘어 프레임 내부에 안착)
-            const svgBlog = `<span class="naver-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 0h-4.3l-4.5 13.2V0H3.3v24h4.3l4.5-13.2V24h4.3V0z"/></svg></span>`;
-            const defaultIcon = `📁`;
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden flex flex-col' style='position:absolute !important; top:0 !important; left:0 !important; width:100% !important; height:100% !important; background:#0c0d0e !important; overflow-y:auto !important; z-index:50 !important;'>"
+            "    <div style='padding:32px 24px 20px 24px !important; text-align:center !important; background:#111214 !important; border-bottom:1px solid rgba(255,255,255,0.05) !important; flex-shrink:0 !important;'>"
+            "        <h2 class='serif italic' style='font-size:22px !important; font-weight:700 !important; color:#ffffff !important; letter-spacing:1px !important; margin-bottom:4px !important;'>" + brand_name + " Portfolio</h2>"
+            "        <p style='font-size:9px !important; font-weight:700 !important; text-transform:uppercase !important; letter-spacing:4px !important; color:#C5A059 !important; margin-bottom:12px !important;'>Selected Pieces</p>"
+            "        <p style='font-size:11px !important; color:#999999 !important; line-height:1.6em !important; font-weight:300 !important; max-width:260px !important; margin:0 auto !important;'>" + brand_name + " 스튜디오의 차분하고 미니멀한 아카이브 피드입니다.</p>"
+            "    </div>"
+            "    <div style='flex:1 !important; overflow-y:auto !important; padding:24px 20px !important; width:100% !important;'>"
+            "        <div style='display:flex !important; flex-direction:column !important; width:100% !important;'>" + cards_html + "</div>"
+            "    </div>"
+            "    <div style='padding:0 20px 24px 20px !important; background:#0c0d0e !important; flex-shrink:0 !important; width:100% !important;'>"
+            "        <button onclick=\"switchPage('mainPage')\" class='gold-btn' style='font-size:11px !important; padding:12px !important; tracking-widest: 0.1em !important; text-transform: uppercase !important;'>Return To Card ✕</button>"
+            "    </div>"
+            "</div>"
+        )
 
-            targets.forEach((btn, index) => {
-                if(!btn) return;
-                const type = snsTypes[index];
-                if (type.includes("INSTA")) {
-                    btn.innerHTML = svgInsta;
-                } else if (type.includes("BLOG") || type.includes("NAVER")) {
-                    btn.innerHTML = svgBlog;
-                } else {
-                    btn.innerText = defaultIcon;
-                    btn.className += " text-xs font-bold bg-stone-800 px-2.5 py-1 rounded-xl border border-white/5 text-stone-300";
-                }
-            });
-        }
+    # 3. 외부 [Ethereal] 전용 가로 패닝 스크롤 레이아웃 빌더
+    elif theme_key == "ethereal":
+        cards_html = ""
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip() or default_img
+            desc_text = item.get("description", "").strip()
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
 
-        function switchPage(id) { 
-            ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); 
-            document.getElementById(id).classList.remove('hidden'); 
-        }
-        
-        let isWelcomeInserted = false;
-        document.getElementById('chatToggleBtn').addEventListener('click', (e) => {
-            if (document.getElementById('draggableChatWidget').hasAttribute('data-dragged')) {
-                document.getElementById('draggableChatWidget').removeAttribute('data-dragged');
-                return;
-            }
-            const chatWin = document.getElementById('chatWindow');
-            chatWin.classList.toggle('hidden');
-            
-            if (!chatWin.classList.contains('hidden') && !isWelcomeInserted) {
-                const msgZone = document.getElementById('widgetMsgZone');
-                const welcomeHtml = `
-                    <div id="gemiWelcomeMsg" class="flex flex-col items-start mb-2 order-first">
-                        <div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white leading-relaxed break-keep">
-                            안녕하세요! 디렉터 ${user_name}님의 프로젝트 안내를 보조하는 AI 팀원입니다. ✨<br><br>전체적인 포트폴리오 안내 및 견적 문의에 대해 성심성의껏 안내해 드릴게요. 궁금한 점을 편하게 말씀해 주세요!
-                        </div>
-                    </div>
-                `;
-                msgZone.insertAdjacentHTML('beforeend', welcomeHtml);
-                isWelcomeInserted = true;
-                msgZone.scrollTop = msgZone.scrollHeight;
-            }
-        });
+            cards_html += (
+                "<div class='eth-project-card'>"
+                "    <div class='eth-img-frame'><img src='" + img_url + "'></div>"
+                "    <div class='eth-meta-box'>"
+                "        <h4 class='eth-project-title'>" + project_title + "</h4>"
+                "        <p class='eth-project-desc'>" + desc_text + "</p>"
+                "    </div>"
+                "</div>"
+            )
 
-        function initDraggableWidget() {
-            const widget = document.getElementById('draggableChatWidget');
-            const handle = document.getElementById('chatToggleBtn');
-            let isDragging = false;
-            let startX, startY, initialRight, initialBottom;
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "    <div class='eth-header-bar'>"
+            "        <span class='eth-brand-title'>" + brand_name + " ARCHIVE</span>"
+            "        <button onclick=\"switchPage('mainPage')\" class='eth-close-btn'>Close ✕</button>"
+            "    </div>"
+            "    <div class='eth-gallery-track'>" + cards_html + "</div>"
+            "</div>"
+        )
 
-            function dragStart(e) {
-                isDragging = true;
-                widget.removeAttribute('data-dragged');
-                const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-                const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-                startX = clientX;
-                startY = clientY;
-                
-                const rect = widget.getBoundingClientRect();
-                const parentRect = widget.parentElement.getBoundingClientRect();
-                initialRight = parentRect.right - rect.right;
-                initialBottom = parentRect.bottom - rect.bottom;
-            }
+    # 4. 외부 [Paradigm Shift] 전용 비대칭 매거진 월 레이아웃 빌더
+    elif theme_key == "paradigm":
+        cards_html = ""
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip() or default_img
+            desc_text = item.get("description", "").strip()
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
 
-            function dragMove(e) {
-                if (!isDragging) return;
-                e.preventDefault();
-                widget.setAttribute('data-dragged', 'true');
-                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-                
-                const deltaX = startX - clientX;
-                const deltaY = startY - clientY;
-                
-                widget.style.right = (initialRight + deltaX) + 'px';
-                widget.style.bottom = (initialBottom + deltaY) + 'px';
-            }
+            cards_html += (
+                "<div class='para-card'>"
+                "    <div class='para-img-box'><img src='" + img_url + "'></div>"
+                "    <div class='para-meta-box'>"
+                "        <h4 class='para-title'>" + project_title + "</h4>"
+                "        <p class='para-desc'>" + desc_text + "</p>"
+                "    </div>"
+                "</div>"
+            )
 
-            function dragEnd() {
-                isDragging = false;
-            }
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "    <div class='para-close-bar'>"
+            "        <span class='para-brand-label'>" + brand_name + " CONCEPT</span>"
+            "        <button onclick=\"switchPage('mainPage')\" class='para-close-btn'>Close ✕</button>"
+            "    </div>"
+            "    <div class='para-container'>"
+            "        <div class='para-sidebar'>"
+            "            <div class='para-sidebar-inner'>"
+            "                <h2>Selected<br>Works</h2>"
+            "            </div>"
+            "        </div>"
+            "        <div class='para-main-feed'>"
+            "            <div class='para-grid'>" + cards_html + "</div>"
+            "        </div>"
+            "    </div>"
+            "</div>"
+        )
 
-            handle.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', dragMove, { passive: false });
-            document.addEventListener('mouseup', dragEnd);
+    # 👑 마스터 변수 직렬 체환 기동 (순치환 연쇄 구조로 버그 완전 박멸)
+    rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", custom_css_content)
+    rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", custom_layout_html)
 
-            handle.addEventListener('touchstart', dragStart, { passive: true });
-            document.addEventListener('touchmove', dragMove, { passive: false });
-            document.addEventListener('touchend', dragEnd);
-        }
-        
-        function clickFaqButton(e, btnElement) {
-            const questionText = btnElement.innerText.trim();
-            const inputField = document.getElementById('widgetInput');
-            if (inputField) {
-                inputField.value = questionText;
-                sendAiMessage(e);
-            }
-        }
+    # 하위 태그 탐색 꼬임 방지를 위한 순정 변수 공백 안전 삭제 패치
+    rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", "")
+    rendered_code = rendered_code.replace("${PORTFOLIO_RIGHT_COLUMN}", "")
 
-        async function submitEstimate() {
-            const btn = document.getElementById('submitBtn');
-            if (!btn) return;
-            
-            const nameEl = document.getElementById('formClientName');
-            const phoneEl = document.getElementById('formClientPhone');
-            const typeEl = document.getElementById('formProjectType');
-            const budgetEl = document.getElementById('formBudget');
-            const descEl = document.getElementById('formProjectDesc');
-            
-            if(!nameEl || !nameEl.value.trim()){
-                alert("디렉터님이 성함을 알아야 연락드릴 수 있습니다. 이름 또는 brand_name을 입력해주세요.");
-                nameEl.focus(); return;
-            }
-            if(!phoneEl || !phoneEl.value.trim()){
-                alert("연락처를 남겨주셔야 문의 내용에 대한 답변을 드릴 수 있습니다.");
-                phoneEl.focus(); return;
-            }
+    # 연락처 및 기타 정보
+    rendered_code = rendered_code.replace("${PHONE}", contact_info.get("phone", ""))
+    rendered_code = rendered_code.replace("${EMAIL}", contact_info.get("email", ""))
+    
+    # SNS 정보 처리
+    sns1_type = contact_info.get("sns1_type", "SNS")
+    sns1_url = contact_info.get("sns1_url", "#")
+    sns2_type = contact_info.get("sns2_type", "SNS")
+    sns2_url = contact_info.get("sns2_url", "#")
+    
+    rendered_code = rendered_code.replace("${SNS1_TYPE}", sns1_type)
+    rendered_code = rendered_code.replace("${SNS1_URL}", sns1_url)
+    rendered_code = rendered_code.replace("${SNS2_TYPE}", sns2_type)
+    rendered_code = rendered_code.replace("${SNS2_URL}", sns2_url)
+    
+    rendered_code = rendered_code.replace("${SNS1_DISPLAY}", "display: flex;" if sns1_url != "#" else "display: none !important;")
+    rendered_code = rendered_code.replace("${SNS2_DISPLAY}", "display: flex;" if sns2_url != "#" else "display: none !important;")
 
-            const data = { 
-                name: nameEl.value, 
-                phone: phoneEl.value, 
-                type: typeEl ? typeEl.value : '', 
-                budget: budgetEl ? budgetEl.value : '', 
-                desc: descEl ? descEl.value : '' 
-            };
-            
-            btn.innerText = "SENDING...";
-            btn.disabled = true;
-            
-            try {
-                await fetch('${SUPABASE_URL}/rest/v1/gemi_customer_inquiry', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "apikey": "${SUPABASE_KEY}",
-                        "Authorization": "Bearer ${SUPABASE_KEY}"
-                    },
-                    body: JSON.stringify({
-                        brand_name: "${brand_name}",
-                        customer_name: data.name,
-                        customer_contact: data.phone,
-                        inquiry_type: data.type,
-                        message: `[예산: ${data.budget}] ${data.desc}`
-                    })
-                });
+    # FAQ 1, 2, 3 텍스트 치환
+    f1_q = faq_info.get("faq1_q", "").strip()
+    f1_a = faq_info.get("faq1_a", "").strip()
+    f2_q = faq_info.get("faq2_q", "").strip()
+    f2_a = faq_info.get("faq2_a", "").strip()
+    f3_q = faq_info.get("faq3_q", "").strip()
+    f3_a = faq_info.get("faq3_a", "").strip()
 
-                fetch('https://gemi-5vfl.onrender.com/api/submit-inquiry', { 
-                    method: "POST", 
-                    headers: { "Content-Type": "application/json" }, 
-                    body: JSON.stringify({ 
-                        customer_name: data.name, 
-                        customer_contact: data.phone, 
-                        inquiry_type: data.type, 
-                        message: `[예산: ${data.budget}] ${data.desc}` 
-                    }) 
-                });
-                
-                alert("문의가 정상 전송되었습니다!");
-            } catch (error) {
-                alert("전송 중 오류가 발생했습니다: " + error.message);
-            } finally {
-                btn.innerText = "SUBMIT BRIEF";
-                btn.disabled = false;
-                switchPage('mainPage');
-            }
-        }
+    rendered_code = rendered_code.replace("${FAQ1_Q}", f1_q)
+    rendered_code = rendered_code.replace("${FAQ1_A}", f1_a)
+    rendered_code = rendered_code.replace("${FAQ2_Q}", f2_q)
+    rendered_code = rendered_code.replace("${FAQ2_A}", f2_a)
+    rendered_code = rendered_code.replace("${FAQ3_Q}", f3_q)
+    rendered_code = rendered_code.replace("${FAQ3_A}", f3_a)
 
-        async function sendAiMessage(e) {
-            if(e && typeof e.preventDefault === 'function') e.preventDefault();
+    has_any_faq = f1_q or f2_q or f3_q
+    rendered_code = rendered_code.replace("${FAQ_DISPLAY}", "display: block;" if has_any_faq else "display: none !important;")
+    rendered_code = rendered_code.replace("${FAQ1_DISPLAY}", "display: block;" if f1_q else "display: none !important;")
+    rendered_code = rendered_code.replace("${FAQ2_DISPLAY}", "display: block;" if f2_q else "display: none !important;")
+    rendered_code = rendered_code.replace("${FAQ3_DISPLAY}", "display: block;" if f3_q else "display: none !important;")
 
-            const input = document.getElementById('widgetInput');
-            const text = input.value.trim();
-            if(!text) return;
-            
-            document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-end mb-2"><div class="bg-[#C5A059] p-3 rounded-2xl text-[11px] text-black">${text}</div></div>`);
-            input.value = '';
-            
-            setTimeout(() => {
-                const msgZone = document.getElementById('widgetMsgZone');
-                if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;
-            }, 50);
-            
-            try {
-                const safeGuideline = G_TXT
-                    .replace(/\\/g, '\\\\')
-                    .replace(/"/g, '\\"')
-                    .replace(/\n/g, '\\n')
-                    .replace(/\r/g, '\\r')
-                    .replace(/\t/g, '\\t');
-
-                const response = await fetch('https://gemi-5vfl.onrender.com/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message: text, 
-                        guideline_txt: safeGuideline,
-                        brand_name: "${brand_name}"
-                    })
-                });
-                const data = await response.json();
-                
-                if (data.reply && data.reply.includes("오늘 준비된 대화 개수")) {
-                    input.placeholder = "대화 한도가 소진되었습니다.";
-                    input.disabled = true;
-                    document.getElementById('sendBtn').disabled = true;
-                }
-
-                document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-start mb-2"><div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white break-keep leading-relaxed">${data.reply || data.error}</div></div>`);
-                
-                setTimeout(() => {
-                    const msgZone = document.getElementById('widgetMsgZone');
-                    if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;
-                }, 50);
-
-            } catch(e) {
-                document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="text-[10px] text-red-500">통신 실패: ${e.message}</div>`);
-            }
-        }
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            renderSnsLogos();
-            initDraggableWidget();
-        });
-
-        document.getElementById('sendBtn').addEventListener('click', sendAiMessage);
-        document.getElementById('widgetInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendAiMessage(e); });
-    </script>
-</body>
-</html>
+    return rendered_code
