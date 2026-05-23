@@ -16,7 +16,7 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-# 👑 [듀얼 엔진 전환 패치] 리턴 타입을 두 장의 코드를 동시에 담아 뱉는 dict로 설계했습니다.
+# 👑 [4단 분리 듀얼 엔진] 메인 명함과 새 창용 상세 기획서 문서를 분리 빌드하여 dict로 리턴합니다.
 def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
@@ -100,62 +100,71 @@ def generate_webcard_code(gui_payload: dict) -> dict:
                 custom_css_content = css_f.read()
 
     # 1. 기존 [명함 테마와 동기화] 무드 전용 마스터 루프 빌더
-    if theme_key == "sync":
-        left_column_html = ""   # 홀수 번호 카드가 누적될 왼쪽 열
-        right_column_html = ""  # 짝수 번호 카드가 누적될 오른쪽 열
+    # 명함 내부 SPA 뷰어 레이아웃을 그대로 유지하되, 카드 하단에 새 창으로 상세보기를 띄울 링크 버튼을 안착시킵니다.
+    left_column_html = ""   # 홀수 번호 카드가 누적될 왼쪽 열
+    right_column_html = ""  # 짝수 번호 카드가 누적될 오른쪽 열
 
-        for idx, item in enumerate(portfolio_items):
-            img_url = item.get("image_url", "").strip()
-            desc_text = item.get("description", "").strip()
+    for idx, item in enumerate(portfolio_items):
+        img_url = item.get("image_url", "").strip()
+        desc_text = item.get("description", "").strip()
+        
+        if not img_url:
+            img_url = default_img
             
-            if not img_url:
-                img_url = default_img
-                
-            raw_name = item.get("image_name", "")
-            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
-            if project_title.startswith("port_"):
-                project_title = project_title.replace("port_", "", 1)
+        raw_name = item.get("image_name", "")
+        project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+        if project_title.startswith("port_"):
+            project_title = project_title.replace("port_", "", 1)
 
-            if desc_text:
-                card_html = (
-                    "<div class='group mb-6'>"
-                    "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'>"
-                    "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
-                    "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
-                    "</div>"
-                )
-            else:
-                card_html = (
-                    "<div class='group mb-4'>"
-                    "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all'>"
-                    "</div>"
-                )
-
-            if (idx + 1) % 2 != 0:
-                left_column_html += card_html
-            else:
-                right_column_html += card_html
-
-        if not left_column_html and not right_column_html:
-            left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-2xl border border-white/5 shadow-2xl'></div>"
-
-        # 👑 [새 창 분기 최적화] id='promoPage'에서 hidden을 강제 해제하여 단독 페이지용으로 정렬합니다.
-        custom_layout_html = (
-            "<div id='promoPage' class='w-full h-full flex flex-col relative'>"
-            "    <div class='px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center'>"
-            "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
-            "    </div>"
-            "    <div class='sub-page-content'>"
-            "        <div class='grid grid-cols-2 gap-4'>"
-            "            <div class='space-y-4'>" + left_column_html + "</div>"
-            "            <div class='space-y-4 pt-8'>" + right_column_html + "</div>"
-            "        </div>"
-            "    </div>"
-            "</div>"
+        # 👑 [4단 링크 주입] 각 작품 카드 하단에 새 창으로 독립 CSS 템플릿을 호출하는 "상세 기획서" 단추 장착
+        detail_button_html = (
+            "<a href='./pages/portfolio.html' target='_blank' "
+            "class='inline-block mt-2 text-[9px] text-[#C5A059] border border-[#C5A059]/30 rounded-lg px-2 py-1 hover:bg-[#C5A059]/10 transition-all tracking-wider font-medium serif uppercase'>"
+            "View Concept Document ↗</a>"
         )
 
+        if desc_text:
+            card_html = (
+                "<div class='group mb-6'>"
+                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'>"
+                "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
+                "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
+                + detail_button_html +
+                "</div>"
+            )
+        else:
+            card_html = (
+                "<div class='group mb-4'>"
+                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all'>"
+                + detail_button_html +
+                "</div>"
+            )
+
+        if (idx + 1) % 2 != 0:
+            left_column_html += card_html
+        else:
+            right_column_html += card_html
+
+    if not left_column_html and not right_column_html:
+        left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-2xl border border-white/5 shadow-2xl'></div>"
+
+    main_card_layout_html = (
+        "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+        "    <div class='px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center'>"
+        "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
+        "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider'>Close</button>"
+        "    </div>"
+        "    <div class='sub-page-content'>"
+        "        <div class='grid grid-cols-2 gap-4'>"
+        "            <div class='space-y-4'>" + left_column_html + "</div>"
+        "            <div class='space-y-4 pt-8'>" + right_column_html + "</div>"
+        "        </div>"
+        "    </div>"
+        "</div>"
+    )
+
     # 2. 외부 [Big Picture] 순정 카드 핏 정밀 조립 레이어
-    elif theme_key == "big":
+    if theme_key == "big":
         cards_html = ""
         for idx, item in enumerate(portfolio_items):
             img_url = item.get("image_url", "").strip() or default_img
@@ -257,33 +266,37 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             "</div>"
         )
 
-    # 👑 [독립 포트폴리오용 순정 액자 코드 정밀 패키징]
-    # 외부 CSS 틀 고유의 색상(견적 버튼 등)을 온전히 살리기 위해 복사되던 Tailwind script 라인을 제거했습니다.
+    # 테마 동기화 모드일 때 예외 처리 레이아웃 보정
+    if theme_key == "sync":
+        custom_layout_html = main_card_layout_html.replace("hidden ", "")
+
+    # 👑 [독립 포트폴리오용 순정 액자 코드 패키징]
+    # 새 창용 서브 페이지에는 Tailwind 스크립트를 삭제하여 순정 외부 CSS의 컬러가 깨지지 않도록 철저히 격리했습니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{{brand_name}} - Portfolio</title>
+    <title>{brand_name} - Concept Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
         body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
         .sub-page-content {{ padding: 10px; background: #121314; }}
-        {{custom_css_content}}
+        {custom_css_content}
     </style>
 </head>
 <body class="antialiased">
     <div style="max-w: 800px; margin: 0 auto;">
-        {{custom_layout_html}}
+        {custom_layout_html}
     </div>
 </body>
 </html>"""
 
-    # 메인 명함 소스코드 최종 마스킹 (메인 카드 내부에서는 포트폴리오 레이아웃 구멍을 깨끗하게 소거)
+    # 메인 명함 소스코드 최종 마스킹 (메인 명함 뼈대에는 순정 2단 컬럼 구조의 레이아웃 주입)
     rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", "")
-    rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", "")
+    rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", main_card_layout_html)
     rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", "")
     rendered_code = rendered_code.replace("${PORTFOLIO_RIGHT_COLUMN}", "")
 
