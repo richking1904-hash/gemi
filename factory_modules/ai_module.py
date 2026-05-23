@@ -16,7 +16,7 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-# 👑 [4단 분리 듀얼 엔진] 메인 명함과 새 창용 상세 기획서 문서를 분리 빌드하여 dict로 리턴합니다.
+# 👑 [4단 분리 듀얼 엔진] 명함 본진과 새 창용 독립 갤러리 문서를 완전 격리 빌드합니다.
 def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
@@ -124,8 +124,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
         if desc_text:
             card_html = (
-                "<div class='group mb-6'>"
-                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2 w-full object-contain'>"
+                "<div class='group mb-6' style='background:none; border:none; box-shadow:none; padding:0; margin-bottom:24px;'>"
+                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'>"
                 "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
                 "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
                 + detail_button_html +
@@ -133,8 +133,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             )
         else:
             card_html = (
-                "<div class='group mb-4'>"
-                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all w-full object-contain'>"
+                "<div class='group mb-4' style='background:none; border:none; box-shadow:none; padding:0; margin-bottom:16px Triton;'>"
+                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important Triton;'>"
                 + detail_button_html +
                 "</div>"
             )
@@ -174,8 +174,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
                 project_title = project_title.replace("port_", "", 1)
 
             cards_html += (
-                "<div class='bp-magazine-item'>"
-                "    <div class='bp-image-container'><img src='" + img_url + "' style='max-height:none; object-fit:contain;'></div>"
+                "<div class='bp-magazine-item' style='background:none; box-shadow:none; border:none; max-height:none; height:auto;'>"
+                "    <div class='bp-image-container' style='max-height:none; height:auto;'><img src='" + img_url + "' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'></div>"
                 "    <div class='bp-text-container'>"
                 "        <h4 class='bp-item-title'>" + project_title + "</h4>"
                 "        <p class='bp-item-desc'>" + desc_text + "</p>"
@@ -184,7 +184,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             )
         
         custom_layout_html = (
-            "<div id='promoPage' class=''>"
+            "<div id='promoPage'>"
             "    <div class='bp-premium-header'>"
             "        <h2>" + brand_name + " Portfolio</h2>"
             "        <p class='bp-brand-sub'>Selected Pieces</p>"
@@ -208,8 +208,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
                 project_title = project_title.replace("port_", "", 1)
 
             cards_html += (
-                "<div class='eth-project-card'>"
-                "    <div class='eth-img-frame'><img src='" + img_url + "' style='object-fit:contain;'></div>"
+                "<div class='eth-project-card' style='max-height:none; height:auto;'>"
+                "    <div class='eth-img-frame' style='max-height:none; height:auto;'><img src='" + img_url + "' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'></div>"
                 "    <div class='eth-meta-box'>"
                 "        <h4 class='eth-project-title'>" + project_title + "</h4>"
                 "        <p class='eth-project-desc'>" + desc_text + "</p>"
@@ -238,8 +238,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
                 project_title = project_title.replace("port_", "", 1)
 
             cards_html += (
-                "<div class='para-card'>"
-                "    <div class='para-img-box'><img src='" + img_url + "' style='object-fit:contain;'></div>"
+                "<div class='para-card' style='max-height:none; height:auto;'>"
+                "    <div class='para-img-box' style='max-height:none; height:auto;'><img src='" + img_url + "' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'></div>"
                 "    <div class='para-meta-box'>"
                 "        <h4 class='para-title'>" + project_title + "</h4>"
                 "        <p class='para-desc'>" + desc_text + "</p>"
@@ -267,34 +267,57 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     # 테마 동기화 모드일 때 예외 처리 레이아웃 보정
     if theme_key == "sync":
-        custom_layout_html = main_card_layout_html.replace("hidden ", "")
+        # 새 창 전용 분리 페이지에서는 닫기 버튼이 무의미하므로 내비바 형태로 스왑합니다.
+        custom_layout_html = main_card_layout_html.replace("hidden ", "").replace(
+            "<button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider'>Close</button>",
+            ""
+        )
 
-    # 👑 [스크롤 제약 완전 해제 & 원본 비율 마감]
-    # 이미지가 강제로 잘리거나 축소되지 않도록 overflow와 가로 세로 스크롤 프레임을 무제한 순정으로 개조했습니다.
+    # 👑 [사각 프레임 완전 해제 & 무제한 풀스크롤 마스터 마감]
+    # 1. body와 html의 overflow 제한을 해제하고 centered-card 클래스를 격리 소멸시켰습니다.
+    # 2. 상단에 명함 홈으로 언제든 복귀하거나 탭을 닫을 수 있는 '프리미엄 상단 관제 툴바 내비게이션'을 탑재했습니다.
     final_portfolio_html = f"""<!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" style="overflow-y: auto !important; height: auto !important;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{brand_name} - Concept Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
-        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; overflow-y: auto !important; }}
+        html, body {{ background-color: var(--dark-bg) !important; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh !important; height: auto !important; margin: 0; padding: 0; overflow-y: auto !important; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
-        .sub-page-content {{ padding: 10px; background: #121314; overflow-y: visible !important; }}
-        img {{ max-height: none !important; object-fit: contain !important; width: 100% !important; }}
+        
+        /* 👑 사각틀 규격 완전 파괴 및 전체 대화면 자유 해제 */
+        .sub-page-content {{ padding: 20px 0; background: transparent !important; height: auto !important; overflow-y: visible !important; }}
+        
+        /* 모든 하위 이미지들의 크기 제약 철저히 박멸 */
+        img {{ max-height: none !important; height: auto !important; width: 100% !important; object-fit: contain !important; display: block; }}
+        
         {custom_css_content}
     </style>
 </head>
-<body class="antialiased">
-    <div style="max-w: 1000px; margin: 0 auto;">
+<body class="antialiased text-stone-200 px-4 md:px-8 pb-16">
+    
+    <div style="max-w: 900px; margin: 0 auto;" class="pt-6 pb-2">
+        <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
+            <a href="../index.html" class="text-[11px] text-stone-400 hover:text-[#C5A059] transition-colors tracking-widest uppercase flex items-center gap-2">
+                <span>←</span> BACK TO WEB CARD (명함 홈으로)
+            </a>
+            <button onclick="window.close()" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider border border-white/10 rounded-full px-3 py-1 bg-white/5 transition-all">
+                Close Tab ✕ (창 닫기)
+            </button>
+        </div>
+    </div>
+
+    <div style="max-w: 900px; margin: 0 auto;" class="h-auto">
         {custom_layout_html}
     </div>
 </body>
 </html>"""
 
-    # 메인 명함 소스코드 최종 마스킹 (메인 명함 뼈대에는 순정 2단 컬럼 구조의 레이아웃 주입)
+    # 명함 본진 소스코드 최종 마스킹 (명함 본진에는 순정 2단 컬럼 구조의 레이아웃 주입)
     rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", "")
     rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", main_card_layout_html)
     rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", "")

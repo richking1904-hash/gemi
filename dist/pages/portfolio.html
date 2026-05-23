@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" style="overflow-y: auto !important; height: auto !important;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GeMi - Concept Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #C5A059; --dark-bg: #121314; }
-        body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; overflow-y: auto !important; }
+        html, body { background-color: var(--dark-bg) !important; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh !important; height: auto !important; margin: 0; padding: 0; overflow-y: auto !important; }
         .serif { font-family: 'Bodoni Moda', serif; }
-        .sub-page-content { padding: 10px; background: #121314; overflow-y: visible !important; }
-        img { max-height: none !important; object-fit: contain !important; width: 100% !important; }
+        
+        /* 👑 사각틀 규격 완전 파괴 및 전체 대화면 자유 해제 */
+        .sub-page-content { padding: 20px 0; background: transparent !important; height: auto !important; overflow-y: visible !important; }
+        
+        /* 모든 하위 이미지들의 크기 제약 철저히 박멸 */
+        img { max-height: none !important; height: auto !important; width: 100% !important; object-fit: contain !important; display: block; }
+        
         /* ==========================================================================
    GeMi Factory Premium Theme Plugin: Big Picture (Absolute Class Sync Fix)
    ========================================================================== */
@@ -165,9 +171,21 @@
 }
     </style>
 </head>
-<body class="antialiased">
-    <div style="max-w: 1000px; margin: 0 auto;">
-        <div id='promoPage' class=''>    <div class='bp-premium-header'>        <h2>GeMi Portfolio</h2>        <p class='bp-brand-sub'>Selected Pieces</p>        <p class='bp-description'>디렉터 장형규님이 전개하는 고품격 비주얼 디자인 아카이브입니다.</p>    </div>    <div class='bp-card-feed-zone'>        <div class='bp-magazine-layout'><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a1_1779548632.jpg' style='max-height:none; object-fit:contain;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a1</h4>        <p class='bp-item-desc'>sdfasfsa</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a4_1779548634.jpg' style='max-height:none; object-fit:contain;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a4</h4>        <p class='bp-item-desc'>asfdasdf</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a14_1779548636.jpg' style='max-height:none; object-fit:contain;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a14</h4>        <p class='bp-item-desc'>sadfasfd</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a18_1779548638.jpg' style='max-height:none; object-fit:contain;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a18</h4>        <p class='bp-item-desc'>safdsafsadf</p>    </div></div></div>    </div></div>
+<body class="antialiased text-stone-200 px-4 md:px-8 pb-16">
+    
+    <div style="max-w: 900px; margin: 0 auto;" class="pt-6 pb-2">
+        <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
+            <a href="../index.html" class="text-[11px] text-stone-400 hover:text-[#C5A059] transition-colors tracking-widest uppercase flex items-center gap-2">
+                <span>←</span> BACK TO WEB CARD (명함 홈으로)
+            </a>
+            <button onclick="window.close()" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider border border-white/10 rounded-full px-3 py-1 bg-white/5 transition-all">
+                Close Tab ✕ (창 닫기)
+            </button>
+        </div>
+    </div>
+
+    <div style="max-w: 900px; margin: 0 auto;" class="h-auto">
+        <div id='promoPage'>    <div class='bp-premium-header'>        <h2>GeMi Portfolio</h2>        <p class='bp-brand-sub'>Selected Pieces</p>        <p class='bp-description'>디렉터 장형규님이 전개하는 고품격 비주얼 디자인 아카이브입니다.</p>    </div>    <div class='bp-card-feed-zone'>        <div class='bp-magazine-layout'><div class='bp-magazine-item' style='background:none; box-shadow:none; border:none; max-height:none; height:auto;'>    <div class='bp-image-container' style='max-height:none; height:auto;'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a14_1779548994.jpg' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a14</h4>        <p class='bp-item-desc'>sdafds</p>    </div></div><div class='bp-magazine-item' style='background:none; box-shadow:none; border:none; max-height:none; height:auto;'>    <div class='bp-image-container' style='max-height:none; height:auto;'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a16_1779548995.jpg' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a16</h4>        <p class='bp-item-desc'>safdsf</p>    </div></div><div class='bp-magazine-item' style='background:none; box-shadow:none; border:none; max-height:none; height:auto;'>    <div class='bp-image-container' style='max-height:none; height:auto;'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a17_1779548997.jpg' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a17</h4>        <p class='bp-item-desc'>safasfds</p>    </div></div><div class='bp-magazine-item' style='background:none; box-shadow:none; border:none; max-height:none; height:auto;'>    <div class='bp-image-container' style='max-height:none; height:auto;'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a18_1779548999.jpg' style='max-height:none !important; height:auto !important; width:100% !important; object-fit:contain !important;'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a18</h4>        <p class='bp-item-desc'>sadfafas</p>    </div></div></div>    </div></div>
     </div>
 </body>
 </html>
