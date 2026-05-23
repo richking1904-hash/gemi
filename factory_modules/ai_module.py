@@ -100,7 +100,6 @@ def generate_webcard_code(gui_payload: dict) -> dict:
                 custom_css_content = css_f.read()
 
     # 1. 기존 [명함 테마와 동기화] 무드 전용 마스터 루프 빌더
-    # 명함 내부 SPA 뷰어 레이아웃을 그대로 유지하되, 카드 하단에 새 창으로 상세보기를 띄울 링크 버튼을 안착시킵니다.
     left_column_html = ""   # 홀수 번호 카드가 누적될 왼쪽 열
     right_column_html = ""  # 짝수 번호 카드가 누적될 오른쪽 열
 
@@ -126,7 +125,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         if desc_text:
             card_html = (
                 "<div class='group mb-6'>"
-                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'>"
+                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2 w-full object-contain'>"
                 "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
                 "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
                 + detail_button_html +
@@ -135,7 +134,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         else:
             card_html = (
                 "<div class='group mb-4'>"
-                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all'>"
+                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all w-full object-contain'>"
                 + detail_button_html +
                 "</div>"
             )
@@ -176,7 +175,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
             cards_html += (
                 "<div class='bp-magazine-item'>"
-                "    <div class='bp-image-container'><img src='" + img_url + "'></div>"
+                "    <div class='bp-image-container'><img src='" + img_url + "' style='max-height:none; object-fit:contain;'></div>"
                 "    <div class='bp-text-container'>"
                 "        <h4 class='bp-item-title'>" + project_title + "</h4>"
                 "        <p class='bp-item-desc'>" + desc_text + "</p>"
@@ -210,7 +209,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
             cards_html += (
                 "<div class='eth-project-card'>"
-                "    <div class='eth-img-frame'><img src='" + img_url + "'></div>"
+                "    <div class='eth-img-frame'><img src='" + img_url + "' style='object-fit:contain;'></div>"
                 "    <div class='eth-meta-box'>"
                 "        <h4 class='eth-project-title'>" + project_title + "</h4>"
                 "        <p class='eth-project-desc'>" + desc_text + "</p>"
@@ -240,7 +239,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
             cards_html += (
                 "<div class='para-card'>"
-                "    <div class='para-img-box'><img src='" + img_url + "'></div>"
+                "    <div class='para-img-box'><img src='" + img_url + "' style='object-fit:contain;'></div>"
                 "    <div class='para-meta-box'>"
                 "        <h4 class='para-title'>" + project_title + "</h4>"
                 "        <p class='para-desc'>" + desc_text + "</p>"
@@ -270,8 +269,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     if theme_key == "sync":
         custom_layout_html = main_card_layout_html.replace("hidden ", "")
 
-    # 👑 [독립 포트폴리오용 순정 액자 코드 패키징]
-    # 새 창용 서브 페이지에는 Tailwind 스크립트를 삭제하여 순정 외부 CSS의 컬러가 깨지지 않도록 철저히 격리했습니다.
+    # 👑 [스크롤 제약 완전 해제 & 원본 비율 마감]
+    # 이미지가 강제로 잘리거나 축소되지 않도록 overflow와 가로 세로 스크롤 프레임을 무제한 순정으로 개조했습니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -281,14 +280,15 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
-        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; }}
+        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; overflow-y: auto !important; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
-        .sub-page-content {{ padding: 10px; background: #121314; }}
+        .sub-page-content {{ padding: 10px; background: #121314; overflow-y: visible !important; }}
+        img {{ max-height: none !important; object-fit: contain !important; width: 100% !important; }}
         {custom_css_content}
     </style>
 </head>
 <body class="antialiased">
-    <div style="max-w: 800px; margin: 0 auto;">
+    <div style="max-w: 1000px; margin: 0 auto;">
         {custom_layout_html}
     </div>
 </body>
