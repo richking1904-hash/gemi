@@ -24,7 +24,9 @@ def init_supabase_tables_automatically():
     except Exception as e:
         print(f"ℹ️ [Supabase] 진단 중 참조 오류 발생: {e}")
 
-def auto_git_push_hybrid(url_name, final_html_code):
+# 👑 [배송 엔진 고도화 패치]
+# ai_module이 뱉어낸 2개의 html 코드가 담긴 딕셔너리(html_payload)를 인자로 받도록 수정했습니다.
+def auto_git_push_hybrid(url_name, html_payload):
     clean_url = "".join(c.lower() for c in url_name if c.isalnum() or c in ["-", "_"]).strip()
     
     # 👑 [주소 교정 완료] 형규님의 진짜 버셀 도메인 주소인 gemistudio.vercel.app 규칙 반영
@@ -36,9 +38,20 @@ def auto_git_push_hybrid(url_name, final_html_code):
     try:
         output_dir = "dist"
         os.makedirs(output_dir, exist_ok=True)
-        output_path = os.path.join(output_dir, "index.html")
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(final_html_code)
+        
+        # 1호 산출물: 메인 웹명함 배송
+        main_path = os.path.join(output_dir, "index.html")
+        with open(main_path, "w", encoding="utf-8") as f:
+            f.write(html_payload.get("main_html", ""))
+
+        # 2호 산출물: 새 창 팝업용 서브 포트폴리오 배송
+        pages_dir = os.path.join(output_dir, "pages")
+        os.makedirs(pages_dir, exist_ok=True)
+        portfolio_path = os.path.join(pages_dir, "portfolio.html")
+        with open(portfolio_path, "w", encoding="utf-8") as f:
+            f.write(html_payload.get("portfolio_html", ""))
+
+        print(f"📦 [팩토리 배송완료] 물리 파일 저장 완료:\n  -> {main_path}\n  -> {portfolio_path}")
 
         subprocess.run(["git", "add", "."], check=True)
         
@@ -104,13 +117,15 @@ def main_pipeline():
     gui_payload["portfolio_items"] = upload_result.get("portfolio_items", [])
 
     print("\n🤖 3단계: Gemini AI 완전 동적 코딩 가동...")
-    final_html_code = generate_webcard_code(gui_payload)
+    # 👑 [엔진 수령 라인 교정] 이제 단일 문자열이 아니라 마스터 딕셔너리 데이터 세트를 리턴받습니다.
+    html_payload = generate_webcard_code(gui_payload)
     
-    if not final_html_code:
+    if not html_payload or not html_payload.get("main_html"):
         print("❌ [Main] AI 소스코드 생성에 실패했습니다.")
         return
 
-    auto_git_push_hybrid(custom_url_name, final_html_code)
+    # 👑 보정된 딕셔너리 데이터 세트를 그대로 배송 담당 함수로 인계합니다.
+    auto_git_push_hybrid(custom_url_name, html_payload)
     print("\n🏁 [GeMi Factory] 모든 하이브리드 공정이 종료되었습니다!")
 
 if __name__ == "__main__":

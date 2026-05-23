@@ -16,7 +16,8 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-def generate_webcard_code(gui_payload: dict) -> str:
+# 👑 [듀얼 엔진 전환 패치] 리턴 타입을 두 장의 코드를 동시에 담아 뱉는 dict로 설계했습니다.
+def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
     faq_info = gui_payload.get("faq_info", {})
@@ -60,7 +61,7 @@ def generate_webcard_code(gui_payload: dict) -> str:
         refined_intro = response.choices[0].message.content.strip()
     except: pass
 
-    # 템플릿 렌더링
+    # 템플릿 렌더링 (메인 명함용 뼈대 빌드업)
     rendered_code = template_code
     rendered_code = rendered_code.replace("${user_name}", director_name)
     rendered_code = rendered_code.replace("${brand_name}", brand_name)
@@ -88,10 +89,12 @@ def generate_webcard_code(gui_payload: dict) -> str:
     elif "Paradigm Shift" in portfolio_theme:
         theme_key = "paradigm"
 
-    # 외부 css 로드 파일 구역
+    # 외부 css 로드 파일 구역 (factory_modules 내부 순정 경로 유지)
     if theme_key != "sync":
         css_file_name = f"{theme_key}.css"
-        css_path = os.path.join("external_themes", css_file_name)
+        css_path = os.path.join("factory_modules", "external_themes", css_file_name)
+        if not os.path.exists(css_path):
+            css_path = os.path.join("external_themes", css_file_name)
         if os.path.exists(css_path):
             with open(css_path, "r", encoding="utf-8") as css_f:
                 custom_css_content = css_f.read()
@@ -136,11 +139,11 @@ def generate_webcard_code(gui_payload: dict) -> str:
         if not left_column_html and not right_column_html:
             left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-2xl border border-white/5 shadow-2xl'></div>"
 
+        # 👑 [새 창 분기 최적화] id='promoPage'에서 hidden을 강제 해제하여 단독 페이지용으로 정렬합니다.
         custom_layout_html = (
-            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "<div id='promoPage' class='w-full h-full flex flex-col relative'>"
             "    <div class='px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center'>"
             "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
-            "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider'>Close</button>"
             "    </div>"
             "    <div class='sub-page-content'>"
             "        <div class='grid grid-cols-2 gap-4'>"
@@ -151,7 +154,7 @@ def generate_webcard_code(gui_payload: dict) -> str:
             "</div>"
         )
 
-    # 2. 외부 [Big Picture] 순정 카드 핏 정밀 조립 레이어 (형규님 피드백 완벽 반영 완료)
+    # 2. 외부 [Big Picture] 순정 카드 핏 정밀 조립 레이어
     elif theme_key == "big":
         cards_html = ""
         for idx, item in enumerate(portfolio_items):
@@ -173,7 +176,7 @@ def generate_webcard_code(gui_payload: dict) -> str:
             )
         
         custom_layout_html = (
-            "<div id='promoPage' class='hidden'>"
+            "<div id='promoPage' class=''>"
             "    <div class='bp-premium-header'>"
             "        <h2>" + brand_name + " Portfolio</h2>"
             "        <p class='bp-brand-sub'>Selected Pieces</p>"
@@ -181,9 +184,6 @@ def generate_webcard_code(gui_payload: dict) -> str:
             "    </div>"
             "    <div class='bp-card-feed-zone'>"
             "        <div class='bp-magazine-layout'>" + cards_html + "</div>"
-            "    </div>"
-            "    <div class='bp-action-bottom'>"
-            "        <button onclick=\"switchPage('mainPage')\" class='bp-back-to-main-btn'>Return To Card ✕</button>"
             "    </div>"
             "</div>"
         )
@@ -210,10 +210,9 @@ def generate_webcard_code(gui_payload: dict) -> str:
             )
 
         custom_layout_html = (
-            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "<div id='promoPage' class='w-full h-full flex flex-col relative'>"
             "    <div class='eth-header-bar'>"
             "        <span class='eth-brand-title'>" + brand_name + " ARCHIVE</span>"
-            "        <button onclick=\"switchPage('mainPage')\" class='eth-close-btn'>Close ✕</button>"
             "    </div>"
             "    <div class='eth-gallery-track'>" + cards_html + "</div>"
             "</div>"
@@ -241,10 +240,9 @@ def generate_webcard_code(gui_payload: dict) -> str:
             )
 
         custom_layout_html = (
-            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "<div id='promoPage' class='w-full h-full flex flex-col relative'>"
             "    <div class='para-close-bar'>"
             "        <span class='para-brand-label'>" + brand_name + " CONCEPT</span>"
-            "        <button onclick=\"switchPage('mainPage')\" class='para-close-btn'>Close ✕</button>"
             "    </div>"
             "    <div class='para-container'>"
             "        <div class='para-sidebar'>"
@@ -252,18 +250,41 @@ def generate_webcard_code(gui_payload: dict) -> str:
             "                <h2>Selected<br>Works</h2>"
             "            </div>"
             "        </div>"
-            "        <div class='para-main-feed'>"
-            "            <div class='para-grid'>" + cards_html + "</div>"
-            "        </div>"
+            "    </div>"
+            "    <div class='para-main-feed'>"
+            "        <div class='para-grid'>" + cards_html + "</div>"
             "    </div>"
             "</div>"
         )
 
-    # 마스터 변수 치환 기동 (기존 template.html의 고정 태그 및 변수 완전 대응)
-    rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", custom_css_content)
-    rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", custom_layout_html)
+    # 👑 [독립 포트폴리오용 순정 액자 코드 정밀 패키징]
+    # 메인 명함 뼈대 레이아웃과 완전 격리된 새 창 전용 독립형 HTML 문서를 한 땀 한 땀 구현했습니다.
+    final_portfolio_html = f"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{brand_name} - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {{ --gold: #C5A059; --dark-bg: #121314; }}
+        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; }}
+        .serif {{ font-family: 'Bodoni Moda', serif; }}
+        .sub-page-content {{ padding: 10px; background: #121314; }}
+        {custom_css_content}
+    </style>
+</head>
+<body class="antialiased">
+    <div style="max-w: 800px; margin: 0 auto;">
+        {custom_layout_html}
+    </div>
+</body>
+</html>"""
 
-    # 하위 태그 탐색 꼬임 방지를 위한 순정 변수 공백 안전 삭제 패치
+    # 메인 명함 소스코드 최종 마스킹 (메인 카드 내부에서는 포트폴리오 레이아웃 구멍을 깨끗하게 소거)
+    rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", "")
+    rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", "")
     rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", "")
     rendered_code = rendered_code.replace("${PORTFOLIO_RIGHT_COLUMN}", "")
 
@@ -306,4 +327,8 @@ def generate_webcard_code(gui_payload: dict) -> str:
     rendered_code = rendered_code.replace("${FAQ2_DISPLAY}", "display: block;" if f2_q else "display: none !important;")
     rendered_code = rendered_code.replace("${FAQ3_DISPLAY}", "display: block;" if f3_q else "display: none !important;")
 
-    return rendered_code
+    # 👑 마스터 딕셔너리로 두 개의 완공 소스코드를 묶어서 패킹 인계합니다.
+    return {
+        "main_html": rendered_code,
+        "portfolio_html": final_portfolio_html
+    }
