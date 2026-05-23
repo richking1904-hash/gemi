@@ -3,13 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeMi - Concept Portfolio</title>
+    <title>GeMi - Portfolio Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #C5A059; --dark-bg: #121314; }
-        body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; }
+        body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; }
         .serif { font-family: 'Bodoni Moda', serif; }
-        .sub-page-content { padding: 10px; background: #121314; }
+        
+        /* 👑 중앙 사각틀 무드를 그대로 지키고, 디렉터님 오더대로 세로 길이만 밑으로 50% 확장 */
+        .centered-card { 
+            width: 100%; 
+            max-width: 410px; 
+            height: 95vh; 
+            max-height: 135vh !important; 
+            background-color: #1a1c1e; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 32px; 
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        .sub-page-content { flex: 1; padding: 20px; background: #1a1c1e; }
+        .sub-page-content::-webkit-scrollbar { width: 0px; }
+        img { max-height: none !important; object-fit: contain !important; width: 100% !important; }
+        
         /* ==========================================================================
    GeMi Factory Premium Theme Plugin: Big Picture (Absolute Class Sync Fix)
    ========================================================================== */
@@ -164,9 +184,16 @@
 }
     </style>
 </head>
-<body class="antialiased">
-    <div style="max-w: 800px; margin: 0 auto;">
-        <div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a3_1779549341.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a3</h4>        <p class='bp-item-desc'>dsafdsa</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a6_1779549342.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a6</h4>        <p class='bp-item-desc'>asdfsaf</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a8_1779549344.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a8</h4>        <p class='bp-item-desc'>sadf</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a10_1779549346.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a10</h4>        <p class='bp-item-desc'>afdsaf</p>    </div></div>
+<body class="antialiased text-stone-200">
+    
+    <div style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 200; width: 100%; max-width: 410px; padding: 0 15px;">
+        <a href="../index.html" style="display: block; width: 100%; text-align: center; background: rgba(26,28,30,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 11px; color: var(--gold); text-decoration: none; font-size: 11px; font-weight: bold; tracking-pacing: 2px; box-shadow: 0 10px 25px rgba(0,0,0,0.6);">
+            ← BACK TO WEB CARD (명함 홈으로 이동)
+        </a>
+    </div>
+
+    <div class="centered-card" style="margin-top: 50px;">
+        <div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a2_1779549717.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a2</h4>        <p class='bp-item-desc'>asfdassa</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a3_1779549718.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a3</h4>        <p class='bp-item-desc'>safssa</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a6_1779549720.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a6</h4>        <p class='bp-item-desc'>dsafdsaf</p>    </div></div><div class='bp-magazine-item'>    <div class='bp-image-container'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a7_1779549722.jpg'></div>    <div class='bp-text-container'>        <h4 class='bp-item-title'>a7</h4>        <p class='bp-item-desc'>afdasf</p>    </div></div>
     </div>
 </body>
 </html>

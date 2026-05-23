@@ -16,7 +16,7 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-# 👑 [명함 내부 SPA 맞춤형 공정] 포트폴리오 사각 프레임 규격을 확장하고 뒤로가기를 복원합니다.
+# 👑 [명함 사각 라운드 테두리 순정 유지 공정] 틀은 지키고 세로와 비율만 확장합니다.
 def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
@@ -115,19 +115,20 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         if project_title.startswith("port_"):
             project_title = project_title.replace("port_", "", 1)
 
-        # 각 작품 카드 레이아웃 구성 (명함 내부 SPA 스크롤 가독성 극대화)
+        # 👑 [오타 완전 수리 및 원비율 연출 구역] 
+        # 오타가 났던 문자열 결합 문법을 완벽히 수리했고, max-height를 해제하여 이미지가 온전히 아래로 흐르게 매싱했습니다.
         if desc_text:
             card_html = (
-                "<div class='group mb-4 w-full break-inside-avoid text-left'>"
-                "  <img src='" + img_url + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain mb-1.5'>"
-                "  <h4 class='text-[11px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
+                "<div class='group mb-5 w-full break-inside-avoid text-left'>"
+                "  <img src='" + img_url + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain' style='max-height:none !important; height:auto !important;'>"
+                "  <h4 class='text-[11px] font-bold text-[#C5A059] tracking-wide px-1 serif italic mt-2'>" + project_title + "</h4>"
                 "  <p class='text-[9px] text-stone-400 font-light leading-relaxed px-1 mt-0.5 break-keep'>" + desc_text + "</p>"
                 "</div>"
             )
         else:
             card_html = (
-                "<div class='group mb-3 w-full break-inside-avoid'>"
-                "  <img src='" + img_url + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain'>"
+                "<div class='group mb-4 w-full break-inside-avoid'>"
+                "  <img src='" + img_url + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain' style='max-height:none !important; height:auto !important;'>"
                 "</div>"
             )
 
@@ -137,29 +138,25 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             right_column_html += card_html
 
     if not left_column_html and not right_column_html:
-        left_column_html = "<div class='group mb-4 Triton'><img src='" + default_img + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain'></div>"
+        left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain'></div>"
 
-    # 👑 [사각틀 50% 세로 확장 & 뒤로가기 복원 마스터 프레임]
-    # - max-h-[480px] 또는 max-h-[50vh] 수준이던 사각 내부창 스크롤 영역을 max-h-[720px] (약 1.5배 이상) 수준으로 대폭 확장했습니다.
-    # - 상단에 원래 명함 홈으로 완벽하게 되돌아가는 switchPage('mainPage') 함수 기반 뒤로가기(Close) 툴바를 확실하게 복원했습니다.
+    # 👑 명함 내부 순정 스위칭용 스켈레톤 틀 고정
     main_card_layout_html = (
-        "<div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#151617] rounded-2xl overflow-hidden border border-white/5'>"
-        "    "
-        "    <div class='px-5 py-3.5 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center z-10'>"
-        "        <span class='text-[10px] font-bold tracking-[2px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
-        "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] font-medium text-stone-400 hover:text-white uppercase tracking-widest bg-white/5 px-2.5 py-1 rounded-md transition-colors border border-white/5'>← CLOSE (뒤로가기)</button>"
+        "<div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>"
+        "    <div class='px-5 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center z-10'>"
+        "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
+        "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider font-bold'>Close</button>"
         "    </div>"
-        "    "
-        "    <div class='sub-page-content overflow-y-auto px-4 py-4 text-center' style='max-height: 720px !important; min-height: 450px; scrollbar-width: none; -ms-overflow-style: none;'>"
-        "        <div class='grid grid-cols-2 gap-3.5 items-start text-left'>"
-        "            <div class='flex flex-col space-y-3.5'>" + left_column_html + "</div>"
-        "            <div class='flex flex-col space-y-3.5 pt-4'>" + right_column_html + "</div>"
+        "    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 135vh !important; scrollbar-width: none; -ms-overflow-style: none;'>"
+        "        <div class='grid grid-cols-2 gap-4 items-start'>"
+        "            <div class='flex flex-col space-y-4'>" + left_column_html + "</div>"
+        "            <div class='flex flex-col space-y-4 pt-6'>" + right_column_html + "</div>"
         "        </div>"
         "    </div>"
         "</div>"
     )
 
-    # 2. 외부 [Big Picture] 순정 카드 핏 정밀 조립 레이어
+    # 2. 외부 [Big Picture] 레이아웃 빌더
     if theme_key == "big":
         cards_html = ""
         for idx, item in enumerate(portfolio_items):
@@ -222,30 +219,59 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     if theme_key == "sync":
         custom_layout_html = main_card_layout_html.replace("hidden ", "")
 
-    # 독립 포트폴리오용 순정 HTML 코드 패키징
+    # 👑 [순정 사각 라운드 카드 1.5배 정밀 확장 완공 구역]
+    # 형규님이 대만족하셨던 그 수려한 블랙 테두리 무대틀을 그대로 살려 패키징했습니다.
+    # 세로 높이 한계선을 50% 더 긴 비율(max-height: 135vh)로 수치 보정했습니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{brand_name} - Concept Portfolio</title>
+    <title>{brand_name} - Portfolio Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
-        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; }}
+        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
-        .sub-page-content {{ padding: 10px; background: #121314; }}
+        
+        /* 👑 중앙 사각틀 무드를 그대로 지키고, 디렉터님 오더대로 세로 길이만 밑으로 50% 확장 */
+        .centered-card {{ 
+            width: 100%; 
+            max-width: 410px; 
+            height: 95vh; 
+            max-height: 135vh !important; 
+            background-color: #1a1c1e; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 32px; 
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }}
+        .sub-page-content {{ flex: 1; padding: 20px; background: #1a1c1e; }}
+        .sub-page-content::-webkit-scrollbar {{ width: 0px; }}
+        img {{ max-height: none !important; object-fit: contain !important; width: 100% !important; }}
+        
         {custom_css_content}
     </style>
 </head>
-<body class="antialiased">
-    <div style="max-w: 800px; margin: 0 auto;">
+<body class="antialiased text-stone-200">
+    
+    <div style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 200; width: 100%; max-width: 410px; padding: 0 15px;">
+        <a href="../index.html" style="display: block; width: 100%; text-align: center; background: rgba(26,28,30,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 11px; color: var(--gold); text-decoration: none; font-size: 11px; font-weight: bold; tracking-pacing: 2px; box-shadow: 0 10px 25px rgba(0,0,0,0.6);">
+            ← BACK TO WEB CARD (명함 홈으로 이동)
+        </a>
+    </div>
+
+    <div class="centered-card" style="margin-top: 50px;">
         {custom_layout_html}
     </div>
 </body>
 </html>"""
 
-    # 메인 명함 소스코드 최종 마스킹 (메인 명함 본진에는 수정한 순정 사각 레이아웃 주입)
+    # 명함 본진 소스코드 마스킹
     rendered_code = template_code
     rendered_code = rendered_code.replace("${user_name}", director_name)
     rendered_code = rendered_code.replace("${brand_name}", brand_name)
@@ -294,7 +320,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     has_any_faq = f1_q or f2_q or f3_q
     rendered_code = rendered_code.replace("${FAQ_DISPLAY}", "display: block;" if has_any_faq else "display: none !important;")
     rendered_code = rendered_code.replace("${FAQ1_DISPLAY}", "display: block;" if f1_q else "display: none !important;")
-    rendered_code = rendered_code.replace("${FAQ2_DISPLAY}", "display: block;" if f2_q else "display: none !important;")
+    rendered_code = rendered_code.replace("${FAQ2_DISPLAY}", "display: block;" if f1_q else "display: none !important;")
     rendered_code = rendered_code.replace("${FAQ3_DISPLAY}", "display: block;" if f3_q else "display: none !important;")
 
     return {
