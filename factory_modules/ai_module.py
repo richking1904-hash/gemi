@@ -151,7 +151,7 @@ def generate_webcard_code(gui_payload: dict) -> str:
             "</div>"
         )
 
-    # 2. 외부 [Big Picture] 전용 아키텍처 레이아웃 빌더
+    # 2. 외부 [Big Picture] 순정 카드 핏 정밀 조립 레이어 (형규님 피드백 완벽 반영 완료)
     elif theme_key == "big":
         cards_html = ""
         for idx, item in enumerate(portfolio_items):
@@ -163,27 +163,27 @@ def generate_webcard_code(gui_payload: dict) -> str:
                 project_title = project_title.replace("port_", "", 1)
 
             cards_html += (
-                "<div class='bp-gallery-card'>"
-                "    <div class='bp-card-wrapper'>"
-                "        <div class='overflow-hidden'><img src='" + img_url + "' class='bp-gallery-img'></div>"
-                "        <div class='bp-meta-box'>"
-                "            <h4 class='bp-project-title'>" + project_title + "</h4>"
-                "            <p class='bp-project-desc'>" + desc_text + "</p>"
-                "        </div>"
+                "<div class='bp-magazine-item'>"
+                "    <div class='bp-image-container'><img src='" + img_url + "'></div>"
+                "    <div class='bp-text-container'>"
+                "        <h4 class='bp-item-title'>" + project_title + "</h4>"
+                "        <p class='bp-item-desc'>" + desc_text + "</p>"
                 "    </div>"
                 "</div>"
             )
         
         custom_layout_html = (
-            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
-            "    <div class='bp-close-bar'>"
-            "        <span class='para-brand-label'>" + brand_name + " GALLERY</span>"
-            "        <button onclick=\"switchPage('mainPage')\" class='bp-close-btn'>Close ✕</button>"
-            "    </div>"
-            "    <div class='bp-sub-content'>"
+            "<div id='promoPage' class='hidden'>"
+            "    <div class='bp-premium-header'>"
             "        <h2>" + brand_name + " Portfolio</h2>"
-            "        <p class='bp-intro-text'>디렉터 " + director_name + "님이 전개하는 독보적인 디자인 아카이브입니다.</p>"
-            "        <div class='bp-gallery-grid'>" + cards_html + "</div>"
+            "        <p class='bp-brand-sub'>Selected Pieces</p>"
+            "        <p class='bp-description'>디렉터 " + director_name + "님이 전개하는 고품격 비주얼 디자인 아카이브입니다.</p>"
+            "    </div>"
+            "    <div class='bp-card-feed-zone'>"
+            "        <div class='bp-magazine-layout'>" + cards_html + "</div>"
+            "    </div>"
+            "    <div class='bp-action-bottom'>"
+            "        <button onclick=\"switchPage('mainPage')\" class='bp-back-to-main-btn'>Return To Card ✕</button>"
             "    </div>"
             "</div>"
         )
@@ -263,7 +263,7 @@ def generate_webcard_code(gui_payload: dict) -> str:
     rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", custom_css_content)
     rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", custom_layout_html)
 
-    # ❌ [유의점 보완] 하위 태그 탐색 꼬임 방지를 위한 순정 변수 공백 안전 삭제 패치
+    # 하위 태그 탐색 꼬임 방지를 위한 순정 변수 공백 안전 삭제 패치
     rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", "")
     rendered_code = rendered_code.replace("${PORTFOLIO_RIGHT_COLUMN}", "")
 
