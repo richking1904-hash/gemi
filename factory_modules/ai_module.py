@@ -16,7 +16,7 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-# 👑 [상단 타이틀 완전 격리 및 순정 Close 복원 공정] 사각틀 위로 제목을 올리고 여백을 압축합니다.
+# 👑 [큰 틀 웹명함 크기 동기화 및 상단 이름 중간 배치 공정] 명함 고유 핏을 복원하고 타이틀을 재정렬합니다.
 def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
@@ -89,7 +89,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     elif "Paradigm Shift" in portfolio_theme:
         theme_key = "paradigm"
 
-    # 외부 css 로드 파일 구역 (factory_modules 내부 순정 경로 유지)
+    # 외부 css 로드 파일 구역
     if theme_key != "sync":
         css_file_name = f"{theme_key}.css"
         css_path = os.path.join("factory_modules", "external_themes", css_file_name)
@@ -99,7 +99,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             with open(css_path, "r", encoding="utf-8") as css_f:
                 custom_css_content = css_f.read()
 
-    # 세로 카드 피드형 1열 구조 빌더
+    # 세로 카드 피드형 1열 구조 빌더 (내부 사각틀 스펙은 그대로 유지)
     feed_cards_html = ""   
 
     for idx, item in enumerate(portfolio_items):
@@ -114,7 +114,6 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         if project_title.startswith("port_"):
             project_title = project_title.replace("port_", "", 1)
 
-        # 이미지 비율 완전 사수 및 마진 콤팩트 압축
         if desc_text:
             card_html = (
                 "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>"
@@ -138,15 +137,14 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     if not feed_cards_html:
         feed_cards_html = "<div class='centered-card-item' style='width:100%; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; margin:0 auto;'><img src='" + default_img + "' style='width:100%; height:auto;'></div>"
 
-    # 👑 사각틀 위에 올려둘 슬림하고 고급스러운 메인 제목 타이틀 레이아웃 (여백 완벽 축소)
+    # 👑 [개미 아카이브 지붕 유지] 움직임 없이 외곽틀 위에 우아하게 수평 고정되는 브랜드 텍스트
     portfolio_main_title_html = (
-        "<div style='text-align:center; padding:12px 0 6px 0; background:transparent; width:100%; max-width:410px; margin:0 auto;'>"
-        "    <h2 class='serif italic text-white text-[20px] font-bold tracking-wide' style='margin:0;'>" + director_name + "</h2>"
-        "    <p class='text-[#C5A059] text-[9px] font-bold uppercase tracking-[4px]' style='margin:3px 0 0 0;'>" + brand_name + " ARCHIVE</p>"
+        "<div style='text-align:center; padding:10px 0 2px 0; background:transparent; width:100%; max-width:410px; margin:0 auto;'>"
+        "    <p class='text-[#C5A059] text-[10px] font-bold uppercase tracking-[5px]' style='margin:0;'>" + brand_name + " ARCHIVE</p>"
         "</div>"
     )
 
-    # 메인 웹명함 내부 SPA 스위칭용 레이아웃 양식 (여백 보정 완료)
+    # 메인 웹명함 내부 SPA 스위칭용 레이아웃 양식
     main_card_layout_html = (
         "<div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>"
         "    <div class='px-5 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center z-10'>"
@@ -159,13 +157,12 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "</div>"
     )
 
-    # 테마 안정화 매핑
     if theme_key == "big" or theme_key == "ethereal" or theme_key == "paradigm" or theme_key == "sync":
         custom_layout_html = feed_cards_html
 
-    # 👑 [완공 조립 레이어]
-    # 1. 제목 타이틀을 사각틀(.centered-card) 밖으로 빼내어 '이동 없는 상단 지붕' 형태로 정렬했습니다.
-    # 2. 사각틀 우측 상단 툴바에 예전 순정 무드 그대로 작동하는 콤팩트한 Close 단추를 완벽하게 고정했습니다.
+    # 👑 [완공 명함 동기화 핏 빌더]
+    # 1. .centered-card의 크기 및 패딩 환경을 기존 순정 웹명함(index.html 메인 카드박스) 규격과 1:1 매칭 수리했습니다.
+    # 2. 툴바 내부에 Grid 시스템을 주입하여 [Selected Pieces - 장형규 - Close] 가 좌우 정렬을 유지하며 이름이 정중앙에 수평으로 꽂힙니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -176,15 +173,15 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
-        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 25px 15px 30px 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto !important; }}
+        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px 15px 30px 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto !important; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
         
-        /* 👑 사각 박스 고유 핏 마스터 세팅 (세로 25% 축소 규격 고정) */
+        /* 👑 큰 기둥 사각틀을 순정 웹명함 카드팩 크기로 완전 동기화 체인지 */
         .centered-card {{ 
             width: 100%; 
             max-width: 410px; 
-            height: 70vh; 
-            max-height: 100vh !important; 
+            height: 82vh; 
+            max-height: 780px !important; 
             background-color: #1a1c1e; 
             border: 1px solid rgba(255, 255, 255, 0.1); 
             border-radius: 32px; 
@@ -193,7 +190,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             display: flex; 
             flex-direction: column; 
             position: relative; 
-            margin-top: 12px;
+            margin-top: 8px;
         }}
         .sub-page-content {{ flex: 1; padding: 16px; background: #1a1c1e; }}
         .sub-page-content::-webkit-scrollbar {{ display: none; }}
@@ -206,9 +203,12 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     {portfolio_main_title_html}
 
     <div class="centered-card">
-        <div style="display: flex; justify-content: space-between; items-center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;">
-            <span style="font-size: 10px; font-weight: bold; tracking-content: 3px; color: var(--gold);" class="serif uppercase">Selected Pieces</span>
-            <a href="../index.html" style="font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</a>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;">
+            <span style="font-size: 10px; font-weight: bold; tracking-content: 2px; color: var(--gold); text-align: left;" class="serif uppercase">Selected Pieces</span>
+            
+            <span style="font-size: 14px; font-weight: 700; color: #fff; text-align: center; font-family: 'Noto Sans KR', sans-serif; tracking-wide: 1px; line-height: 1;">{director_name}</span>
+            
+            <a href="../index.html" style="font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</a>
         </div>
 
         <div class="sub-page-content overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
