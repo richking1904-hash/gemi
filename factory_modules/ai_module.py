@@ -16,7 +16,7 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-# 👑 [포트폴리오 상단 제목 타이틀 보정 공정] 사각틀 내부 최상단에 명확한 기획 헤더를 장착합니다.
+# 👑 [포트폴리오 천장 짤림 현상 해결 및 미세조정 공정] 헤더 고정을 풀고 카드 간격에 숨통을 틔웁니다.
 def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
@@ -114,22 +114,22 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         if project_title.startswith("port_"):
             project_title = project_title.replace("port_", "", 1)
 
-        # 👑 [미세 자름 방지 및 카드 정렬 수리] padding 여백 및 box-sizing 간섭을 제거하여 완벽하게 담기도록 감쌌습니다.
+        # 👑 개별 포트폴리오 카드도 라운드가 짤리지 않고 숨을 쉴 수 있도록 마진과 패딩을 미세조정했습니다.
         if desc_text:
             card_html = (
-                "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:35px;'>"
-                "  <div style='width:100%; position:relative; overflow:hidden; pading:0;'>"
+                "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:40px;'>"
+                "  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>"
                 "    <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>"
                 "  </div>"
-                "  <div style='padding:20px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>"
+                "  <div style='padding:22px 20px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>"
                 "    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>" + project_title + "</h4>"
-                "    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto; Triton'>" + desc_text + "</p>"
+                "    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1.5 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>" + desc_text + "</p>"
                 "  </div>"
                 "</div>"
             )
         else:
             card_html = (
-                "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); margin-bottom:28px; pading:0;'>"
+                "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); margin-bottom:32px; padding:0;'>"
                 "  <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>"
                 "</div>"
             )
@@ -138,11 +138,10 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     if not feed_cards_html:
         feed_cards_html = "<div class='centered-card-item' style='width:100%; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; margin:0 auto;'><img src='" + default_img + "' style='width:100%; height:auto;'></div>"
 
-    # 👑 [메인 제목 타이틀 헤더 블록 정의] 
-    # 사각 상자 내부 최상단에 깔끔하게 배치될 고급스러운 무드의 미니멀 명조 헤더 섹션입니다.
+    # 👑 메인 제목 타이틀 헤더 구역 (여백을 콤팩트하게 다듬었습니다)
     portfolio_main_title_html = (
-        "<div style='text-align:center; padding:30px 20px 24px 20px; border-b:1px solid rgba(255,255,255,0.05); background:#1e2022;'>"
-        "    <h2 class='serif italic text-white text-[20px] font-bold tracking-wide' style='margin:0;'>" + director_name + "</h2>"
+        "<div style='text-align:center; padding:28px 20px 20px 20px; border-bottom:1px solid rgba(255,255,255,0.05); background:#1e2022; margin-bottom:24px; border-radius:32px 32px 0 0;'>"
+        "    <h2 class='serif italic text-white text-[19px] font-bold tracking-wide' style='margin:0;'>" + director_name + "</h2>"
         "    <p class='text-[#C5A059] text-[9px] font-bold uppercase tracking-[4px]' style='margin:4px 0 0 0;'>" + brand_name + " ARCHIVE</p>"
         "</div>"
     )
@@ -160,11 +159,13 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "</div>"
     )
 
-    # 외부 테마용 레이아웃 매핑 안정화
+    # 외부 테마 레이아웃 매핑
     if theme_key == "big" or theme_key == "ethereal" or theme_key == "paradigm" or theme_key == "sync":
         custom_layout_html = feed_cards_html
 
-    # 👑 [완공 규격 팩 인계 세팅] 사각 상자 틀 내부 최상단에 메인 제목 타이틀 블록을 수려하게 결합했습니다.
+    # 👑 [완공 뼈대 스펙 조정] 
+    # 제목 구역과 이미지 피드 구역을 하나의 스크롤 컨테이너(`overflow-y-auto`) 안에 묶었습니다.
+    # 이제 스크롤을 내릴 때 제목이 위에 고정되어 이미지를 가로막지 않고, 전체가 부드럽게 함께 올라가 숨통이 탁 트입니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -178,7 +179,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 75px 15px 40px 15px; display: flex; align-items: center; justify-content: center; overflow-y: auto !important; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
         
-        /* 중앙 사각틀 무드 유지 및 세로 25% 다운사이징 반영 스펙 */
+        /* 중앙 사각 박스 기본 틀 설정 */
         .centered-card {{ 
             width: 100%; 
             max-width: 410px; 
@@ -193,7 +194,15 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             flex-direction: column; 
             position: relative; 
         }}
-        .sub-page-content {{ flex: 1; padding: 0px; background: #1a1c1e; }}
+        /* 👑 스크롤 트랙을 제목과 피드가 공유하도록 설정하여 잘림 현상을 완전 정화합니다 */
+        .scroll-container {{ 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 0 16px 24px 16px; 
+            scrollbar-width: none; 
+            -ms-overflow-style: none; 
+        }}
+        .scroll-container::-webkit-scrollbar {{ display: none; }}
         
         {custom_css_content}
     </style>
@@ -207,10 +216,9 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     </div>
 
     <div class="centered-card">
-        {portfolio_main_title_html}
-
-        <div class="sub-page-content overflow-y-auto px-5 py-6" style="scrollbar-width: none; -ms-overflow-style: none;">
-            <div class="flex flex-col space-y-8 items-center">{custom_layout_html}</div>
+        <div class="scroll-container">
+            {portfolio_main_title_html}
+            <div class="flex flex-col items-center">{custom_layout_html}</div>
         </div>
     </div>
 </body>
