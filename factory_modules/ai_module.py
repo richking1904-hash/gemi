@@ -74,53 +74,198 @@ def generate_webcard_code(gui_payload: dict) -> str:
     # 하이브리드 가변형 포트폴리오 소스코드 마스터 빌더
     portfolio_items = gui_payload.get("portfolio_items", [])
     
-    left_column_html = ""   # 홀수 번호 카드가 누적될 왼쪽 열
-    right_column_html = ""  # 짝수 번호 카드가 누적될 오른쪽 열
+    # 👑 [신설 공정] 외부 테마 주입 파이프라인 엔진 가동
+    portfolio_theme = gui_payload.get("portfolio_theme", "[명함 테마와 동기화]")
+    custom_css_content = ""
+    custom_layout_html = ""
 
-    for idx, item in enumerate(portfolio_items):
-        img_url = item.get("image_url", "").strip()
-        desc_text = item.get("description", "").strip()
-        
-        if not img_url:
-            img_url = default_img
+    # 테마 키워드 매핑 매치
+    theme_key = "sync"
+    if "Big Picture" in portfolio_theme:
+        theme_key = "big"
+    elif "Ethereal" in portfolio_theme:
+        theme_key = "ethereal"
+    elif "Paradigm Shift" in portfolio_theme:
+        theme_key = "paradigm"
+
+    # 외부 css 로드 파일 구역
+    if theme_key != "sync":
+        css_file_name = f"{theme_key}.css"
+        css_path = os.path.join("external_themes", css_file_name)
+        if os.path.exists(css_path):
+            with open(css_path, "r", encoding="utf-8") as css_f:
+                custom_css_content = css_f.read()
+
+    # 1. 기존 [명함 테마와 동기화] 무드 전용 마스터 루프 빌더
+    if theme_key == "sync":
+        left_column_html = ""   # 홀수 번호 카드가 누적될 왼쪽 열
+        right_column_html = ""  # 짝수 번호 카드가 누적될 오른쪽 열
+
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip()
+            desc_text = item.get("description", "").strip()
             
-        # 파일 경로에서 이름 추출 및 가공
-        raw_name = item.get("image_name", "")
-        project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
-        if project_title.startswith("port_"):
-            project_title = project_title.replace("port_", "", 1)
+            if not img_url:
+                img_url = default_img
+                
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
 
-        # 👑 [매거진형 아키텍처 정밀 구현 구역]
-        # 문법 크래시를 유발하던 onclick 자바스크립트 문자열 처리를 100% 영구 소멸시켰습니다.
-        # HTML과 Tailwind CSS 스타일의 순수한 조합으로만 갤러리 피드를 안전하게 적재합니다.
-        if desc_text:
-            # 1. 서사가 있다면: 사진 아래에 프로젝트 제목을 올리고, 그 밑에 기획 의도 서사를 잡지처럼 차분하게 출력
-            card_html = (
-                "<div class='group mb-6'>"
-                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'>"
-                "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
-                "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
+            if desc_text:
+                card_html = (
+                    "<div class='group mb-6'>"
+                    "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'>"
+                    "<h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>" + project_title + "</h4>"
+                    "<p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>" + desc_text + "</p>"
+                    "</div>"
+                )
+            else:
+                card_html = (
+                    "<div class='group mb-4'>"
+                    "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all'>"
+                    "</div>"
+                )
+
+            if (idx + 1) % 2 != 0:
+                left_column_html += card_html
+            else:
+                right_column_html += card_html
+
+        if not left_column_html and not right_column_html:
+            left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-2xl border border-white/5 shadow-2xl'></div>"
+
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "    <div class='px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center'>"
+            "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
+            "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider'>Close</button>"
+            "    </div>"
+            "    <div class='sub-page-content'>"
+            "        <div class='grid grid-cols-2 gap-4'>"
+            "            <div class='space-y-4'>" + left_column_html + "</div>"
+            "            <div class='space-y-4 pt-8'>" + right_column_html + "</div>"
+            "        </div>"
+            "    </div>"
+            "</div>"
+        )
+
+    # 2. 외부 [Big Picture] 전용 아키텍처 레이아웃 빌더
+    elif theme_key == "big":
+        cards_html = ""
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip() or default_img
+            desc_text = item.get("description", "").strip()
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
+
+            cards_html += (
+                "<div class='bp-gallery-card'>"
+                "    <div class='bp-card-wrapper'>"
+                "        <div class='overflow-hidden'><img src='" + img_url + "' class='bp-gallery-img'></div>"
+                "        <div class='bp-meta-box'>"
+                "            <h4 class='bp-project-title'>" + project_title + "</h4>"
+                "            <p class='bp-project-desc'>" + desc_text + "</p>"
+                "        </div>"
+                "    </div>"
                 "</div>"
             )
-        else:
-            # 2. 서사가 없다면: 글자 이름표를 완벽하게 배제하고 오직 고화질 미니멀 격자 프레임 자체로만 정렬
-            card_html = (
-                "<div class='group mb-4'>"
-                "<img src='" + img_url + "' class='rounded-2xl border border-white/5 shadow-2xl transition-all'>"
+        
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "    <div class='bp-close-bar'>"
+            "        <span class='para-brand-label'>" + brand_name + " GALLERY</span>"
+            "        <button onclick=\"switchPage('mainPage')\" class='bp-close-btn'>Close ✕</button>"
+            "    </div>"
+            "    <div class='bp-sub-content'>"
+            "        <h2>" + brand_name + " Portfolio</h2>"
+            "        <p class='bp-intro-text'>디렉터 " + director_name + "님이 전개하는 독보적인 디자인 아카이브입니다.</p>"
+            "        <div class='bp-gallery-grid'>" + cards_html + "</div>"
+            "    </div>"
+            "</div>"
+        )
+
+    # 3. 외부 [Ethereal] 전용 가로 패닝 스크롤 레이아웃 빌더
+    elif theme_key == "ethereal":
+        cards_html = ""
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip() or default_img
+            desc_text = item.get("description", "").strip()
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
+
+            cards_html += (
+                "<div class='eth-project-card'>"
+                "    <div class='eth-img-frame'><img src='" + img_url + "'></div>"
+                "    <div class='eth-meta-box'>"
+                "        <h4 class='eth-project-title'>" + project_title + "</h4>"
+                "        <p class='eth-project-desc'>" + desc_text + "</p>"
+                "    </div>"
                 "</div>"
             )
 
-        if (idx + 1) % 2 != 0:
-            left_column_html += card_html
-        else:
-            right_column_html += card_html
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "    <div class='eth-header-bar'>"
+            "        <span class='eth-brand-title'>" + brand_name + " ARCHIVE</span>"
+            "        <button onclick=\"switchPage('mainPage')\" class='eth-close-btn'>Close ✕</button>"
+            "    </div>"
+            "    <div class='eth-gallery-track'>" + cards_html + "</div>"
+            "</div>"
+        )
 
-    if not left_column_html and not right_column_html:
-        left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-2xl border border-white/5 shadow-2xl'></div>"
+    # 4. 외부 [Paradigm Shift] 전용 비대칭 매거진 월 레이아웃 빌더
+    elif theme_key == "paradigm":
+        cards_html = ""
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip() or default_img
+            desc_text = item.get("description", "").strip()
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
 
-    # 템플릿 코드 치환
-    rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", left_column_html)
-    rendered_code = rendered_code.replace("${PORTFOLIO_RIGHT_COLUMN}", right_column_html)
+            cards_html += (
+                "<div class='para-card'>"
+                "    <div class='para-img-box'><img src='" + img_url + "'></div>"
+                "    <div class='para-meta-box'>"
+                "        <h4 class='para-title'>" + project_title + "</h4>"
+                "        <p class='para-desc'>" + desc_text + "</p>"
+                "    </div>"
+                "</div>"
+            )
+
+        custom_layout_html = (
+            "<div id='promoPage' class='hidden w-full h-full flex flex-col relative'>"
+            "    <div class='para-close-bar'>"
+            "        <span class='para-brand-label'>" + brand_name + " CONCEPT</span>"
+            "        <button onclick=\"switchPage('mainPage')\" class='para-close-btn'>Close ✕</button>"
+            "    </div>"
+            "    <div class='para-container'>"
+            "        <div class='para-sidebar'>"
+            "            <div class='para-sidebar-inner'>"
+            "                <h2>Selected<br>Works</h2>"
+            "            </div>"
+            "        </div>"
+            "        <div class='para-main-feed'>"
+            "            <div class='para-grid'>" + cards_html + "</div>"
+            "        </div>"
+            "    </div>"
+            "</div>"
+        )
+
+    # 마스터 변수 치환 기동 (기존 template.html의 고정 태그 및 변수 완전 대응)
+    rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", custom_css_content)
+    rendered_code = rendered_code.replace("${PORTFOLIO_PAGE_LAYOUT}", custom_layout_html)
+
+    # ❌ [유의점 보완] 하위 태그 탐색 꼬임 방지를 위한 순정 변수 공백 안전 삭제 패치
+    rendered_code = rendered_code.replace("${PORTFOLIO_LEFT_COLUMN}", "")
+    rendered_code = rendered_code.replace("${PORTFOLIO_RIGHT_COLUMN}", "")
 
     # 연락처 및 기타 정보
     rendered_code = rendered_code.replace("${PHONE}", contact_info.get("phone", ""))

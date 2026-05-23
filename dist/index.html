@@ -56,16 +56,36 @@
         input:focus, textarea:focus { border-color: var(--gold) !important; }
         .gold-btn { background: var(--gold); color: #000; font-weight: 700; border-radius: 14px; padding: 14px; width: 100%; transition: 0.3s; }
 
-        /* 👑 SNS 오리지널 아이콘 컬러 팩 */
-        .insta-color { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); }
-        .naver-color { color: #03C75A; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); }
+        /* 👑 [흑백 버그 완전 박멸 인스타 마스킹 컬러 채널 가동] */
+        .insta-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            border-radius: 6px;
+            padding: 3.5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+        /* 👑 [블로그 초록색 네모박스 컨테이너 프레임 장착] */
+        .naver-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #03C75A;
+            border-radius: 5px;
+            padding: 4.5px 5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        /* 👑 [신설 조립 결합 브릿지] 외부 수급 CSS 프리셋 팩 주입 통로 확보 */
+        
     </style>
 </head>
 <body class="antialiased font-sans text-stone-200">
     <div class="centered-card">
         <div id="mainPage" class="w-full h-full flex flex-col">
             <div class="card-image-wrapper">
-                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222212.483_1779463059.png" class="w-full h-full object-cover grayscale-[20%]">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/a13_1779514820.jpg" class="w-full h-full object-cover grayscale-[20%]">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
@@ -82,8 +102,8 @@
                         <span class="tracking-wide">✉️ gemi_design@naver.com</span>
                     </div>
                     <div class="flex justify-center gap-6 items-center py-0.5" style="display: flex;">
-                        <a href="https://instagram.com/" target="_blank" id="snsIconBtn1" class="transition-transform hover:scale-110" title="Instagram"></a>
-                        <a href="https://blog.naver.com/" target="_blank" id="snsIconBtn2" style="display: flex;" class="transition-transform hover:scale-110" title="Naver Blog"></a>
+                        <a href="https://instagram.com/" target="_blank" id="snsIconBtn1" class="transition-transform hover:scale-110 flex items-center justify-center" title="Instagram"></a>
+                        <a href="https://blog.naver.com/" target="_blank" id="snsIconBtn2" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="Naver Blog"></a>
                     </div>
                 </div>
 
@@ -94,18 +114,7 @@
             </div>
         </div>
 
-        <div id="promoPage" class="hidden w-full h-full flex flex-col relative">
-            <div class="px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
-                <span class="text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase">Selected Pieces</span>
-                <button onclick="switchPage('mainPage')" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider">Close</button>
-            </div>
-            <div class="sub-page-content">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4"><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a1_1779463060.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a1</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"화이트 셔츠의 담백함 위에 실버 주얼리가 더해지며, 단순한 룩이 곧 강렬한 존재감으로 변한다. 빛을 받아 반짝이는 목걸이와 반지들이 하나의 조형물처럼 느껴지고, 자연스러운 헤어와 표정이 그 화려함을 부드럽게 중화시킨다. 절제와 화려함이 공존하는 순간."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a8_1779463063.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a8</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"다채로운 색감의 재킷들이 하나의 팔레트처럼 이어지고, 각기 다른 표정과 제스처가 그 색을 더욱 생생하게 살려낸다. 노랑의 밝음, 블루의 차분함, 핑크의 발랄함이 교차하며, 마치 감정과 패션이 함께 춤추는 듯한 자유로운 무드가 완성된다."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a13_1779463066.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a13</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"그린, 베이지, 그레이의 니트가 서로 다른 톤을 지니면서도 함께 어우러져 조화로운 무드를 만든다. 세 사람이 같은 제스처를 취하며 하나의 패턴처럼 보이고, 각자의 바지 컬러가 또 다른 변주를 더한다. 개별적인 개성이 모여 집단적인 스타일을 완성하는 순간."</p></div></div>
-                    <div class="space-y-4 pt-8"><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a4_1779463061.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a4</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"화이트 셔츠와 블루 데님의 조합은 언제나 클래식하지만, 포즈와 시선이 더해지면 그 안에서 새로운 이야기가 만들어진다. 자연광이 비추는 공간 속에서 단순한 의상이 오히려 더 큰 감각을 드러내며, 일상의 편안함과 세련된 무드가 동시에 담긴다."</p></div><div class='group mb-6'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a9_1779463065.jpg' class='rounded-2xl border border-white/5 shadow-2xl transition-all mb-2'><h4 class='text-[12px] font-bold text-[#C5A059] tracking-wide px-1 serif italic'>a9</h4><p class='text-[10px] text-stone-400 font-light leading-relaxed px-1 mt-1 break-keep'>"화이트 톤의 베이스 위에 블랙 크롭 재킷과 하이웨이스트 팬츠가 더해지며, 강렬한 대비가 시선을 사로잡는다. 포즈와 움직임이 옷의 구조적 라인을 더욱 돋보이게 하고, 빛과 그림자가 교차하며 스타일의 입체감을 완성한다. 도시적인 세련됨과 자신감이 느껴지는 장면."</p></div><div class='group mb-4'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-25T001532.481_1779463068.png' class='rounded-2xl border border-white/5 shadow-2xl transition-all'></div></div>
-                </div>
-            </div>
-        </div>
+        <div id='promoPage' class='hidden w-full h-full flex flex-col relative'>    <div class='bp-close-bar'>        <span class='para-brand-label'>GeMi GALLERY</span>        <button onclick="switchPage('mainPage')" class='bp-close-btn'>Close ✕</button>    </div>    <div class='bp-sub-content'>        <h2>GeMi Portfolio</h2>        <p class='bp-intro-text'>디렉터 장형규님이 전개하는 독보적인 디자인 아카이브입니다.</p>        <div class='bp-gallery-grid'><div class='bp-gallery-card'>    <div class='bp-card-wrapper'>        <div class='overflow-hidden'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a1_1779514821.jpg' class='bp-gallery-img'></div>        <div class='bp-meta-box'>            <h4 class='bp-project-title'>a1</h4>            <p class='bp-project-desc'>"화이트 셔츠의 담백함 위에 실버 주얼리가 더해지며, 단순한 룩이 곧 강렬한 존재감으로 변한다. 빛을 받아 반짝이는 목걸이와 반지들이 하나의 조형물처럼 느껴지고, 자연스러운 헤어와 표정이 그 화려함을 부드럽게 중화시킨다. 절제와 화려함이 공존하는 순간."</p>        </div>    </div></div><div class='bp-gallery-card'>    <div class='bp-card-wrapper'>        <div class='overflow-hidden'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a4_1779514822.jpg' class='bp-gallery-img'></div>        <div class='bp-meta-box'>            <h4 class='bp-project-title'>a4</h4>            <p class='bp-project-desc'>"화이트 셔츠와 블루 데님의 조합은 언제나 클래식하지만, 포즈와 시선이 더해지면 그 안에서 새로운 이야기가 만들어진다. 자연광이 비추는 공간 속에서 단순한 의상이 오히려 더 큰 감각을 드러내며, 일상의 편안함과 세련된 무드가 동시에 담긴다."</p>        </div>    </div></div><div class='bp-gallery-card'>    <div class='bp-card-wrapper'>        <div class='overflow-hidden'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a8_1779514824.jpg' class='bp-gallery-img'></div>        <div class='bp-meta-box'>            <h4 class='bp-project-title'>a8</h4>            <p class='bp-project-desc'>"다채로운 색감의 재킷들이 하나의 팔레트처럼 이어지고, 각기 다른 표정과 제스처가 그 색을 더욱 생생하게 살려낸다. 노랑의 밝음, 블루의 차분함, 핑크의 발랄함이 교차하며, 마치 감정과 패션이 함께 춤추는 듯한 자유로운 무드가 완성된다."</p>        </div>    </div></div><div class='bp-gallery-card'>    <div class='bp-card-wrapper'>        <div class='overflow-hidden'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a9_1779514826.jpg' class='bp-gallery-img'></div>        <div class='bp-meta-box'>            <h4 class='bp-project-title'>a9</h4>            <p class='bp-project-desc'>"화이트 톤의 베이스 위에 블랙 크롭 재킷과 하이웨이스트 팬츠가 더해지며, 강렬한 대비가 시선을 사로잡는다. 포즈와 움직임이 옷의 구조적 라인을 더욱 돋보이게 하고, 빛과 그림자가 교차하며 스타일의 입체감을 완성한다. 도시적인 세련됨과 자신감이 느껴지는 장면."</p>        </div>    </div></div><div class='bp-gallery-card'>    <div class='bp-card-wrapper'>        <div class='overflow-hidden'><img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_a13_1779514827.jpg' class='bp-gallery-img'></div>        <div class='bp-meta-box'>            <h4 class='bp-project-title'>a13</h4>            <p class='bp-project-desc'>"그린, 베이지, 그레이의 니트가 서로 다른 톤을 지니면서도 함께 어우러져 조화로운 무드를 만든다. 세 사람이 같은 제스처를 취하며 하나의 패턴처럼 보이고, 각자의 바지 컬러가 또 다른 변주를 더한다. 개별적인 개성이 모여 집단적인 스타일을 완성하는 순간."</p>        </div>    </div></div></div>    </div></div>
 
         <div id="contactPage" class="hidden w-full h-full flex flex-col">
             <div class="px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
@@ -149,15 +158,16 @@
         const encodedData = "error";
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
         
-        // 👑 [네이버 공식 오리지널 N 심볼 로고로 긴급 수정 교체 구역]
+        // 👑 [인스타 그라데이션 복구 및 네이버 블로그 공식 N 스퀘어 박스 완벽 안착 구역]
         function renderSnsLogos() {
             const snsTypes = ["Instagram".toUpperCase(), "Naver Blog".toUpperCase()];
             const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2')];
             
-            const svgInsta = `<svg class="w-6 h-6 insta-color" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`;
+            // 인스타 흰색 심볼 (그라데이션 프레임 내부에 안착)
+            const svgInsta = `<span class="insta-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></span>`;
             
-            // 👑 진짜 네이버 스퀘어 공식 'N' 로고 패스 데이터 반영
-            const svgBlog = `<svg class="w-6 h-6 naver-color" viewBox="0 0 24 24" fill="currentColor"><path d="M16.2 10.5V24h-4.75V13.5L6.6 24H2.4V0h4.75v10.5L12 0h4.2v10.5z"/></svg>`;
+            // 네이버 블로그 하얀색 N 심볼 (초록색 스퀘어 프레임 내부에 안착)
+            const svgBlog = `<span class="naver-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 0h-4.3l-4.5 13.2V0H3.3v24h4.3l4.5-13.2V24h4.3V0z"/></svg></span>`;
             const defaultIcon = `📁`;
 
             targets.forEach((btn, index) => {
@@ -270,7 +280,7 @@
             const descEl = document.getElementById('formProjectDesc');
             
             if(!nameEl || !nameEl.value.trim()){
-                alert("디렉터님이 성함을 알아야 연락드릴 수 있습니다. 이름 또는 브랜드명을 입력해주세요.");
+                alert("디렉터님이 성함을 알아야 연락드릴 수 있습니다. 이름 또는 brand_name을 입력해주세요.");
                 nameEl.focus(); return;
             }
             if(!phoneEl || !phoneEl.value.trim()){

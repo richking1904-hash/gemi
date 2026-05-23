@@ -1,0 +1,215 @@
+/* ==========================================================================
+   GeMi Factory Premium Theme Plugin: Paradigm Shift (HTML5 UP Custom)
+   ========================================================================== */
+
+/* 🚀 1. 포트폴리오 방 전체를 비대칭 스퀘어 매거진 월 화면으로 해방 */
+#promoPage {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    background-color: #ffffff !important; /* Paradigm Shift 고유의 클린 리얼 화이트 무드 */
+    z-index: 99999 !important;
+    overflow-y: auto !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-family: "Source Sans Pro", "Raleway", "Noto Sans KR", sans-serif;
+    color: #000000 !important;
+    animation: paradigmSliceIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes paradigmSliceIn {
+    from { opacity: 0; transform: scale(0.97) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 🚀 2. 상단 고정 프리미엄 Close 클로징 컨트롤 바 */
+#promoPage .para-close-bar {
+    width: 100%;
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid rgba(144, 144, 144, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+#promoPage .para-brand-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: #000000;
+    font-family: "Raleway", sans-serif;
+    text-transform: uppercase;
+}
+
+#promoPage .para-close-btn {
+    font-size: 10px;
+    font-weight: 700;
+    color: #888888;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.2s;
+}
+
+#promoPage .para-close-btn:hover {
+    color: #49fcd4; /* 시그니처 네온 민트 포인트 브릿지 */
+}
+
+/* 🚀 3. Paradigm Shift 레이아웃의 상징인 좌우 비대칭 분할 및 수직 기둥 축 스킨 */
+#promoPage .para-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    padding: 60px 40px;
+    position: relative;
+}
+
+/* 왼쪽 기둥: 헤더 타이틀 및 고유 수직 데코 라인 */
+#promoPage .para-sidebar {
+    width: 30%;
+    position: relative;
+    padding-right: 40px;
+}
+
+#promoPage .para-sidebar-inner {
+    position: sticky;
+    top: 120px;
+    text-align: right;
+}
+
+#promoPage .para-sidebar-inner h2 {
+    font-family: "Raleway", sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #000000;
+    letter-spacing: 2px;
+    line-height: 1.3;
+}
+
+/* 패러다임 시프트의 상징: 타이틀 우측에 박히는 민트색 인디케이터 수직선 */
+#promoPage .para-sidebar:after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background-color: #49fcd4;
+}
+
+/* 오른쪽 메인 콘텐츠 피드 월 (Wall) */
+#promoPage .para-main-feed {
+    width: 70%;
+    padding-left: 60px;
+}
+
+/* 🚀 4. 볼드하고 정갈한 격자형 프리미엄 스퀘어 카드 그리드 */
+#promoPage .para-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px;
+    width: 100%;
+}
+
+#promoPage .para-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid rgba(144, 144, 144, 0.15);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+#promoPage .para-card:hover {
+    transform: translateY(-4px);
+    border-color: #49fcd4;
+    box-shadow: 0 20px 40px rgba(73, 252, 212, 0.12);
+}
+
+#promoPage .para-img-box {
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+#promoPage .para-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#promoPage .para-meta-box {
+    padding: 24px;
+}
+
+#promoPage .para-title {
+    font-family: "Raleway", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #000000;
+    text-transform: uppercase;
+}
+
+#promoPage .para-desc {
+    font-size: 11px;
+    color: #555555;
+    line-height: 1.7em;
+    margin-top: 8px;
+    font-weight: 300;
+    break-keep: true;
+}
+
+/* 🚀 5. 완벽한 모바일 터치 피드 변환 (비대칭 해제 및 1열 통합 구조) */
+@media screen and (max-width: 1152px) {
+    #promoPage .para-container {
+        flex-direction: column;
+        padding: 40px 20px;
+    }
+    
+    #promoPage .para-sidebar {
+        width: 100%;
+        padding-right: 0;
+        margin-bottom: 40px;
+    }
+    
+    #promoPage .para-sidebar-inner {
+        position: static;
+        text-align: left;
+    }
+    
+    #promoPage .para-sidebar:after {
+        display: none;
+    }
+    
+    #promoPage .para-main-feed {
+        width: 100%;
+        padding-left: 0;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    #promoPage .para-grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 24px;
+    }
+    
+    #promoPage .para-close-bar {
+        padding: 16px 20px;
+    }
+    
+    #promoPage .para-sidebar-inner h2 {
+        font-size: 24px;
+    }
+}
