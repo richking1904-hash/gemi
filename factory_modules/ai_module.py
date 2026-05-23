@@ -16,7 +16,7 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-# 👑 [포트폴리오 사각 라운드 박스 피드형 공정] 가로는 유지하고 세로만 25% 줄인 콤팩트 피드로 교정합니다.
+# 👑 [포트폴리오 상단 제목 타이틀 보정 공정] 사각틀 내부 최상단에 명확한 기획 헤더를 장착합니다.
 def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
@@ -114,29 +114,38 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         if project_title.startswith("port_"):
             project_title = project_title.replace("port_", "", 1)
 
-        # 👑 사각 박스 내부의 이미지가 틀 밖으로 짤리지 않도록 내부 패딩 및 스크롤 여백 최적화
+        # 👑 [미세 자름 방지 및 카드 정렬 수리] padding 여백 및 box-sizing 간섭을 제거하여 완벽하게 담기도록 감쌌습니다.
         if desc_text:
             card_html = (
-                "<div class='centered-card-item mb-10' style='width:100%; max-width:410px; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin:0 auto 30px auto;'>"
-                "  <div style='width:100%; position:relative; overflow:hidden; max-height:280px;'>"
-                "    <img src='" + img_url + "' style='width:100% !important; height:100% !important; object-fit:contain !important; display:block;'>"
+                "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:35px;'>"
+                "  <div style='width:100%; position:relative; overflow:hidden; pading:0;'>"
+                "    <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>"
                 "  </div>"
-                "  <div style='padding:16px; background:#1a1c1e; text-align:center; border-t:1px solid rgba(255,255,255,0.05);'>"
+                "  <div style='padding:20px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>"
                 "    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>" + project_title + "</h4>"
-                "    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>" + desc_text + "</p>"
+                "    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto; Triton'>" + desc_text + "</p>"
                 "  </div>"
                 "</div>"
             )
         else:
             card_html = (
-                "<div class='centered-card-item mb-8' style='width:100%; max-width:410px; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); margin:0 auto 24px auto; max-height:280px;'>"
-                "  <img src='" + img_url + "' style='width:100% !important; height:100% !important; object-fit:contain !important; display:block;'>"
+                "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); margin-bottom:28px; pading:0;'>"
+                "  <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>"
                 "</div>"
             )
         feed_cards_html += card_html
 
     if not feed_cards_html:
-        feed_cards_html = "<div class='centered-card-item' style='width:100%; max-width:410px; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; margin:0 auto;'><img src='" + default_img + "' style='width:100%; height:auto;'></div>"
+        feed_cards_html = "<div class='centered-card-item' style='width:100%; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; margin:0 auto;'><img src='" + default_img + "' style='width:100%; height:auto;'></div>"
+
+    # 👑 [메인 제목 타이틀 헤더 블록 정의] 
+    # 사각 상자 내부 최상단에 깔끔하게 배치될 고급스러운 무드의 미니멀 명조 헤더 섹션입니다.
+    portfolio_main_title_html = (
+        "<div style='text-align:center; padding:30px 20px 24px 20px; border-b:1px solid rgba(255,255,255,0.05); background:#1e2022;'>"
+        "    <h2 class='serif italic text-white text-[20px] font-bold tracking-wide' style='margin:0;'>" + director_name + "</h2>"
+        "    <p class='text-[#C5A059] text-[9px] font-bold uppercase tracking-[4px]' style='margin:4px 0 0 0;'>" + brand_name + " ARCHIVE</p>"
+        "</div>"
+    )
 
     # 메인 웹명함 내부 SPA 스위칭용 레이아웃 양식
     main_card_layout_html = (
@@ -151,34 +160,25 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "</div>"
     )
 
-    # 외부 테마용 레이아웃 매핑
-    if theme_key == "big":
-        custom_layout_html = feed_cards_html
-    elif theme_key == "ethereal":
-        custom_layout_html = feed_cards_html
-    elif theme_key == "paradigm":
+    # 외부 테마용 레이아웃 매핑 안정화
+    if theme_key == "big" or theme_key == "ethereal" or theme_key == "paradigm" or theme_key == "sync":
         custom_layout_html = feed_cards_html
 
-    if theme_key == "sync":
-        custom_layout_html = feed_cards_html
-
-    # 👑 [세로 25% 정밀 다이어트 마감 구역]
-    # - 가로 max-width: 410px은 그대로 단단하게 유지합니다.
-    # - 기존 height: 92vh / max-height: 135vh 세팅을 정확히 25% 축소하여 height: 70vh / max-height: 100vh 로 콤팩트하게 압축했습니다.
+    # 👑 [완공 규격 팩 인계 세팅] 사각 상자 틀 내부 최상단에 메인 제목 타이틀 블록을 수려하게 결합했습니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{brand_name} - Portfolio Feed</title>
+    <title>{brand_name} - Portfolio Archive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
-        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 80px 15px 40px 15px; display: flex; align-items: center; justify-content: center; overflow-y: auto !important; }}
+        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 75px 15px 40px 15px; display: flex; align-items: center; justify-content: center; overflow-y: auto !important; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
         
-        /* 👑 가로는 유지하고 세로 높이만 정확히 25% 다운사이징 */
+        /* 중앙 사각틀 무드 유지 및 세로 25% 다운사이징 반영 스펙 */
         .centered-card {{ 
             width: 100%; 
             max-width: 410px; 
@@ -207,8 +207,10 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     </div>
 
     <div class="centered-card">
-        <div class="sub-page-content overflow-y-auto px-5 py-5" style="scrollbar-width: none; -ms-overflow-style: none;">
-            <div class="flex flex-col space-y-6 items-center">{custom_layout_html}</div>
+        {portfolio_main_title_html}
+
+        <div class="sub-page-content overflow-y-auto px-5 py-6" style="scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="flex flex-col space-y-8 items-center">{custom_layout_html}</div>
         </div>
     </div>
 </body>
