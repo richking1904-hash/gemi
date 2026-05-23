@@ -16,7 +16,7 @@ SUPABASE_TABLE = "gemi_chat_cache"
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
 
-# 👑 [명함 사각 라운드 테두리 순정 유지 공정] 틀은 지키고 세로와 비율만 확장합니다.
+# 👑 [포트폴리오 사각 라운드 박스 피드형 공정] 2열을 폐기하고 1열 콤팩트 카드 피드로 완전 개조합니다.
 def generate_webcard_code(gui_payload: dict) -> dict:
     user_info = gui_payload.get("user_info", {})
     contact_info = gui_payload.get("contact_info", {})
@@ -75,7 +75,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     # 하이브리드 가변형 포트폴리오 소스코드 마스터 빌더
     portfolio_items = gui_payload.get("portfolio_items", [])
     
-    # 👑 외부 테마 주입 파이프라인 엔진 가동
+    # 외부 테마 주입 파이프라인 엔진 가동
     portfolio_theme = gui_payload.get("portfolio_theme", "[명함 테마와 동기화]")
     custom_css_content = ""
     custom_layout_html = ""
@@ -99,9 +99,9 @@ def generate_webcard_code(gui_payload: dict) -> dict:
             with open(css_path, "r", encoding="utf-8") as css_f:
                 custom_css_content = css_f.read()
 
-    # 1. 기존 [명함 테마와 동기화] 무드 전용 마스터 루프 빌더
-    left_column_html = ""   # 홀수 번호 카드가 누적될 왼쪽 열
-    right_column_html = ""  # 짝수 번호 카드가 누적될 오른쪽 열
+    # 👑 [세로 카드 피드형 1열 구조 빌더 설계]
+    # - 꼬임의 주범이었던 2열 그리드를 완전히 들어내고, 형규님 오더대로 '중앙 사각 라운드 카드'가 아래로 반복해서 쌓이는 구조로 개조했습니다.
+    feed_cards_html = ""   
 
     for idx, item in enumerate(portfolio_items):
         img_url = item.get("image_url", "").strip()
@@ -115,144 +115,69 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         if project_title.startswith("port_"):
             project_title = project_title.replace("port_", "", 1)
 
-        # 👑 [오타 완전 수리 및 원비율 연출 구역] 
-        # 오타가 났던 문자열 결합 문법을 완벽히 수리했고, max-height를 해제하여 이미지가 온전히 아래로 흐르게 매싱했습니다.
+        # 👑 개별 카드가 완벽한 라운드 박스 형태를 띠며, 내부에 안착한 이미지가 비율에 맞게 절대 잘리지 않도록 고정합니다.
         if desc_text:
             card_html = (
-                "<div class='group mb-5 w-full break-inside-avoid text-left'>"
-                "  <img src='" + img_url + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain' style='max-height:none !important; height:auto !important;'>"
-                "  <h4 class='text-[11px] font-bold text-[#C5A059] tracking-wide px-1 serif italic mt-2'>" + project_title + "</h4>"
-                "  <p class='text-[9px] text-stone-400 font-light leading-relaxed px-1 mt-0.5 break-keep'>" + desc_text + "</p>"
+                "<div class='centered-card-item mb-10' style='width:100%; max-width:410px; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin:0 auto 40px auto;'>"
+                "  <div style='width:100%; position:relative; overflow:hidden;'>"
+                "    <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block;'>"
+                "  </div>"
+                "  <div style='padding:20px; background:#1a1c1e; text-align:center; border-t:1px solid rgba(255,255,255,0.05);'>"
+                "    <h4 class='text-[14px] font-bold text-[#C5A059] tracking-wide serif italic'>" + project_title + "</h4>"
+                "    <p class='text-[11px] text-stone-400 font-light leading-relaxed mt-1.5 break-keep' style='max-width:300px; margin:6px auto 0 auto;'>" + desc_text + "</p>"
+                "  </div>"
                 "</div>"
             )
         else:
             card_html = (
-                "<div class='group mb-4 w-full break-inside-avoid'>"
-                "  <img src='" + img_url + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain' style='max-height:none !important; height:auto !important;'>"
+                "<div class='centered-card-item mb-8' style='width:100%; max-width:410px; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); margin:0 auto 32px auto;'>"
+                "  <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block;'>"
                 "</div>"
             )
+        feed_cards_html += card_html
 
-        if (idx + 1) % 2 != 0:
-            left_column_html += card_html
-        else:
-            right_column_html += card_html
+    if not feed_cards_html:
+        feed_cards_html = "<div class='centered-card-item' style='width:100%; max-width:410px; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; margin:0 auto;'><img src='" + default_img + "' style='width:100%; height:auto;'></div>"
 
-    if not left_column_html and not right_column_html:
-        left_column_html = "<div class='group mb-4'><img src='" + default_img + "' class='rounded-xl border border-white/5 shadow-md w-full object-contain'></div>"
-
-    # 👑 명함 내부 순정 스위칭용 스켈레톤 틀 고정
+    # 메인 웹명함 내부 SPA 스위칭용 스켈레톤 마스킹
     main_card_layout_html = (
         "<div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>"
         "    <div class='px-5 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center z-10'>"
         "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
         "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider font-bold'>Close</button>"
         "    </div>"
-        "    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 135vh !important; scrollbar-width: none; -ms-overflow-style: none;'>"
-        "        <div class='grid grid-cols-2 gap-4 items-start'>"
-        "            <div class='flex flex-col space-y-4'>" + left_column_html + "</div>"
-        "            <div class='flex flex-col space-y-4 pt-6'>" + right_column_html + "</div>"
-        "        </div>"
+        "    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 90vh; scrollbar-width: none; -ms-overflow-style: none;'>"
+        "        <div class='flex flex-col space-y-6 items-center'>" + feed_cards_html + "</div>"
         "    </div>"
         "</div>"
     )
 
-    # 2. 외부 [Big Picture] 레이아웃 빌더
+    # 2. 외부 테마용 레이아웃 분기 빌더
     if theme_key == "big":
-        cards_html = ""
-        for idx, item in enumerate(portfolio_items):
-            img_url = item.get("image_url", "").strip() or default_img
-            desc_text = item.get("description", "").strip()
-            raw_name = item.get("image_name", "")
-            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
-
-            cards_html += (
-                "<div class='bp-magazine-item'>"
-                "    <div class='bp-image-container'><img src='" + img_url + "'></div>"
-                "    <div class='bp-text-container'>"
-                "        <h4 class='bp-item-title'>" + project_title + "</h4>"
-                "        <p class='bp-item-desc'>" + desc_text + "</p>"
-                "    </div>"
-                "</div>"
-            )
-        custom_layout_html = cards_html
-
-    # 3. 외부 [Ethereal] 레이아웃 빌더
+        custom_layout_html = feed_cards_html
     elif theme_key == "ethereal":
-        cards_html = ""
-        for idx, item in enumerate(portfolio_items):
-            img_url = item.get("image_url", "").strip() or default_img
-            desc_text = item.get("description", "").strip()
-            raw_name = item.get("image_name", "")
-            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
-
-            cards_html += (
-                "<div class='eth-project-card'>"
-                "    <div class='eth-img-frame'><img src='" + img_url + "'></div>"
-                "    <div class='eth-meta-box'>"
-                "        <h4 class='eth-project-title'>" + project_title + "</h4>"
-                "        <p class='eth-project-desc'>" + desc_text + "</p>"
-                "    </div>"
-                "</div>"
-            )
-        custom_layout_html = cards_html
-
-    # 4. 외부 [Paradigm Shift] 레이아웃 빌더
+        custom_layout_html = feed_cards_html
     elif theme_key == "paradigm":
-        cards_html = ""
-        for idx, item in enumerate(portfolio_items):
-            img_url = item.get("image_url", "").strip() or default_img
-            desc_text = item.get("description", "").strip()
-            raw_name = item.get("image_name", "")
-            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
-
-            cards_html += (
-                "<div class='para-card'>"
-                "    <div class='para-img-box'><img src='" + img_url + "'></div>"
-                "    <div class='para-meta-box'>"
-                "        <h4 class='para-title'>" + project_title + "</h4>"
-                "        <p class='para-desc'>" + desc_text + "</p>"
-                "    </div>"
-                "</div>"
-            )
-        custom_layout_html = cards_html
+        custom_layout_html = feed_cards_html
 
     if theme_key == "sync":
-        custom_layout_html = main_card_layout_html.replace("hidden ", "")
+        custom_layout_html = feed_cards_html
 
-    # 👑 [순정 사각 라운드 카드 1.5배 정밀 확장 완공 구역]
-    # 형규님이 대만족하셨던 그 수려한 블랙 테두리 무대틀을 그대로 살려 패키징했습니다.
-    # 세로 높이 한계선을 50% 더 긴 비율(max-height: 135vh)로 수치 보정했습니다.
+    # 👑 [세로 누적 피드형 팝업 최종 완공 규격]
+    # - 바깥 도화지는 풀스크롤로 뚫어두어 마우스 휠이나 터치로 스크롤을 내릴 때마다 예쁜 사각 라운드 카드 형태가 툭툭 등장합니다.
+    # - 상단 뒤로가기 링크 바는 화면 위쪽에 늘 깔끔하게 정착되어 있습니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{brand_name} - Portfolio Archive</title>
+    <title>{brand_name} - Portfolio Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
-        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; }}
+        body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 80px 15px 40px 15px; overflow-y: auto !important; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
-        
-        /* 👑 중앙 사각틀 무드를 그대로 지키고, 디렉터님 오더대로 세로 길이만 밑으로 50% 확장 */
-        .centered-card {{ 
-            width: 100%; 
-            max-width: 410px; 
-            height: 95vh; 
-            max-height: 135vh !important; 
-            background-color: #1a1c1e; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 32px; 
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-        }}
-        .sub-page-content {{ flex: 1; padding: 20px; background: #1a1c1e; }}
-        .sub-page-content::-webkit-scrollbar {{ width: 0px; }}
-        img {{ max-height: none !important; object-fit: contain !important; width: 100% !important; }}
         
         {custom_css_content}
     </style>
@@ -260,12 +185,12 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 <body class="antialiased text-stone-200">
     
     <div style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 200; width: 100%; max-width: 410px; padding: 0 15px;">
-        <a href="../index.html" style="display: block; width: 100%; text-align: center; background: rgba(26,28,30,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 11px; color: var(--gold); text-decoration: none; font-size: 11px; font-weight: bold; tracking-pacing: 2px; box-shadow: 0 10px 25px rgba(0,0,0,0.6);">
+        <a href="../index.html" style="display: block; width: 100%; text-align: center; background: #1a1c1e; border: 1px solid var(--gold); border-radius: 14px; padding: 12px; color: var(--gold); text-decoration: none; font-size: 11px; font-weight: bold; tracking-widest: 2px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); font-family: 'Noto Sans KR', sans-serif;">
             ← BACK TO WEB CARD (명함 홈으로 이동)
         </a>
     </div>
 
-    <div class="centered-card" style="margin-top: 50px;">
+    <div style="width: 100%; max-width: 410px; margin: 0 auto; height: auto;">
         {custom_layout_html}
     </div>
 </body>
