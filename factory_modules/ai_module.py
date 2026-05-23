@@ -258,26 +258,25 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         )
 
     # 👑 [독립 포트폴리오용 순정 액자 코드 정밀 패키징]
-    # 메인 명함 뼈대 레이아웃과 완전 격리된 새 창 전용 독립형 HTML 문서를 한 땀 한 땀 구현했습니다.
+    # 외부 CSS 틀 고유의 색상(견적 버튼 등)을 온전히 살리기 위해 복사되던 Tailwind script 라인을 제거했습니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{brand_name} - Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{{brand_name}} - Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
         body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px; color: #e2e8f0; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
         .sub-page-content {{ padding: 10px; background: #121314; }}
-        {custom_css_content}
+        {{custom_css_content}}
     </style>
 </head>
 <body class="antialiased">
     <div style="max-w: 800px; margin: 0 auto;">
-        {custom_layout_html}
+        {{custom_layout_html}}
     </div>
 </body>
 </html>"""
