@@ -144,12 +144,14 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "</div>"
     )
 
-    # 메인 웹명함 내부 SPA 스위칭용 레이아웃 양식
+    # 👑 [문법 오류 정밀 수리 완료 구역]
+    # 따옴표 충돌 문제를 완벽히 조치하여 인터페이스 바인딩 오류를 완전히 제거했습니다.
     main_card_layout_html = (
         "<div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>"
-        "    <div class='px-5 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center z-10'>"
-        "        <span class='text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase'>Selected Pieces</span>"
-        "        <button onclick=\"switchPage('mainPage')\" class='text-[10px] text-stone-500 hover:text-white uppercase tracking-wider font-bold'>Close</button>"
+        "    <div style='display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;'>"
+        "        <span style='font-size: 10px; font-weight: bold; tracking-spacing: 2px; color: #C5A059; text-align: left;' class='serif uppercase'>Selected Pieces</span>"
+        "        <span style='font-size: 14px; font-weight: 700; color: #fff; text-align: center; font-family: \"Noto Sans KR\", sans-serif; tracking-wide: 1px; line-height: 1;'>" + director_name + "</span>"
+        "        <button onclick=\"switchPage('mainPage')\" style='font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right; background: none; border: none; cursor: pointer;' onmouseover=\"this.style.color='#fff'\" onmouseout=\"this.style.color='#888'\">Close ✕</button>"
         "    </div>"
         "    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 90vh; scrollbar-width: none; -ms-overflow-style: none;'>"
         "        <div class='flex flex-col space-y-6 items-center'>" + feed_cards_html + "</div>"
@@ -160,9 +162,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     if theme_key == "big" or theme_key == "ethereal" or theme_key == "paradigm" or theme_key == "sync":
         custom_layout_html = feed_cards_html
 
-    # 👑 [완공 명함 동기화 핏 빌더]
-    # 1. .centered-card의 크기 및 패딩 환경을 기존 순정 웹명함(index.html 메인 카드박스) 규격과 1:1 매칭 수리했습니다.
-    # 2. 툴바 내부에 Grid 시스템을 주입하여 [Selected Pieces - 장형규 - Close] 가 좌우 정렬을 유지하며 이름이 정중앙에 수평으로 꽂힙니다.
+    # 완공 명함 동기화 핏 빌더 (배포 파일 생성 규격 보존)
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -175,8 +175,6 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         :root {{ --gold: #C5A059; --dark-bg: #121314; }}
         body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px 15px 30px 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto !important; }}
         .serif {{ font-family: 'Bodoni Moda', serif; }}
-        
-        /* 👑 큰 기둥 사각틀을 순정 웹명함 카드팩 크기로 완전 동기화 체인지 */
         .centered-card {{ 
             width: 100%; 
             max-width: 410px; 
@@ -194,23 +192,17 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         }}
         .sub-page-content {{ flex: 1; padding: 16px; background: #1a1c1e; }}
         .sub-page-content::-webkit-scrollbar {{ display: none; }}
-        
         {custom_css_content}
     </style>
 </head>
 <body class="antialiased text-stone-200">
-    
     {portfolio_main_title_html}
-
     <div class="centered-card">
-        <div style="display: grid; grid-template-columns: 1fr auto 1fr; items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;">
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;">
             <span style="font-size: 10px; font-weight: bold; tracking-content: 2px; color: var(--gold); text-align: left;" class="serif uppercase">Selected Pieces</span>
-            
             <span style="font-size: 14px; font-weight: 700; color: #fff; text-align: center; font-family: 'Noto Sans KR', sans-serif; tracking-wide: 1px; line-height: 1;">{director_name}</span>
-            
             <a href="../index.html" style="font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</a>
         </div>
-
         <div class="sub-page-content overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
             <div class="flex flex-col space-y-5 items-center">{custom_layout_html}</div>
         </div>
