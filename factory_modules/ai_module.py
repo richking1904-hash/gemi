@@ -145,8 +145,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     )
 
     # 👑 [리모컨 외부 CSS 'Big Picture' 단추 연동 전용 컬러 칩 변형 구역]
-    # - 구조 변형이나 레이아웃 왜곡을 완전히 배제하고, 마음에 들어 하신 오리지널 2중 사각 라운드 구도를 100% 똑같이 사수합니다.
-    # - 메인 명함 본진의 무드와 조화롭게 이어지도록, 은은하고 화사한 미색 차콜(#222426)과 스톤 그레이(#2a2d30), 우아한 크림 골드(#E5C07B)로 컬러만 고급스럽게 재조정했습니다.
+    # - 구조 변형을 완전히 배제하고, 마음에 들어 하신 오리지널 2중 사각 라운드 구도를 100% 똑같이 사수합니다.
+    # - 리모컨에서 Big Picture를 누르면 생성되는 외부 창(portfolio.html)의 카드들만 은은한 미색 차콜(#222426)과 스톤그레이(#2a2d30), 화사한 골드(#E5C07B) 무드로 부드럽게 필터링됩니다.
     if theme_key == "big":
         big_style_cards_html = ""
         for idx, item in enumerate(portfolio_items):
@@ -177,7 +177,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
                 )
             big_style_cards_html += card_html
         custom_layout_html = big_style_cards_html
-    elif theme_key == "ethereal" or theme_key == "paradigm" or theme_key == "sync":
+    else:
         custom_layout_html = feed_cards_html
 
     # 👑 [오리지날 본진 직통 초고속 매싱 레이아웃]
@@ -189,12 +189,13 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "        <button onclick=\"switchPage('mainPage')\" style='font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right; background: none; border: none; cursor: pointer;' onmouseover=\"this.style.color='#fff'\" onmouseout=\"this.style.color='#888'\">Close ✕</button>"
         "    </div>"
         "    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 90vh; scrollbar-width: none; -ms-overflow-style: none;'>"
-        "        <div class='flex flex-col space-y-6 items-center'>" + custom_layout_html + "</div>"
+        "        <div class='flex flex-col space-y-6 items-center'>" + feed_cards_html + "</div>"
         "    </div>"
         "</div>"
     )
 
     # 완공 명함 동기화 핏 빌더 (배포 파일 생성 규격 보존)
+    # 👑 외부 창(portfolio.html)으로 출력되는 구조에만 선택된 테마 레이아웃(custom_layout_html)이 주입됩니다.
     final_portfolio_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
