@@ -162,7 +162,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
 
 
-    # 테마 키워드 매핑 매치
+    # 테마 키워드 매핑 매치 (👑 오타 완벽 제거 공정 완료)
 
     theme_key = "sync"
 
@@ -277,6 +277,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
 
     # 👑 [개미 아카이브 지붕 유지] 움직임 없이 외곽틀 위에 우아하게 수평 고정되는 브랜드 텍스트
+
     portfolio_main_title_html = (
 
         "<div style='text-align:center; padding:10px 0 2px 0; background:transparent; width:100%; max-width:410px; margin:0 auto;'>"
@@ -289,11 +290,11 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
 
 
-    # 👑 [리모컨 외부 CSS 'Big Picture' 단추 연동 전용 컬러 칩 변형 구역]
+    # 👑 [리모컨 외부 CSS 'Big Picture' 연동 전용 컬러 칩 변형 구역]
 
     # - 구조 변형을 완전히 배제하고, 마음에 들어 하신 오리지널 2중 사각 라운드 구도를 100% 똑같이 사수합니다.
 
-    # - 선택해주신 2안: 현대적 미술관 감성의 뮤티드 스톤 그레이(#e2e4e6) 배경, 정갈한 실버 화이트(#f3f4f6) 글자판 영역, 선명한 먹색(#111111) 타이틀로 화사한 대비 효과를 완성했습니다.
+    # - 👑 [2번 안 최종 주입]: 온기가 도는 프리미엄 웜 그레이(#2a2b2d) 배경과 차콜 그레이(#333537) 카드판 영역을 구축하여 본진 명함과의 완벽한 일관성 핏을 완성했습니다.
 
     if theme_key == "big":
 
@@ -319,7 +320,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
                 card_html = (
 
-                    "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#e2e4e6; border:1px solid rgba(0,0,0,0.08); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.15); display:flex; flex-direction:column; margin-bottom:24px;'>"
+                    "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#333537; border:1px solid rgba(255,255,255,0.06); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.5); display:flex; flex-direction:column; margin-bottom:24px;'>"
 
                     "  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>"
 
@@ -327,11 +328,11 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
                     "  </div>"
 
-                    "  <div style='padding:16px; background:#f3f4f6; text-align:center; border-top:1px solid rgba(0,0,0,0.04);'>"
+                    "  <div style='padding:16px; background:#333537; text-align:center; border-top:1px solid rgba(255,255,255,0.04);'>"
 
-                    "    <h4 class='text-[13px] font-bold text-[#111111] tracking-wide serif italic'>" + project_title + "</h4>"
+                    "    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>" + project_title + "</h4>"
 
-                    "    <p class='text-[10px] text-stone-600 font-normal leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>" + desc_text + "</p>"
+                    "    <p class='text-[10px] text-stone-300 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>" + desc_text + "</p>"
 
                     "  </div>"
 
@@ -343,7 +344,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
                 card_html = (
 
-                    "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#e2e4e6; border:1px solid rgba(0,0,0,0.08); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.15); margin-bottom:20px; padding:0;'>"
+                    "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#333537; border:1px solid rgba(255,255,255,0.06); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.5); margin-bottom:20px; padding:0;'>"
 
                     "  <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>"
 
@@ -391,7 +392,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     # 완공 명함 동기화 핏 빌더 (배포 파일 생성 규격 보존)
 
-    # 👑 오타(paradigm 단어 유실 오류)를 완벽 청소하고 미술관 컨셉에 맞추어 그레이&화이트 실버 톤 스펙으로 인라인 정밀 보정을 마쳤습니다.
+    # 👑 2번 안 테마 컬러 스펙 주입 (웜 그레이 배경화면 및 차콜 그레이 카드 박스 컨테이너 안착)
 
     final_portfolio_html = f"""<!DOCTYPE html>
 
@@ -411,7 +412,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     <style>
 
-        :root {{ --gold: #C5A059; --dark-bg: {"#1e2022" if theme_key == "big" else "#121314"}; }}
+        :root {{ --gold: #C5A059; --dark-bg: {"#2a2b2d" if theme_key == "big" else "#121314"}; }}
 
         body {{ background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 20px 15px 30px 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto !important; }}
 
@@ -427,9 +428,9 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
             max-height: 780px !important;
 
-            background-color: {"#f5f6f8" if theme_key == "big" else "#1a1c1e"};
+            background-color: {"#333537" if theme_key == "big" else "#1a1c1e"};
 
-            border: 1px solid {"rgba(0, 0, 0, 0.08)" if theme_key == "big" else "rgba(255, 255, 255, 0.1)"};
+            border: 1px solid {"rgba(255, 255, 255, 0.06)" if theme_key == "big" else "rgba(255, 255, 255, 0.1)"};
 
             border-radius: 32px;
 
@@ -447,7 +448,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
         }}
 
-        .sub-page-content {{ flex: 1; padding: 16px; background: packing: {"#f5f6f8" if theme_key == "big" else "#1a1c1e"}; }}
+        .sub-page-content {{ flex: 1; padding: 16px; background: packing: {"#333537" if theme_key == "big" else "#1a1c1e"}; }}
 
         .sub-page-content::-webkit-scrollbar {{ display: none; }}
 
@@ -457,17 +458,17 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
 </head>
 
-<body class="antialiased {"text-stone-800" if theme_key == "big" else "text-stone-200"}" style="box-sizing: border-box;">
+<body class="antialiased text-stone-200" style="box-sizing: border-box;">
 
     {portfolio_main_title_html}
 
     <div class="centered-card">
 
-        <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid {"rgba(0,0,0,0.04)" if theme_key == "big" else "rgba(255,255,255,0.05)"}; background: {"#f5f6f8" if theme_key == "big" else "#1a1c1e"}; z-index: 100;">
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid {"rgba(255,255,255,0.04)" if theme_key == "big" else "rgba(255,255,255,0.05)"}; background: {"#333537" if theme_key == "big" else "#1a1c1e"}; z-index: 100;">
 
-            <span style="font-size: 10px; font-weight: bold; tracking-content: 2px; color: {"#111111" if theme_key == "big" else "var(--gold)"}; text-align: left;" class="serif uppercase">Selected Pieces</span>
+            <span style="font-size: 10px; font-weight: bold; tracking-content: 2px; color: var(--gold); text-align: left;" class="serif uppercase">Selected Pieces</span>
 
-            <span style="font-size: 14px; font-weight: 700; color: {"#111111" if theme_key == "big" else "#fff"}; text-align: center; font-family: 'Noto Sans KR', sans-serif; tracking-wide: 1px; line-height: 1;">{director_name}</span>
+            <span style="font-size: 14px; font-weight: 700; color: #fff; text-align: center; font-family: 'Noto Sans KR', sans-serif; tracking-wide: 1px; line-height: 1;">{director_name}</span>
 
             <a href="../index.html" style="font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</a>
 
