@@ -48,8 +48,8 @@ def send_telegram_alert(text: str, brand_name: str = "GeMi"):
     # 🔐 [수정 완료]: brand_name != "GeMi" 조건문을 삭제하여 어떤 브랜드명이든 장부에서 조회 및 복호화하도록 잠금 해제
     if ENCRYPTION_KEY and brand_name:
         try:
-            # 주소창에서 들어온 대소문자 형태 그대로 칼같이 정확하게 일치하는 행을 매칭 (.eq)
-            res = supabase.table("gemi_telegram_config").select("telegram_token", "telegram_chat_id").eq("brand_name", brand_name.strip()).execute()
+            # 🔥 [대소문자 철벽 방어 수술 완료]: .eq 대신 .ilike를 사용하여 대소문자 매칭 이슈 완벽 조치
+            res = supabase.table("gemi_telegram_config").select("telegram_token", "telegram_chat_id").ilike("brand_name", brand_name.strip()).execute()
             if res.data and len(res.data) > 0:
                 config = res.data[0]
                 enc_token = config.get("telegram_token")
