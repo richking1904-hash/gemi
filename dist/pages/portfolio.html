@@ -27,7 +27,158 @@
         }
         .sub-page-content { flex: 1; padding: 16px; background: #1a1c1e; }
         .sub-page-content::-webkit-scrollbar { display: none; }
-        
+        /* ==========================================================================
+   GeMi Factory Premium Theme Plugin: Big Picture (Absolute Class Sync Fix)
+   ========================================================================== */
+
+/* 👑 1. 명함 사각 틀 감옥을 무조건 탈출하여 모니터 전체화면을 장악하는 마스터 레이어 */
+#promoPage {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    background-color: #0c0d0e !important; /* 시크하고 깊이감 있는 프리미엄 블랙 배경 */
+    z-index: 99999 !important; /* 기존 centered-card를 완벽히 덮어버림 */
+    overflow-y: scroll !important; /* 🔥 상하 부드러운 스크롤 완벽 강제 활성화 */
+    overflow-x: hidden !important;
+    display: block !important;
+}
+
+/* 스크롤바 럭셔리 골드 커스텀 */
+#promoPage::-webkit-scrollbar {
+    width: 4px !important;
+}
+#promoPage::-webkit-scrollbar-thumb {
+    background: #C5A059 !important;
+    border-radius: 10px !important;
+}
+
+/* 👑 2. [상단 신설] 포트폴리오 웅장한 매거진 스타일 프리미엄 헤더 영역 */
+#promoPage .bp-premium-header {
+    padding: 48px 24px 28px 24px !important;
+    text-align: center !important;
+    background: linear-gradient(to bottom, #111214, #0c0d0e) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+#promoPage .bp-premium-header h2 {
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    color: #ffffff !important;
+    font-family: 'Bodoni Moda', serif !important;
+    font-style: italic !important;
+    margin-bottom: 6px !important;
+}
+
+#promoPage .bp-premium-header p.bp-brand-sub {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 4px !important;
+    color: #C5A059 !important;
+    margin-bottom: 16px !important;
+}
+
+#promoPage .bp-premium-header p.bp-description {
+    font-size: 11.5px !important;
+    color: #999999 !important;
+    line-height: 1.65em !important;
+    font-weight: 300 !important;
+    max-width: 300px !important;
+    margin: 0 auto !important;
+    break-keep: true !important;
+}
+
+/* 👑 3. 뚱뚱하게 퍼지던 작품 이미지를 미니멀하게 잡아주는 격자 피드 매거진 존 */
+#promoPage .bp-card-feed-zone {
+    padding: 24px 20px !important;
+    max-width: 480px !important; /* 명함 가로 규격에 맞춰 시각적 안정감 확보 */
+    margin: 0 auto !important;
+}
+
+#promoPage .bp-magazine-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 28px !important;
+    width: 100% !important;
+}
+
+#promoPage .bp-magazine-item {
+    width: 100% !important;
+    background: #151618 !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+}
+
+#promoPage .bp-image-container {
+    width: 100% !important;
+    height: 240px !important; /* 뚱뚱하게 터지던 이미지 높이를 240px 크기로 완벽하게 락 */
+    overflow: hidden !important;
+}
+
+#promoPage .bp-image-container img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* 기획 서사 및 텍스트 수납 가벨 공간 */
+#promoPage .bp-text-container {
+    padding: 18px 20px !important;
+    background: #151618 !important;
+}
+
+#promoPage .bp-item-title {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #C5A059 !important;
+    letter-spacing: 1px !important;
+    font-family: 'Bodoni Moda', serif !important;
+    font-style: italic !important;
+}
+
+#promoPage .bp-item-desc {
+    font-size: 10.5px !important;
+    color: #aaaaaa !important;
+    line-height: 1.6em !important;
+    margin-top: 6px !important;
+    font-weight: 300 !important;
+    break-keep: true !important;
+}
+
+/* 👑 4. [하단 신설] 웹명함 본체로 우아하게 백업 복귀하는 마스터 클로징 버튼 */
+#promoPage .bp-action-bottom {
+    padding: 10px 20px 40px 20px !important;
+    max-width: 480px !important;
+    margin: 0 auto !important;
+}
+
+#promoPage .bp-back-to-main-btn {
+    background: #C5A059 !important; /* GeMi 시그니처 프리미엄 골드 컬러 */
+    color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    border-radius: 14px !important;
+    padding: 14px !important;
+    width: 100% !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: opacity 0.2s !important;
+    text-align: center !important;
+    box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2) !important;
+}
+
+#promoPage .bp-back-to-main-btn:hover {
+    opacity: 0.9 !important;
+}
     </style>
 </head>
 <body class="antialiased text-stone-200">
@@ -39,7 +190,7 @@
             <a href="../index.html" style="font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</a>
         </div>
         <div class="sub-page-content overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
-            <div class="flex flex-col space-y-5 items-center"><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T223525.823_1779584023.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T223525.823</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sdff</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-16T232332.741_1779584025.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-16T232332.741</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sfasd</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-16T232431.580_1779584026.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-16T232431.580</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sfsds</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-16T232455.706_1779584028.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-16T232455.706</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sdfdafsfsd</p>  </div></div></div>
+            <div class="flex flex-col space-y-5 items-center"><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#222426; border:1px solid rgba(255,255,255,0.15); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.5); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222812.620_1779585006.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#2a2d30; text-align:center; border-top:1px solid rgba(255,255,255,0.08);'>    <h4 class='text-[13px] font-bold text-[#E5C07B] tracking-wide serif italic'>Image_fx - 2026-01-15T222812.620</h4>    <p class='text-[10px] text-stone-300 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>ddsffd</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#222426; border:1px solid rgba(255,255,255,0.15); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.5); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222835.401_1779585008.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#2a2d30; text-align:center; border-top:1px solid rgba(255,255,255,0.08);'>    <h4 class='text-[13px] font-bold text-[#E5C07B] tracking-wide serif italic'>Image_fx - 2026-01-15T222835.401</h4>    <p class='text-[10px] text-stone-300 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sdfsdf</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#222426; border:1px solid rgba(255,255,255,0.15); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.5); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222925.621_1779585009.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#2a2d30; text-align:center; border-top:1px solid rgba(255,255,255,0.08);'>    <h4 class='text-[13px] font-bold text-[#E5C07B] tracking-wide serif italic'>Image_fx - 2026-01-15T222925.621</h4>    <p class='text-[10px] text-stone-300 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sfsdfs</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#222426; border:1px solid rgba(255,255,255,0.15); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.5); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222952.801_1779585011.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#2a2d30; text-align:center; border-top:1px solid rgba(255,255,255,0.08);'>    <h4 class='text-[13px] font-bold text-[#E5C07B] tracking-wide serif italic'>Image_fx - 2026-01-15T222952.801</h4>    <p class='text-[10px] text-stone-300 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sfdsfs</p>  </div></div></div>
         </div>
     </div>
 </body>

@@ -144,8 +144,43 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "</div>"
     )
 
+    # 👑 [리모컨 외부 CSS 'Big Picture' 단추 연동 전용 컬러 칩 변형 구역]
+    # - 구조 변형이나 레이아웃 왜곡을 완전히 배제하고, 마음에 들어 하신 오리지널 2중 사각 라운드 구도를 100% 똑같이 사수합니다.
+    # - 메인 명함 본진의 무드와 조화롭게 이어지도록, 은은하고 화사한 미색 차콜(#222426)과 스톤 그레이(#2a2d30), 우아한 크림 골드(#E5C07B)로 컬러만 고급스럽게 재조정했습니다.
+    if theme_key == "big":
+        big_style_cards_html = ""
+        for idx, item in enumerate(portfolio_items):
+            img_url = item.get("image_url", "").strip() or default_img
+            desc_text = item.get("description", "").strip()
+            raw_name = item.get("image_name", "")
+            project_title = os.path.splitext(raw_name)[0] if raw_name else f"Project Piece {idx+1}"
+            if project_title.startswith("port_"):
+                project_title = project_title.replace("port_", "", 1)
+
+            if desc_text:
+                card_html = (
+                    "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#222426; border:1px solid rgba(255,255,255,0.15); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.5); display:flex; flex-direction:column; margin-bottom:24px;'>"
+                    "  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>"
+                    "    <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>"
+                    "  </div>"
+                    "  <div style='padding:16px; background:#2a2d30; text-align:center; border-top:1px solid rgba(255,255,255,0.08);'>"
+                    "    <h4 class='text-[13px] font-bold text-[#E5C07B] tracking-wide serif italic'>" + project_title + "</h4>"
+                    "    <p class='text-[10px] text-stone-300 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>" + desc_text + "</p>"
+                    "  </div>"
+                    "</div>"
+                )
+            else:
+                card_html = (
+                    "<div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#222426; border:1px solid rgba(255,255,255,0.15); border-radius:32px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.5); margin-bottom:20px; padding:0;'>"
+                    "  <img src='" + img_url + "' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>"
+                    "</div>"
+                )
+            big_style_cards_html += card_html
+        custom_layout_html = big_style_cards_html
+    elif theme_key == "ethereal" or theme_key == "paradigm" or theme_key == "sync":
+        custom_layout_html = feed_cards_html
+
     # 👑 [오리지날 본진 직통 초고속 매싱 레이아웃]
-    # 파이썬 문법 에러의 원인이었던 문자열 꼬임 문제를 완벽하게 수정하여 싱크를 복원했습니다.
     main_card_layout_html = (
         "<div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>"
         "    <div style='display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;'>"
@@ -154,13 +189,10 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "        <button onclick=\"switchPage('mainPage')\" style='font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right; background: none; border: none; cursor: pointer;' onmouseover=\"this.style.color='#fff'\" onmouseout=\"this.style.color='#888'\">Close ✕</button>"
         "    </div>"
         "    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 90vh; scrollbar-width: none; -ms-overflow-style: none;'>"
-        "        <div class='flex flex-col space-y-6 items-center'>" + feed_cards_html + "</div>"
+        "        <div class='flex flex-col space-y-6 items-center'>" + custom_layout_html + "</div>"
         "    </div>"
         "</div>"
     )
-
-    if theme_key == "big" or theme_key == "ethereal" or theme_key == "paradigm" or theme_key == "sync":
-        custom_layout_html = feed_cards_html
 
     # 완공 명함 동기화 핏 빌더 (배포 파일 생성 규격 보존)
     final_portfolio_html = f"""<!DOCTYPE html>
