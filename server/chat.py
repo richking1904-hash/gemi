@@ -29,7 +29,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 # 🔐 [시큐리티 마스터 설정] 기본 마스터 설정값 및 해독용 마스터 키 로드
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = "859745575"
-ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
+ENCRYPTION_KEY = "HaH7XnfEcvYDP0ZdCyOTE9wrTzQCd13yKu4IL49Sqaw="  # 🔥 마스터 비밀 열쇠 직결 패치 완료
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -153,12 +153,13 @@ def chat():
             f"[Guidelines]:\n{guideline_data}"
         )
 
+        # 🛠️ [문법 오류 정밀 수술 칸] 기존 코드의 마감 대괄호 오타를 중괄호 처리 및 정상 마감 완료
         payload = {
             "model": "google/gemini-2.0-flash-001",
             "messages": [
                 {"role": "system", "content": system_instruction},
                 {"role": "user", "content": user_message}
-            }
+            ]
         }
         
         req = urllib.request.Request(
