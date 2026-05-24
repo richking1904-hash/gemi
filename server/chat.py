@@ -45,18 +45,19 @@ def send_telegram_alert(text: str, brand_name: str = "GeMi"):
     target_token = TELEGRAM_BOT_TOKEN
     target_chat_id = TELEGRAM_CHAT_ID
     
-    # 🔐 슈파베이스의 암호화 설정 장부 탐색 파이프라인
-    if ENCRYPTION_KEY and brand_name and brand_name != "GeMi":
+    # 🔐 [수정 완료]: brand_name != "GeMi" 조건문을 삭제하여 어떤 브랜드명이든 장부에서 조회 및 복호화하도록 잠금 해제
+    if ENCRYPTION_KEY and brand_name:
         try:
+            # 주소창에서 들어온 대소문자 형태 그대로 칼같이 정확하게 일치하는 행을 매칭 (.eq)
             res = supabase.table("gemi_telegram_config").select("telegram_token", "telegram_chat_id").eq("brand_name", brand_name.strip()).execute()
             if res.data and len(res.data) > 0:
                 config = res.data[0]
                 enc_token = config.get("telegram_token")
                 enc_chat_id = config.get("telegram_chat_id")
                 
-                if enc_token and enc_chat_id:
+                # 가저온 데이터가 암호화 토큰 포맷일 때만 실시간 해독 가동
+                if enc_token and enc_chat_id and enc_token.startswith("gAAAAA"):
                     f = Fernet(ENCRYPTION_KEY.encode())
-                    # 실시간 해독 복조 개시
                     decrypted_token = f.decrypt(enc_token.encode('utf-8')).decode('utf-8')
                     decrypted_chat_id = f.decrypt(enc_chat_id.encode('utf-8')).decode('utf-8')
                     
@@ -100,7 +101,6 @@ def chat():
         if not user_message:
             return jsonify({"reply": "질문 내용이 비어있습니다."}), 200
 
-        # [검증 1순위] 내 브랜드 서랍에 등록된 고정 FAQ 버튼 매칭 (토큰 0개 즉시 리턴)
         try:
             cache = supabase.table("gemi_chat_cache").select("answer").eq("brand_name", brand_name).eq("question", user_message).execute()
             if cache.data and len(cache.data) > 0:
@@ -111,16 +111,11 @@ def chat():
         except Exception as cache_err:
             print(f"ℹ️ 캐시 장부 매칭 패스: {cache_err}")
 
-        # 👑 [하이브리드 독해 레이어 전면 교정]
-        # 무조건 가이드라인을 주입한 뒤, 비즈니스 질문은 지침서 기반으로 철저히 응대하고 일상 질문은 위트 있게 받아치도록 지침 통합
         client_ip = request.remote_addr or "anonymous"
         session_key = f"{brand_name}_{client_ip}"
         
-        # 사용자가 입력한 메시지가 비즈니스 성격인지 1차 카운트 분기 판단
         is_business_query = False
         
-        # 👑 [4대 SNS 채널 확장 연동 키워드 패치 완료]
-        # - 새롭게 확장 조립된 카카오톡, 유튜브, 인스타, 블로그, 링크, 주소 관련 질문이 일상 대화로 오인되어 챗봇 한도가 차단되는 버그를 완벽 방어했습니다.
         keywords_for_business = [
             "제작", "비용", "단가", "포트폴리오", "기간", "일정", "연락", "이메일", "전화", "문의", 
             "견적", "작업", "의뢰", "수정", "환불", "금액", "디자인", "명함", "단추", "스튜디오", "가격", "얼마",
@@ -129,7 +124,6 @@ def chat():
         if any(k_word in user_message.lower() for k_word in keywords_for_business):
             is_business_query = True
 
-        # 🔴 일상대화일 때만 10회 카운트 제한 검증 작동 (초과 시 AI 차단 후 고정 문구 출력으로 토큰 세이브)
         if not is_business_query:
             current_count = DAILY_TALK_COUNTER.get(session_key, 0)
             if current_count >= 10:
@@ -141,7 +135,6 @@ def chat():
             DAILY_TALK_COUNTER[session_key] = current_count + 1
             print(f"📉 [일상대화 카운터] {session_key}: {DAILY_TALK_COUNTER[session_key]}/10회")
 
-        # 🤖 통합 프리미엄 AI 어조 및 가이드라인 완전 독해 프롬프트 시스템 가동
         print(f"🤖 [통합 AI 질문 전송]: {user_message} (브랜드: {brand_name}, 업무질문여부: {is_business_query})")
         system_instruction = (
             f"You are a friendly, sophisticated branding consultant and AI teammate for '{brand_name}' studio led by Director Jang Hyung-kyu (장형규).\n\n"
@@ -153,7 +146,6 @@ def chat():
             f"[Guidelines]:\n{guideline_data}"
         )
 
-        # 🛠️ [문법 오류 정밀 수술 칸] 기존 코드의 마감 대괄호 오타를 중괄호 처리 및 정상 마감 완료
         payload = {
             "model": "google/gemini-2.0-flash-001",
             "messages": [
@@ -172,7 +164,6 @@ def chat():
             res_data = json.loads(res.read().decode('utf-8'))
             reply = res_data["choices"][0]["message"]["content"].strip()
 
-        # 순수 비즈니스 대화 내용만 장부에 사후 누적 처리
         if is_business_query:
             try:
                 supabase.table("gemi_chat_cache").insert({"brand_name": brand_name, "question": user_message, "answer": reply}).execute()
@@ -200,23 +191,34 @@ def submit_inquiry():
         i_type = body.get("inquiry_type", "").strip()
         msg = body.get("message", "").strip()
         
-        # 👑 [동적 바인딩 추가] 웹명함 양식에서 넘겨주는 실제 소유자 브랜드 추출 (없으면 기본값 GeMi)
-        brand_name = body.get("brand_name", "GeMi").strip()
+        # 👑 [브랜드명 바인딩 고도화]: Vercel 명함 폼 데이터 우선순위 적용
+        brand_name = body.get("brand_name", "").strip()
         
-        # 👑 [교정 유지] Vercel 비동기 요청 본문에서 독립된 budget(예산) 데이터를 안전하게 추출
+        # 👑 [수정 완료]: 명함 폼에서 누락된 경우, 접속 주소창(Referer)에서 원본 글자 그대로(대소문자 유지) 추출하여 연동
+        if not brand_name:
+            referer = request.headers.get("Referer", "")
+            if referer:
+                path_parts = referer.rstrip('/').split('/')
+                last_part = path_parts[-1].strip()  # 강제 변환 없이 입력된 주소 글자 그대로 유지
+                if last_part and last_part.upper() not in ["VERCEL.APP", "WWW", "GEMISTUDIO", "INDEX.HTML"]:
+                    brand_name = last_part
+
+        # 주소 역추적으로도 확인이 어려울 때 최종 백업 기본값 처리
+        if not brand_name:
+            brand_name = "GeMi"
+        
         budget_val = "미기재 또는 상세 내용 참고"
         if "[예산:" in msg:
             try:
                 parts = msg.split("]", 1)
                 budget_val = parts[0].replace("[예산:", "").strip()
-                msg = parts[1].strip()  # 메시지 본문은 깨끗하게 복구
+                msg = parts[1].strip()
             except Exception:
                 pass
 
         if not c_name or not c_contact:
             return jsonify({"success": False, "error": "필수 입력 데이터가 누락되었습니다."}), 400
 
-        # 👑 [텔레그램 알림 양식 고도화 유지] 5대 입력칸 분리 포맷 (해당 명함 소유주의 브랜드명 표기 추가)
         alert_text = (
             f"🔔 *[{brand_name} 명함 신규 견적 문의]*\n\n"
             f"👤 *고객/기업명:* {c_name}\n"
@@ -225,10 +227,10 @@ def submit_inquiry():
             f"💰 *희망 예산 범위:* {budget_val}\n"
             f"📝 *상세 요청사항:* {msg}"
         )
-        # 🔐 동적 해독 엔진을 거쳐 명함 주인에게 정확히 알림 전송
+        
+        # 🔐 대소문자가 일치하는 장부를 정확히 매칭하여 알림 전송
         send_telegram_alert(alert_text, brand_name=brand_name)
         
-        # 👑 슈파베이스 장부에도 "GeMi" 고정이 아닌 실제 요청이 들어온 고유 브랜드명으로 직결 적재
         supabase.table("gemi_customer_inquiry").insert({
             "brand_name": brand_name, 
             "customer_name": c_name,
