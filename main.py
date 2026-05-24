@@ -24,34 +24,37 @@ def init_supabase_tables_automatically():
     except Exception as e:
         print(f"ℹ️ [Supabase] 진단 중 참조 오류 발생: {e}")
 
-# 👑 [배송 엔진 고도화 패치]
-# ai_module이 뱉어낸 2개의 html 코드가 담긴 딕셔너리(html_payload)를 인자로 받도록 수정했습니다.
+# 👑 [배송 엔진 고도화 패치 - 독립 폴더 격리 배포 버전 완공]
+# - 새 주소명(url_name)이 입력되면 dist 폴더 하위에 해당 명칭의 폴더를 새로 파서 기존 본진 파일 유실을 원천 차단합니다.
 def auto_git_push_hybrid(url_name, html_payload):
     clean_url = "".join(c.lower() for c in url_name if c.isalnum() or c in ["-", "_"]).strip()
     
     # 👑 [주소 교정 완료] 형규님의 진짜 버셀 도메인 주소인 gemistudio.vercel.app 규칙 반영
     if not clean_url:
         final_deployed_url = "https://gemistudio.vercel.app"
+        # 👑 주소 입력창이 비어있으면 기존 본진 경로인 dist 루트를 사수합니다.
+        output_dir = "dist"
     else:
         final_deployed_url = f"https://{clean_url}.vercel.app"
+        # 👑 [가장 중요한 공정 핵심 개조]: 주소가 들어오면 dist/주소이름 구조로 독립된 새로운 물리 폴더를 강제 생성합니다!
+        output_dir = os.path.join("dist", clean_url)
 
     try:
-        output_dir = "dist"
         os.makedirs(output_dir, exist_ok=True)
         
-        # 1호 산출물: 메인 웹명함 배송
+        # 1호 산출물: 지정된 격리 폴더 내부에 메인 웹명함 배송
         main_path = os.path.join(output_dir, "index.html")
         with open(main_path, "w", encoding="utf-8") as f:
             f.write(html_payload.get("main_html", ""))
 
-        # 2호 산출물: 새 창 팝업용 서브 포트폴리오 배송
+        # 2호 산출물: 지정된 격리 폴더 내부의 pages 폴더 경로에 서브 포트폴리오 배송
         pages_dir = os.path.join(output_dir, "pages")
         os.makedirs(pages_dir, exist_ok=True)
         portfolio_path = os.path.join(pages_dir, "portfolio.html")
         with open(portfolio_path, "w", encoding="utf-8") as f:
             f.write(html_payload.get("portfolio_html", ""))
 
-        print(f"📦 [팩토리 배송완료] 물리 파일 저장 완료:\n  -> {main_path}\n  -> {portfolio_path}")
+        print(f"📦 [팩토리 독립폴더 격리완공] 물리 파일 분리 저장 완료:\n  -> {main_path}\n  -> {portfolio_path}")
 
         subprocess.run(["git", "add", "."], check=True)
         
@@ -61,8 +64,8 @@ def auto_git_push_hybrid(url_name, html_payload):
             subprocess.run(["git", "branch", "-M", "main"], check=True)
             subprocess.run(["git", "push", "-u", "origin", "main"], check=True)
         else:
-            print(f"\n🚚 5단계: [새로운 독립 웹사이트 생성] 주소명: {final_deployed_url} 배포 준비...")
-            subprocess.run(["git", "commit", "-m", f"feat: 새 독립 사이트 배포 ({clean_url})"], check=False)
+            print(f"\n🚚 5단계: [새로운 독립 폴더 기반 배포] 주소명: {final_deployed_url} 브랜치 전송 준비...")
+            subprocess.run(["git", "commit", "-m", f"feat: 새 독립 사이트 폴더 격리 빌드 ({clean_url})"], check=False)
             subprocess.run(["git", "branch", "-M", "main"], check=False)
             subprocess.run(["git", "checkout", "-b", clean_url], check=False)
             subprocess.run(["git", "push", "origin", clean_url], check=True)
@@ -72,7 +75,7 @@ def auto_git_push_hybrid(url_name, html_payload):
         return True
         
     except Exception as e:
-        print(f"❌ [Auto Git] 배포 중 에러 발생: {e}")
+        print(f"❌ [Auto Git] 폴더 분리 및 배포 중 에러 발생: {e}")
         return False
 
 # 👑 [UX 정밀 교정 구역] 
