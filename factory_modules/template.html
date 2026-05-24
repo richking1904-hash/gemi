@@ -76,6 +76,26 @@
             padding: 4.5px 5px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
+        /* 👑 [신설: 카카오톡 공식 옐로우 멜팅 박스 프레임 장착] */
+        .kakao-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #FEE500;
+            border-radius: 6px;
+            padding: 4.5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+        /* 👑 [신설: 유튜브 공식 브라이트 레드 스퀘어 프레임 장착] */
+        .youtube-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #FF0000;
+            border-radius: 6px;
+            padding: 5px 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
 
         /* 👑 [신설 조립 결합 브릿지] 외부 수급 CSS 프리셋 팩 주입 통로 확보 */
         ${PORTFOLIO_CUSTOM_CSS}
@@ -101,9 +121,11 @@
                         <span class="text-stone-600">|</span>
                         <span class="tracking-wide">✉️ ${EMAIL}</span>
                     </div>
-                    <div class="flex justify-center gap-6 items-center py-0.5" style="${SNS1_DISPLAY}">
-                        <a href="${SNS1_URL}" target="_blank" id="snsIconBtn1" class="transition-transform hover:scale-110 flex items-center justify-center" title="${SNS1_TYPE}"></a>
+                    <div class="flex justify-center gap-5 items-center py-0.5">
+                        <a href="${SNS1_URL}" target="_blank" id="snsIconBtn1" style="${SNS1_DISPLAY}" class="transition-transform hover:scale-110 flex items-center justify-center" title="${SNS1_TYPE}"></a>
                         <a href="${SNS2_URL}" target="_blank" id="snsIconBtn2" style="${SNS2_DISPLAY}" class="transition-transform hover:scale-110 flex items-center justify-center" title="${SNS2_TYPE}"></a>
+                        <a href="${SNS3_URL}" target="_blank" id="snsIconBtn3" style="${SNS3_DISPLAY}" class="transition-transform hover:scale-110 flex items-center justify-center" title="${SNS3_TYPE}"></a>
+                        <a href="${SNS4_URL}" target="_blank" id="snsIconBtn4" style="${SNS4_DISPLAY}" class="transition-transform hover:scale-110 flex items-center justify-center" title="${SNS4_TYPE}"></a>
                     </div>
                 </div>
 
@@ -158,16 +180,23 @@
         const encodedData = "${GUIDELINE_TXT_URL}";
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
         
-        // 👑 [인스타 그라데이션 복구 및 네이버 블로그 공식 N 스퀘어 박스 완벽 안착 구역]
+        // 👑 [4대 SNS 프리미엄 시그니처 프레임 박스 로고 완벽 이식 엔진 구역]
         function renderSnsLogos() {
-            const snsTypes = ["${SNS1_TYPE}".toUpperCase(), "${SNS2_TYPE}".toUpperCase()];
-            const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2')];
+            const snsTypes = ["${SNS1_TYPE}".toUpperCase(), "${SNS2_TYPE}".toUpperCase(), "${SNS3_TYPE}".toUpperCase(), "${SNS4_TYPE}".toUpperCase()];
+            const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2'), document.getElementById('snsIconBtn3'), document.getElementById('snsIconBtn4')];
             
-            // 인스타 흰색 심볼 (그라데이션 프레임 내부에 안착)
+            // 1. 인스타 흰색 심볼 (그라데이션 프레임 내부에 안착)
             const svgInsta = `<span class="insta-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></span>`;
             
-            // 네이버 블로그 하얀색 N 심볼 (초록색 스퀘어 프레임 내부에 안착)
+            // 2. 네이버 블로그 하얀색 N 심볼 (초록색 스퀘어 프레임 내부에 안착)
             const svgBlog = `<span class="naver-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 0h-4.3l-4.5 13.2V0H3.3v24h4.3l4.5-13.2V24h4.3V0z"/></svg></span>`;
+            
+            // 3. 카카오톡 어두운 초콜릿 색 심볼 (노란색 스퀘어 프레임 내부에 안착)
+            const svgKakao = `<span class="kakao-icon-frame"><svg class="w-full h-full text-[#3C1E1E]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.553 1.706 4.8 4.29 5.99l-.853 3.125a.366.366 0 00.51.413l3.667-2.443c.453.056.914.086 1.386.086 4.97 0 9-3.186 9-7.116C21 6.185 16.97 3 12 3z"/></svg></span>`;
+            
+            // 4. 유튜브 삼각 플레이 재생 버튼 심볼 (빨간색 스퀘어 프레임 내부에 안착)
+            const svgYoutube = `<span class="youtube-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>`;
+            
             const defaultIcon = `📁`;
 
             targets.forEach((btn, index) => {
@@ -177,6 +206,10 @@
                     btn.innerHTML = svgInsta;
                 } else if (type.includes("BLOG") || type.includes("NAVER")) {
                     btn.innerHTML = svgBlog;
+                } else if (type.includes("KAKAO") || type.includes("TALK")) {
+                    btn.innerHTML = svgKakao;
+                } else if (type.includes("YOUTUBE")) {
+                    btn.innerHTML = svgYoutube;
                 } else {
                     btn.innerText = defaultIcon;
                     btn.className += " text-xs font-bold bg-stone-800 px-2.5 py-1 rounded-xl border border-white/5 text-stone-300";

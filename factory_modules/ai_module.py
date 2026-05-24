@@ -392,8 +392,6 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     # 완공 명함 동기화 핏 빌더 (배포 파일 생성 규격 보존)
 
-    # 👑 2번 안 테마 컬러 스펙 주입 (웜 그레이 배경화면 및 차콜 그레이 카드 박스 컨테이너 안착)
-
     final_portfolio_html = f"""<!DOCTYPE html>
 
 <html lang="ko">
@@ -538,31 +536,49 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
    
 
-    # SNS 정보 처리
+    # 👑 [4대 SNS 프리미엄 동적 치환 마스킹 파이프라인 엔진 가동]
 
-    sns1_type = contact_info.get("sns1_type", "SNS")
+    # - 리모컨 GUI에서 정밀하게 가공되어 적재된 4대 핵심 데이터를 순서대로 안전하게 매싱합니다.
 
-    sns1_url = contact_info.get("sns1_url", "#")
+    sns1_url = contact_info.get("instagram", "").strip() or "#"
 
-    sns2_type = contact_info.get("sns2_type", "SNS")
+    sns2_url = contact_info.get("naver_blog", "").strip() or "#"
 
-    sns2_url = contact_info.get("sns2_url", "#")
+    sns3_url = contact_info.get("kakao_url", "").strip() or "#"
+
+    sns4_url = contact_info.get("telegram_url", "").strip() or "#" # 형규님 매핑 규칙: 유튜브 주소 바인딩
 
    
 
-    rendered_code = rendered_code.replace("${SNS1_TYPE}", sns1_type)
+    rendered_code = rendered_code.replace("${SNS1_TYPE}", "INSTAGRAM")
 
     rendered_code = rendered_code.replace("${SNS1_URL}", sns1_url)
 
-    rendered_code = rendered_code.replace("${SNS2_TYPE}", sns2_type)
+    rendered_code = rendered_code.replace("${SNS1_DISPLAY}", "display: flex;" if sns1_url != "#" else "display: none !important;")
+
+
+
+    rendered_code = rendered_code.replace("${SNS2_TYPE}", "NAVER_BLOG")
 
     rendered_code = rendered_code.replace("${SNS2_URL}", sns2_url)
 
-   
-
-    rendered_code = rendered_code.replace("${SNS1_DISPLAY}", "display: flex;" if sns1_url != "#" else "display: none !important;")
-
     rendered_code = rendered_code.replace("${SNS2_DISPLAY}", "display: flex;" if sns2_url != "#" else "display: none !important;")
+
+
+
+    rendered_code = rendered_code.replace("${SNS3_TYPE}", "KAKAO_TALK")
+
+    rendered_code = rendered_code.replace("${SNS3_URL}", sns3_url)
+
+    rendered_code = rendered_code.replace("${SNS3_DISPLAY}", "display: flex;" if sns3_url != "#" else "display: none !important;")
+
+
+
+    rendered_code = rendered_code.replace("${SNS4_TYPE}", "YOUTUBE")
+
+    rendered_code = rendered_code.replace("${SNS4_URL}", sns4_url)
+
+    rendered_code = rendered_code.replace("${SNS4_DISPLAY}", "display: flex;" if sns4_url != "#" else "display: none !important;")
 
 
 

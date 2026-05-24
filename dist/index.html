@@ -76,6 +76,26 @@
             padding: 4.5px 5px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
+        /* 👑 [신설: 카카오톡 공식 옐로우 멜팅 박스 프레임 장착] */
+        .kakao-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #FEE500;
+            border-radius: 6px;
+            padding: 4.5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+        /* 👑 [신설: 유튜브 공식 브라이트 레드 스퀘어 프레임 장착] */
+        .youtube-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #FF0000;
+            border-radius: 6px;
+            padding: 5px 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
 
         /* 👑 [신설 조립 결합 브릿지] 외부 수급 CSS 프리셋 팩 주입 통로 확보 */
         
@@ -85,14 +105,14 @@
     <div class="centered-card">
         <div id="mainPage" class="w-full h-full flex flex-col">
             <div class="card-image-wrapper">
-                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-03T225910.984_1779602670.png" class="w-full h-full object-cover grayscale-[20%]">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-03T214749.341_1779604464.png" class="w-full h-full object-cover grayscale-[20%]">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
             </div>
             <div class="card-content-wrapper">
                 <div class="text-center mt-1">
                     <h1 class="text-2xl font-bold tracking-tight text-white mb-0.5 serif italic">장형규</h1>
                     <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-2">GeMi</p>
-                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep mb-2">Quiet Luxury 감성의 프리미엄 브랜드 및 graphic 디자인 스튜디오</p>
+                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep mb-2">Quiet Luxury 프리미엄 브랜드 graphic 디자인 스튜디오</p>
                 </div>
                 
                 <div class="flex flex-col items-center gap-2 bg-white/5 py-2 px-4 rounded-2xl border border-white/5 mb-3">
@@ -101,20 +121,22 @@
                         <span class="text-stone-600">|</span>
                         <span class="tracking-wide">✉️ gemi_design@naver.com</span>
                     </div>
-                    <div class="flex justify-center gap-6 items-center py-0.5" style="display: flex;">
-                        <a href="https://instagram.com/" target="_blank" id="snsIconBtn1" class="transition-transform hover:scale-110 flex items-center justify-center" title="Instagram"></a>
-                        <a href="https://blog.naver.com/" target="_blank" id="snsIconBtn2" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="Naver Blog"></a>
+                    <div class="flex justify-center gap-5 items-center py-0.5">
+                        <a href="https://instagram.com/" target="_blank" id="snsIconBtn1" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="INSTAGRAM"></a>
+                        <a href="https://blog.naver.com/" target="_blank" id="snsIconBtn2" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="NAVER_BLOG"></a>
+                        <a href="https://pf.kakao.com/" target="_blank" id="snsIconBtn3" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="KAKAO_TALK"></a>
+                        <a href="https://youtube.com/" target="_blank" id="snsIconBtn4" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="YOUTUBE"></a>
                     </div>
                 </div>
 
                 <div class="smart-grid">
-                    <a href="./pages/portfolio.html" target="_blank" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors text-center block w-full">Portfolio</a>
+                    <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors text-center block w-full">Portfolio</button>
                     <button onclick="switchPage('contactPage')" class="gold-btn text-[11px] py-3 tracking-widest uppercase shadow-xl hover:opacity-90 transition-opacity">Contact</button>
                 </div>
             </div>
         </div>
 
-        <div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>    <div style='display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;'>        <span style='font-size: 10px; font-weight: bold; tracking-spacing: 2px; color: #C5A059; text-align: left;' class='serif uppercase'>Selected Pieces</span>        <span style='font-size: 14px; font-weight: 700; color: #fff; text-align: center; font-family: "Noto Sans KR", sans-serif; tracking-wide: 1px; line-height: 1;'>장형규</span>        <button onclick="switchPage('mainPage')" style='font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right; background: none; border: none; cursor: pointer;' onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</button>    </div>    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 90vh; scrollbar-width: none; -ms-overflow-style: none;'>        <div class='flex flex-col space-y-6 items-center'><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-03T214724.576_1779602671.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-03T214724.576</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sdafsa</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-03T214749.341_1779602673.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-03T214749.341</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>asdfasf</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-03T214814.846_1779602675.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-03T214814.846</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sadfasf</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-03T225909.284_1779602676.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-03T225909.284</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sadfasf</p>  </div></div></div>    </div></div>
+        <div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>    <div style='display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;'>        <span style='font-size: 10px; font-weight: bold; tracking-spacing: 2px; color: #C5A059; text-align: left;' class='serif uppercase'>Selected Pieces</span>        <span style='font-size: 14px; font-weight: 700; color: #fff; text-align: center; font-family: "Noto Sans KR", sans-serif; tracking-wide: 1px; line-height: 1;'>장형규</span>        <button onclick="switchPage('mainPage')" style='font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right; background: none; border: none; cursor: pointer;' onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</button>    </div>    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 90vh; scrollbar-width: none; -ms-overflow-style: none;'>        <div class='flex flex-col space-y-6 items-center'><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T221941.990_1779604470.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T221941.990</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sadfasfasfaf</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222001.297_1779604472.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T222001.297</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sadasfas</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222014.865_1779604473.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T222014.865</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sdafsf</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222040.747_1779604475.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T222040.747</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>asdfasdf</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222118.658_1779604477.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T222118.658</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sadfsd</p>  </div></div></div>    </div></div>
 
         <div id="contactPage" class="hidden w-full h-full flex flex-col">
             <div class="px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
@@ -158,16 +180,23 @@
         const encodedData = "error";
         let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
         
-        // 👑 [인스타 그라데이션 복구 및 네이버 블로그 공식 N 스퀘어 박스 완벽 안착 구역]
+        // 👑 [4대 SNS 프리미엄 시그니처 프레임 박스 로고 완벽 이식 엔진 구역]
         function renderSnsLogos() {
-            const snsTypes = ["Instagram".toUpperCase(), "Naver Blog".toUpperCase()];
-            const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2')];
+            const snsTypes = ["INSTAGRAM".toUpperCase(), "NAVER_BLOG".toUpperCase(), "KAKAO_TALK".toUpperCase(), "YOUTUBE".toUpperCase()];
+            const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2'), document.getElementById('snsIconBtn3'), document.getElementById('snsIconBtn4')];
             
-            // 인스타 흰색 심볼 (그라데이션 프레임 내부에 안착)
+            // 1. 인스타 흰색 심볼 (그라데이션 프레임 내부에 안착)
             const svgInsta = `<span class="insta-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></span>`;
             
-            // 네이버 블로그 하얀색 N 심볼 (초록색 스퀘어 프레임 내부에 안착)
+            // 2. 네이버 블로그 하얀색 N 심볼 (초록색 스퀘어 프레임 내부에 안착)
             const svgBlog = `<span class="naver-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 0h-4.3l-4.5 13.2V0H3.3v24h4.3l4.5-13.2V24h4.3V0z"/></svg></span>`;
+            
+            // 3. 카카오톡 어두운 초콜릿 색 심볼 (노란색 스퀘어 프레임 내부에 안착)
+            const svgKakao = `<span class="kakao-icon-frame"><svg class="w-full h-full text-[#3C1E1E]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.553 1.706 4.8 4.29 5.99l-.853 3.125a.366.366 0 00.51.413l3.667-2.443c.453.056.914.086 1.386.086 4.97 0 9-3.186 9-7.116C21 6.185 16.97 3 12 3z"/></svg></span>`;
+            
+            // 4. 유튜브 삼각 플레이 재생 버튼 심볼 (빨간색 스퀘어 프레임 내부에 안착)
+            const svgYoutube = `<span class="youtube-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>`;
+            
             const defaultIcon = `📁`;
 
             targets.forEach((btn, index) => {
@@ -177,6 +206,10 @@
                     btn.innerHTML = svgInsta;
                 } else if (type.includes("BLOG") || type.includes("NAVER")) {
                     btn.innerHTML = svgBlog;
+                } else if (type.includes("KAKAO") || type.includes("TALK")) {
+                    btn.innerHTML = svgKakao;
+                } else if (type.includes("YOUTUBE")) {
+                    btn.innerHTML = svgYoutube;
                 } else {
                     btn.innerText = defaultIcon;
                     btn.className += " text-xs font-bold bg-stone-800 px-2.5 py-1 rounded-xl border border-white/5 text-stone-300";

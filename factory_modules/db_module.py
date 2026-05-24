@@ -256,6 +256,12 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
 
        
 
+        # 👑 [4대 핵심 채널 슈파베이스 직결 바인딩 공정 완결]
+
+        # - 기존 유실 버그를 잡기 위해 instagram, naver_blog 키값을 정확히 매칭했습니다.
+
+        # - 새 채널인 카카오 주소를 kakao_url에, 유튜브 주소를 telegram_url 컬럼 서랍에 정밀 적재합니다.
+
         config_insert = {
 
             "name": user_info.get("name"),  
@@ -271,6 +277,10 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
             "instagram": contact_info.get("instagram"),
 
             "naver_blog": contact_info.get("naver_blog"),
+
+            "kakao_url": contact_info.get("kakao_url"),
+
+            "telegram_url": contact_info.get("telegram_url"),  # 형규님 규칙: 유튜브 주소 적재
 
             "main_image_url": main_image_url,
 
@@ -360,5 +370,4 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
 
         "portfolio_items": portfolio_items
 
-    } 
-
+    }

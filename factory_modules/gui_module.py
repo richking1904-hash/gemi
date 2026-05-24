@@ -306,6 +306,10 @@ def on_submit_click():
 
 
 
+    # 👑 [슈파베이스 데이터베이스 다이렉트 연동 전용 매싱 장부 개조 완성]
+
+    # - 기존의 가변형 구조를 지우고 슈파베이스 gemi_clients 테이블의 4대 핵심 컬럼과 1:1로 완벽 동기화 시켰습니다.
+
     final_payload = {
 
         "user_info": {
@@ -326,13 +330,13 @@ def on_submit_click():
 
             "email": email_entry.get().strip(),
 
-            "sns1_type": sns1_combobox.get(),
+            "instagram": instagram_entry.get().strip(),
 
-            "sns1_url": sns1_entry.get().strip(),
+            "naver_blog": naver_blog_entry.get().strip(),
 
-            "sns2_type": sns2_combobox.get(),
+            "kakao_url": kakao_entry.get().strip(),
 
-            "sns2_url": sns2_entry.get().strip()
+            "telegram_url": youtube_entry.get().strip()  # 형규님 규칙: 텔레그램 컬럼 자리에 유튜브 주소 안전 적재
 
         },
 
@@ -504,27 +508,39 @@ email_entry.grid(row=1, column=1, padx=15, pady=2); email_entry.insert(0, "gemi_
 
 
 
-# 외부 링크 연동 라인
+# 👑 [리모컨 전용 4대 SNS 입력창 확장 안착 구역]
 
-sns_options = ["Instagram", "Naver Blog", "KakaoTalk", "Telegram", "YouTube"]
+# - 형규님이 정하신 4대 공식 채널의 전용 독립 입력 필드를 콤보박스 없이 정갈한 4선 전용 트랙으로 늘렸습니다.
 
-ctk.CTkLabel(left_panel, text="📱 SNS 채널 1 선택 및 주소(아이디):").pack(anchor="w", pady=(6,0))
+ctk.CTkLabel(left_panel, text="📷 인스타그램 주소 (Instagram):", text_color="#AAAAAA").pack(anchor="w", pady=(6,0))
 
-sns1_frame = ctk.CTkFrame(left_panel, fg_color="transparent"); sns1_frame.pack(fill="x", pady=2)
+instagram_entry = ctk.CTkEntry(left_panel, width=400, fg_color="#2A2A2A")
 
-sns1_combobox = ctk.CTkComboBox(sns1_frame, values=sns_options, width=110, fg_color="#2A2A2A"); sns1_combobox.pack(side="left"); sns1_combobox.set("Instagram")
-
-sns1_entry = ctk.CTkEntry(sns1_frame, width=285, fg_color="#2A2A2A"); sns1_entry.pack(side="right"); sns1_entry.insert(0, "https://instagram.com/")
+instagram_entry.pack(pady=(2, 4)); instagram_entry.insert(0, "https://instagram.com/")
 
 
 
-ctk.CTkLabel(left_panel, text="🌐 SNS 채널 2 선택 및 주소(아이디):").pack(anchor="w", pady=(6,0))
+ctk.CTkLabel(left_panel, text="💚 네이버 블로그 주소 (Naver Blog):", text_color="#AAAAAA").pack(anchor="w", pady=(4,0))
 
-sns2_frame = ctk.CTkFrame(left_panel, fg_color="transparent"); sns2_frame.pack(fill="x", pady=2)
+naver_blog_entry = ctk.CTkEntry(left_panel, width=400, fg_color="#2A2A2A")
 
-sns2_combobox = ctk.CTkComboBox(sns2_frame, values=sns_options, width=110, fg_color="#2A2A2A"); sns2_combobox.pack(side="left"); sns2_combobox.set("Naver Blog")
+naver_blog_entry.pack(pady=(2, 4)); naver_blog_entry.insert(0, "https://blog.naver.com/")
 
-sns2_entry = ctk.CTkEntry(sns2_frame, width=285, fg_color="#2A2A2A"); sns2_entry.pack(side="right"); sns2_entry.insert(0, "https://blog.naver.com/")
+
+
+ctk.CTkLabel(left_panel, text="💛 카카오톡 채널 주소 (KakaoTalk):", text_color="#AAAAAA").pack(anchor="w", pady=(4,0))
+
+kakao_entry = ctk.CTkEntry(left_panel, width=400, fg_color="#2A2A2A")
+
+kakao_entry.pack(pady=(2, 4)); kakao_entry.insert(0, "https://pf.kakao.com/")
+
+
+
+ctk.CTkLabel(left_panel, text="❤️ 유튜브 채널 주소 (YouTube):", text_color="#AAAAAA").pack(anchor="w", pady=(4,0))
+
+youtube_entry = ctk.CTkEntry(left_panel, width=400, fg_color="#2A2A2A")
+
+youtube_entry.pack(pady=(2, 8)); youtube_entry.insert(0, "https://youtube.com/")
 
 
 

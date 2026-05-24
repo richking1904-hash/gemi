@@ -85,11 +85,15 @@ def chat():
         
         # 사용자가 입력한 메시지가 비즈니스 성격인지 1차 카운트 분기 판단
         is_business_query = False
+        
+        # 👑 [4대 SNS 채널 확장 연동 키워드 패치 완료]
+        # - 새롭게 확장 조립된 카카오톡, 유튜브, 인스타, 블로그, 링크, 주소 관련 질문이 일상 대화로 오인되어 챗봇 한도가 차단되는 버그를 완벽 방어했습니다.
         keywords_for_business = [
             "제작", "비용", "단가", "포트폴리오", "기간", "일정", "연락", "이메일", "전화", "문의", 
-            "견적", "작업", "의뢰", "수정", "환불", "금액", "디자인", "명함", "단추", "스튜디오", "가격", "얼마"
+            "견적", "작업", "의뢰", "수정", "환불", "금액", "디자인", "명함", "단추", "스튜디오", "가격", "얼마",
+            "인스타", "instagram", "블로그", "naver", "카카오", "kakao", "유튜브", "youtube", "채널", "링크", "주소"
         ]
-        if any(k_word in user_message for k_word in keywords_for_business):
+        if any(k_word in user_message.lower() for k_word in keywords_for_business):
             is_business_query = True
 
         # 🔴 일상대화일 때만 10회 카운트 제한 검증 작동 (초과 시 AI 차단 후 고정 문구 출력으로 토큰 세이브)
