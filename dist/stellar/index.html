@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>허정아 - STELLAR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #C5A059; --dark-bg: #121314; }
+        body { background-color: var(--dark-bg); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 15px; overflow: hidden; }
+        .serif { font-family: 'Bodoni Moda', serif; }
+        
+        /* 👑 사각 테두리 규격 및 사이즈 100% 순정 유지 */
+        .centered-card { 
+            width: 100%; 
+            max-width: 410px; 
+            height: calc(100vh - 30px); 
+            max-height: 90vh; 
+            background-color: #1a1c1e; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 32px; 
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        
+        #mainPage { overflow-y: auto; }
+        #mainPage::-webkit-scrollbar { width: 0px; } 
+
+        /* 👑 이미지 높이 비중 원본대로 55% 고정 */
+        .card-image-wrapper { width: 100%; height: 55%; position: relative; overflow: hidden; flex-shrink: 0; }
+        
+        /* 👑 하단 여백 정밀 다이어트 세팅 */
+        .card-content-wrapper { flex: 1; padding: 16px 20px 20px 20px; display: flex; flex-direction: column; justify-content: space-between; background: #1a1c1e; }
+        
+        .sub-page-content { flex: 1; overflow-y: auto; padding: 24px; background: #0c0d0e; }
+        .sub-page-content::-webkit-scrollbar { width: 3px; }
+        .sub-page-content::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+        
+        .smart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
+        
+        /* 👑 유동형 드래그 챗봇 레이어 */
+        .floating-chat-widget { position: absolute; bottom: 24px; right: 24px; z-index: 100; touch-action: none; user-select: none; }
+        .chat-toggle-btn { width: 52px; height: 52px; background-color: #ffffff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 2px solid var(--gold); cursor: grab; transition: transform 0.2s, border-color 0.2s; }
+        .chat-toggle-btn:active { cursor: grabbing; transform: scale(0.95); }
+        .chat-window { width: 310px; height: 410px; background: #191b1d; border: 1px solid var(--gold); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; }
+        
+        .widget-msg-zone { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .widget-msg-zone::-webkit-scrollbar { width: 3px; }
+        .widget-msg-zone::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .hidden { display: none !important; }
+        input, textarea { background: #1a1c1e !important; border: 1px solid #333 !important; color: white !important; border-radius: 12px !important; padding: 12px !important; width: 100%; outline: none; }
+        input:focus, textarea:focus { border-color: var(--gold) !important; }
+        .gold-btn { background: var(--gold); color: #000; font-weight: 700; border-radius: 14px; padding: 14px; width: 100%; transition: 0.3s; }
+
+        /* 👑 [흑백 버그 완전 박멸 인스타 마스킹 컬러 채널 가동] */
+        .insta-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            border-radius: 6px;
+            padding: 3.5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+        /* 👑 [블로그 초록색 네모박스 컨테이너 프레임 장착] */
+        .naver-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #03C75A;
+            border-radius: 5px;
+            padding: 4.5px 5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+        /* 👑 [신설: 카카오톡 공식 옐로우 멜팅 박스 프레임 장착] */
+        .kakao-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #FEE500;
+            border-radius: 6px;
+            padding: 4.5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+        /* 👑 [신설: 유튜브 공식 브라이트 레드 스퀘어 프레임 장착] */
+        .youtube-icon-frame {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #FF0000;
+            border-radius: 6px;
+            padding: 5px 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        /* 👑 [신설 조립 결합 브릿지] 외부 수급 CSS 프리셋 팩 주입 통로 확보 */
+        
+    </style>
+</head>
+<body class="antialiased font-sans text-stone-200">
+    <div class="centered-card">
+        <div id="mainPage" class="w-full h-full flex flex-col">
+            <div class="card-image-wrapper">
+                <img src="https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/Image_fx - 2026-01-15T222118.658_1779622411.png" class="w-full h-full object-cover grayscale-[20%]">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1c1e] opacity-100"></div>
+            </div>
+            <div class="card-content-wrapper">
+                <div class="text-center mt-1">
+                    <h1 class="text-2xl font-bold tracking-tight text-white mb-0.5 serif italic">허정아</h1>
+                    <p class="text-[10px] text-[#C5A059] font-bold uppercase tracking-[4px] mb-2">STELLAR</p>
+                    <p class="text-xs text-stone-400 font-light leading-relaxed max-w-[280px] mx-auto break-keep mb-2">"A star with a fox’s charm"</p>
+                </div>
+                
+                <div class="flex flex-col items-center gap-2 bg-white/5 py-2 px-4 rounded-2xl border border-white/5 mb-3">
+                    <div class="flex justify-center gap-5 text-[11px] text-stone-300 items-center w-full border-b border-white/5 pb-1.5">
+                        <a href="tel:010-4234-8050" class="hover:text-white transition-colors flex items-center gap-1.5"><span>📞</span> <span class="font-medium tracking-wider">Call</span></a>
+                        <span class="text-stone-600">|</span>
+                        <span class="tracking-wide">✉️ Nothing</span>
+                    </div>
+                    <div class="flex justify-center gap-5 items-center py-0.5">
+                        <a href="https://instagram.com/" target="_blank" id="snsIconBtn1" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="INSTAGRAM"></a>
+                        <a href="https://blog.naver.com/" target="_blank" id="snsIconBtn2" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="NAVER_BLOG"></a>
+                        <a href="https://pf.kakao.com/" target="_blank" id="snsIconBtn3" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="KAKAO_TALK"></a>
+                        <a href="https://youtube.com/" target="_blank" id="snsIconBtn4" style="display: flex;" class="transition-transform hover:scale-110 flex items-center justify-center" title="YOUTUBE"></a>
+                    </div>
+                </div>
+
+                <div class="smart-grid">
+                    <button onclick="switchPage('promoPage')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors text-center block w-full">Portfolio</button>
+                    <button onclick="switchPage('contactPage')" class="gold-btn text-[11px] py-3 tracking-widest uppercase shadow-xl hover:opacity-90 transition-opacity">Contact</button>
+                </div>
+            </div>
+        </div>
+
+        <div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>    <div style='display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;'>        <span style='font-size: 10px; font-weight: bold; tracking-spacing: 2px; color: #C5A059; text-align: left;' class='serif uppercase'>Selected Pieces</span>        <span style='font-size: 14px; font-weight: 700; color: #fff; text-align: center; font-family: "Noto Sans KR", sans-serif; tracking-wide: 1px; line-height: 1;'>허정아</span>        <button onclick="switchPage('mainPage')" style='font-size: 10px; font-weight: bold; color: #888; text-decoration: none; text-transform: uppercase; tracking-wider: 1px; text-align: right; background: none; border: none; cursor: pointer;' onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Close ✕</button>    </div>    <div class='sub-page-content overflow-y-auto px-5 py-4' style='max-height: 90vh; scrollbar-width: none; -ms-overflow-style: none;'>        <div class='flex flex-col space-y-6 items-center'><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-03T225909.284_1779622412.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-03T225909.284</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>asfdafas</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T221941.990_1779622414.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T221941.990</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sadfsadsa</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222001.297_1779622415.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T222001.297</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>asdfsafdsa</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222014.865_1779622417.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T222014.865</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>afsafsdaf</p>  </div></div><div class='centered-card-item' style='width:100%; box-sizing:border-box; background-color:#1a1c1e; border:1px solid rgba(255,255,255,0.1); border-radius:32px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6); display:flex; flex-direction:column; margin-bottom:24px;'>  <div style='width:100%; position:relative; overflow:hidden; padding:0;'>    <img src='https://bjbpjkeahkupmeuvfwys.supabase.co/storage/v1/object/public/gemi_assets/port_Image_fx - 2026-01-15T222040.747_1779622419.png' style='width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; display:block; margin:0 auto;'>  </div>  <div style='padding:16px; background:#1a1c1e; text-align:center; border-top:1px solid rgba(255,255,255,0.05);'>    <h4 class='text-[13px] font-bold text-[#C5A059] tracking-wide serif italic'>Image_fx - 2026-01-15T222040.747</h4>    <p class='text-[10px] text-stone-400 font-light leading-relaxed mt-1 break-keep' style='max-width:280px; margin:4px auto 0 auto;'>sdafasdfas</p>  </div></div></div>    </div></div>
+
+        <div id="contactPage" class="hidden w-full h-full flex flex-col">
+            <div class="px-6 py-4 border-b border-white/5 bg-[#1a1c1e] flex justify-between items-center">
+                <span class="text-xs font-bold tracking-[3px] text-[#C5A059] serif uppercase">Consultation</span>
+                <button onclick="switchPage('mainPage')" class="text-[10px] text-stone-500 hover:text-white uppercase tracking-wider">Close</button>
+            </div>
+            <div class="sub-page-content space-y-4">
+                <div class="space-y-3.5 pt-1">
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Name / Brand (필수)</label><input type="text" id="formClientName" placeholder="성함 또는 기업명을 입력하세요"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Contact (필수)</label><input type="text" id="formClientPhone" placeholder="010-0000-0000"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Project Type</label><input type="text" id="formProjectType" placeholder="예: 브랜딩, 상세페이지 제작"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Budget Range</label><input type="text" id="formBudget" placeholder="예: 300만원"></div>
+                    <div class="space-y-1"><label class="text-[10px] text-stone-400 uppercase tracking-widest">Details</label><textarea id="formProjectDesc" rows="2" placeholder="프로젝트 목표 및 요청사항을 기술해주세요."></textarea></div>
+                    <button onclick="submitEstimate()" id="submitBtn" class="gold-btn mt-2 py-3">SUBMIT BRIEF</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="draggableChatWidget" class="floating-chat-widget">
+            <button id="chatToggleBtn" class="chat-toggle-btn text-xl shadow-2xl">💬</button>
+            <div id="chatWindow" class="chat-window hidden absolute bottom-16 right-0">
+                <div class="bg-[#C5A059] px-4 py-2.5 text-black font-bold text-[10px] tracking-widest uppercase">✨ STELLAR AI Assistant</div>
+                
+                <div id="widgetMsgZone" class="widget-msg-zone bg-[#1a1c1e]">
+                    <div class="flex flex-col gap-1.5 mb-2 p-1 border-b border-white/5 pb-3" style="display: block;">
+                        <span class="text-[9px] text-stone-500 uppercase tracking-wider block mb-1">추천 질문 선택</span>
+                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">포트폴리오 제작 기간이 얼마나 걸리나요?</button>
+                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">상세페이지 디자인 단가가 궁금합니다.</button>
+                        <button onclick="clickFaqButton(event, this)" style="display: block;" class="text-left bg-stone-800 text-stone-300 text-[11px] px-3 py-2 rounded-xl border border-white/5 hover:border-[#C5A059] transition-all break-keep">작업 의뢰는 어떻게 신청하나요?</button>
+                    </div>
+                </div>
+                
+                <div class="p-3 bg-[#0c0d0e] flex gap-2 border-t border-white/5">
+                    <input type="text" id="widgetInput" class="flex-1 text-[11px]" placeholder="Ask anything...">
+                    <button type="button" id="sendBtn" class="bg-[#C5A059] text-black text-[11px] font-bold px-3 rounded-xl">전송</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const encodedData = "error";
+        let G_TXT = (encodedData === "error") ? "" : atob(encodedData);
+        
+        // 👑 [4대 SNS 프리미엄 시그니처 프레임 박스 로고 완벽 이식 엔진 구역]
+        function renderSnsLogos() {
+            const snsTypes = ["INSTAGRAM".toUpperCase(), "NAVER_BLOG".toUpperCase(), "KAKAO_TALK".toUpperCase(), "YOUTUBE".toUpperCase()];
+            const targets = [document.getElementById('snsIconBtn1'), document.getElementById('snsIconBtn2'), document.getElementById('snsIconBtn3'), document.getElementById('snsIconBtn4')];
+            
+            // 1. 인스타 흰색 심볼 (그라데이션 프레임 내부에 안착)
+            const svgInsta = `<span class="insta-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></span>`;
+            
+            // 2. 네이버 블로그 하얀색 N 심볼 (초록색 스퀘어 프레임 내부에 안착)
+            const svgBlog = `<span class="naver-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 0h-4.3l-4.5 13.2V0H3.3v24h4.3l4.5-13.2V24h4.3V0z"/></svg></span>`;
+            
+            // 3. 카카오톡 어두운 초콜릿 색 심볼 (노란색 스퀘어 프레임 내부에 안착)
+            const svgKakao = `<span class="kakao-icon-frame"><svg class="w-full h-full text-[#3C1E1E]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.553 1.706 4.8 4.29 5.99l-.853 3.125a.366.366 0 00.51.413l3.667-2.443c.453.056.914.086 1.386.086 4.97 0 9-3.186 9-7.116C21 6.185 16.97 3 12 3z"/></svg></span>`;
+            
+            // 4. 유튜브 삼각 플레이 재생 버튼 심볼 (빨간색 스퀘어 프레임 내부에 안착)
+            const svgYoutube = `<span class="youtube-icon-frame"><svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>`;
+            
+            const defaultIcon = `📁`;
+
+            targets.forEach((btn, index) => {
+                if(!btn) return;
+                const type = snsTypes[index];
+                if (type.includes("INSTA")) {
+                    btn.innerHTML = svgInsta;
+                } else if (type.includes("BLOG") || type.includes("NAVER")) {
+                    btn.innerHTML = svgBlog;
+                } else if (type.includes("KAKAO") || type.includes("TALK")) {
+                    btn.innerHTML = svgKakao;
+                } else if (type.includes("YOUTUBE")) {
+                    btn.innerHTML = svgYoutube;
+                } else {
+                    btn.innerText = defaultIcon;
+                    btn.className += " text-xs font-bold bg-stone-800 px-2.5 py-1 rounded-xl border border-white/5 text-stone-300";
+                }
+            });
+        }
+
+        function switchPage(id) { 
+            ['mainPage', 'promoPage', 'contactPage'].forEach(el => document.getElementById(el).classList.add('hidden')); 
+            document.getElementById(id).classList.remove('hidden'); 
+        }
+        
+        let isWelcomeInserted = false;
+        document.getElementById('chatToggleBtn').addEventListener('click', (e) => {
+            if (document.getElementById('draggableChatWidget').hasAttribute('data-dragged')) {
+                document.getElementById('draggableChatWidget').removeAttribute('data-dragged');
+                return;
+            }
+            const chatWin = document.getElementById('chatWindow');
+            chatWin.classList.toggle('hidden');
+            
+            if (!chatWin.classList.contains('hidden') && !isWelcomeInserted) {
+                const msgZone = document.getElementById('widgetMsgZone');
+                const welcomeHtml = `
+                    <div id="gemiWelcomeMsg" class="flex flex-col items-start mb-2 order-first">
+                        <div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white leading-relaxed break-keep">
+                            안녕하세요! 디렉터 허정아님의 프로젝트 안내를 보조하는 AI 팀원입니다. ✨<br><br>전체적인 포트폴리오 안내 및 견적 문의에 대해 성심성의껏 안내해 드릴게요. 궁금한 점을 편하게 말씀해 주세요!
+                        </div>
+                    </div>
+                `;
+                msgZone.insertAdjacentHTML('beforeend', welcomeHtml);
+                isWelcomeInserted = true;
+                msgZone.scrollTop = msgZone.scrollHeight;
+            }
+        });
+
+        function initDraggableWidget() {
+            const widget = document.getElementById('draggableChatWidget');
+            const handle = document.getElementById('chatToggleBtn');
+            let isDragging = false;
+            let startX, startY, initialRight, initialBottom;
+
+            function dragStart(e) {
+                isDragging = true;
+                widget.removeAttribute('data-dragged');
+                const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                startX = clientX;
+                startY = clientY;
+                
+                const rect = widget.getBoundingClientRect();
+                const parentRect = widget.parentElement.getBoundingClientRect();
+                initialRight = parentRect.right - rect.right;
+                initialBottom = parentRect.bottom - rect.bottom;
+            }
+
+            function dragMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                widget.setAttribute('data-dragged', 'true');
+                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+                
+                const deltaX = startX - clientX;
+                const deltaY = startY - clientY;
+                
+                widget.style.right = (initialRight + deltaX) + 'px';
+                widget.style.bottom = (initialBottom + deltaY) + 'px';
+            }
+
+            function dragEnd() {
+                isDragging = false;
+            }
+
+            handle.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', dragMove, { passive: false });
+            document.addEventListener('mouseup', dragEnd);
+
+            handle.addEventListener('touchstart', dragStart, { passive: true });
+            document.addEventListener('touchmove', dragMove, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+        }
+        
+        function clickFaqButton(e, btnElement) {
+            const questionText = btnElement.innerText.trim();
+            const inputField = document.getElementById('widgetInput');
+            if (inputField) {
+                inputField.value = questionText;
+                sendAiMessage(e);
+            }
+        }
+
+        async function submitEstimate() {
+            const btn = document.getElementById('submitBtn');
+            if (!btn) return;
+            
+            const nameEl = document.getElementById('formClientName');
+            const phoneEl = document.getElementById('formClientPhone');
+            const typeEl = document.getElementById('formProjectType');
+            const budgetEl = document.getElementById('formBudget');
+            const descEl = document.getElementById('formProjectDesc');
+            
+            if(!nameEl || !nameEl.value.trim()){
+                alert("디렉터님이 성함을 알아야 연락드릴 수 있습니다. 이름 또는 brand_name을 입력해주세요.");
+                nameEl.focus(); return;
+            }
+            if(!phoneEl || !phoneEl.value.trim()){
+                alert("연락처를 남겨주셔야 문의 내용에 대한 답변을 드릴 수 있습니다.");
+                phoneEl.focus(); return;
+            }
+
+            const data = { 
+                name: nameEl.value, 
+                phone: phoneEl.value, 
+                type: typeEl ? typeEl.value : '', 
+                budget: budgetEl ? budgetEl.value : '', 
+                desc: descEl ? descEl.value : '' 
+            };
+            
+            btn.innerText = "SENDING...";
+            btn.disabled = true;
+            
+            try {
+                await fetch('${SUPABASE_URL}/rest/v1/gemi_customer_inquiry', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "apikey": "${SUPABASE_KEY}",
+                        "Authorization": "Bearer ${SUPABASE_KEY}"
+                    },
+                    body: JSON.stringify({
+                        brand_name: "STELLAR",
+                        customer_name: data.name,
+                        customer_contact: data.phone,
+                        inquiry_type: data.type,
+                        message: `[예산: ${data.budget}] ${data.desc}`
+                    })
+                });
+
+                fetch('https://gemi-5vfl.onrender.com/api/submit-inquiry', { 
+                    method: "POST", 
+                    headers: { "Content-Type": "application/json" }, 
+                    body: JSON.stringify({ 
+                        customer_name: data.name, 
+                        customer_contact: data.phone, 
+                        inquiry_type: data.type, 
+                        message: `[예산: ${data.budget}] ${data.desc}` 
+                    }) 
+                });
+                
+                alert("문의가 정상 전송되었습니다!");
+            } catch (error) {
+                alert("전송 중 오류가 발생했습니다: " + error.message);
+            } finally {
+                btn.innerText = "SUBMIT BRIEF";
+                btn.disabled = false;
+                switchPage('mainPage');
+            }
+        }
+
+        async function sendAiMessage(e) {
+            if(e && typeof e.preventDefault === 'function') e.preventDefault();
+
+            const input = document.getElementById('widgetInput');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-end mb-2"><div class="bg-[#C5A059] p-3 rounded-2xl text-[11px] text-black">${text}</div></div>`);
+            input.value = '';
+            
+            setTimeout(() => {
+                const msgZone = document.getElementById('widgetMsgZone');
+                if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;
+            }, 50);
+            
+            try {
+                const safeGuideline = G_TXT
+                    .replace(/\\/g, '\\\\')
+                    .replace(/"/g, '\\"')
+                    .replace(/\n/g, '\\n')
+                    .replace(/\r/g, '\\r')
+                    .replace(/\t/g, '\\t');
+
+                const response = await fetch('https://gemi-5vfl.onrender.com/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: text, 
+                        guideline_txt: safeGuideline,
+                        brand_name: "STELLAR"
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.reply && data.reply.includes("오늘 준비된 대화 개수")) {
+                    input.placeholder = "대화 한도가 소진되었습니다.";
+                    input.disabled = true;
+                    document.getElementById('sendBtn').disabled = true;
+                }
+
+                document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="flex flex-col items-start mb-2"><div class="bg-[#333] p-3 rounded-2xl text-[11px] text-white break-keep leading-relaxed">${data.reply || data.error}</div></div>`);
+                
+                setTimeout(() => {
+                    const msgZone = document.getElementById('widgetMsgZone');
+                    if(msgZone) msgZone.scrollTop = msgZone.scrollHeight;
+                }, 50);
+
+            } catch(e) {
+                document.getElementById('widgetMsgZone').insertAdjacentHTML('beforeend', `<div class="text-[10px] text-red-500">통신 실패: ${e.message}</div>`);
+            }
+        }
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSnsLogos();
+            initDraggableWidget();
+        });
+
+        document.getElementById('sendBtn').addEventListener('click', sendAiMessage);
+        document.getElementById('widgetInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendAiMessage(e); });
+    </script>
+</body>
+</html>

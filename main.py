@@ -10,6 +10,9 @@ from factory_modules.gui_module import export_gui_data
 from factory_modules.db_module import save_client_data_v2, initialize_db_factory
 from factory_modules.ai_module import generate_webcard_code
 
+# 👑 [정밀 보정 구역] 누락되었던 환경 변수 활성화 함수를 가동합니다.
+load_dotenv()
+
 # 서버 설정 (환경 변수에서 호출하도록 수정)
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")

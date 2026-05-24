@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from supabase import create_client
 from dotenv import load_dotenv
+from cryptography.fernet import Fernet  # 🔐 렌더 실시간 해독 엔진 라이브러리 추가
 
 load_dotenv()
 
@@ -24,26 +25,58 @@ CORS(app, resources={
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+
+# 🔐 [시큐리티 마스터 설정] 기본 마스터 설정값 및 해독용 마스터 키 로드
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = "859745575"
+ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # [대화형 카운터 레이어] 사용자의 일상대화 횟수만 카운트하는 저장소
 DAILY_TALK_COUNTER = {}
 
-def send_telegram_alert(text: str):
-    if not TELEGRAM_BOT_TOKEN:
-        print("❌ [Telegram] 에러: TELEGRAM_TOKEN 환경 변수가 설정되지 않았습니다.")
+# 👑 [동적 실시간 복호화 알림 엔진으로 개조]
+def send_telegram_alert(text: str, brand_name: str = "GeMi"):
+    """
+    gemi_telegram_config 테이블에서 brand_name에 맞는 암호화된 토큰/채널 ID를 꺼내와
+    ENCRYPTION_KEY로 실시간 복호화하여 해당 디렉터의 텔레그램으로 알림을 보냅니다.
+    """
+    target_token = TELEGRAM_BOT_TOKEN
+    target_chat_id = TELEGRAM_CHAT_ID
+    
+    # 🔐 슈파베이스의 암호화 설정 장부 탐색 파이프라인
+    if ENCRYPTION_KEY and brand_name and brand_name != "GeMi":
+        try:
+            res = supabase.table("gemi_telegram_config").select("telegram_token", "telegram_chat_id").eq("brand_name", brand_name.strip()).execute()
+            if res.data and len(res.data) > 0:
+                config = res.data[0]
+                enc_token = config.get("telegram_token")
+                enc_chat_id = config.get("telegram_chat_id")
+                
+                if enc_token and enc_chat_id:
+                    f = Fernet(ENCRYPTION_KEY.encode())
+                    # 실시간 해독 복조 개시
+                    decrypted_token = f.decrypt(enc_token.encode('utf-8')).decode('utf-8')
+                    decrypted_chat_id = f.decrypt(enc_chat_id.encode('utf-8')).decode('utf-8')
+                    
+                    target_token = decrypted_token
+                    target_chat_id = decrypted_chat_id
+                    print(f"🔓 [Security Alert] [{brand_name}] 디렉터 전용 텔레그램 보안 열쇠 해독 성공!")
+        except Exception as decrypt_err:
+            print(f"ℹ️ [Security Alert] [{brand_name}] 전용 키 해독 실패 (마스터 계정으로 대체 전송): {decrypt_err}")
+
+    if not target_token:
+        print("❌ [Telegram] 에러: 발송할 TELEGRAM_TOKEN이 존재하지 않습니다.")
         return
     
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "Markdown"}
+    url = f"https://api.telegram.org/bot{target_token}/sendMessage"
+    payload = {"chat_id": target_chat_id, "text": text, "parse_mode": "Markdown"}
     
     try:
         response = requests.post(url, json=payload, timeout=5)
         if response.status_code == 200:
-            print("✅ [Telegram] 알림 전송 성공.")
+            print(f"✅ [Telegram] [{brand_name}] 알림 전송 성공.")
         else:
             print(f"❌ [Telegram] 전송 실패 (상태코드 {response.status_code}): {response.text}")
     except Exception as e:
@@ -125,7 +158,7 @@ def chat():
             "messages": [
                 {"role": "system", "content": system_instruction},
                 {"role": "user", "content": user_message}
-            ]
+            }
         }
         
         req = urllib.request.Request(
@@ -166,6 +199,9 @@ def submit_inquiry():
         i_type = body.get("inquiry_type", "").strip()
         msg = body.get("message", "").strip()
         
+        # 👑 [동적 바인딩 추가] 웹명함 양식에서 넘겨주는 실제 소유자 브랜드 추출 (없으면 기본값 GeMi)
+        brand_name = body.get("brand_name", "GeMi").strip()
+        
         # 👑 [교정 유지] Vercel 비동기 요청 본문에서 독립된 budget(예산) 데이터를 안전하게 추출
         budget_val = "미기재 또는 상세 내용 참고"
         if "[예산:" in msg:
@@ -179,19 +215,21 @@ def submit_inquiry():
         if not c_name or not c_contact:
             return jsonify({"success": False, "error": "필수 입력 데이터가 누락되었습니다."}), 400
 
-        # 👑 [텔레그램 알림 양식 고도화 유지] 5대 입력칸 분리 포맷
+        # 👑 [텔레그램 알림 양식 고도화 유지] 5대 입력칸 분리 포맷 (해당 명함 소유주의 브랜드명 표기 추가)
         alert_text = (
-            f"🔔 *[GeMi 명함 신규 견적 문의]*\n\n"
+            f"🔔 *[{brand_name} 명함 신규 견적 문의]*\n\n"
             f"👤 *고객/기업명:* {c_name}\n"
             f"📞 *연락처:* {c_contact}\n"
             f"📂 *프로젝트 유형:* {i_type}\n"
             f"💰 *희망 예산 범위:* {budget_val}\n"
             f"📝 *상세 요청사항:* {msg}"
         )
-        send_telegram_alert(alert_text)
+        # 🔐 동적 해독 엔진을 거쳐 명함 주인에게 정확히 알림 전송
+        send_telegram_alert(alert_text, brand_name=brand_name)
         
+        # 👑 슈파베이스 장부에도 "GeMi" 고정이 아닌 실제 요청이 들어온 고유 브랜드명으로 직결 적재
         supabase.table("gemi_customer_inquiry").insert({
-            "brand_name": "GeMi", 
+            "brand_name": brand_name, 
             "customer_name": c_name,
             "customer_contact": c_contact,
             "inquiry_type": i_type,
