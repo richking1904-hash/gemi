@@ -144,8 +144,8 @@ def generate_webcard_code(gui_payload: dict) -> dict:
         "</div>"
     )
 
-    # 👑 [문법 오류 정밀 수리 완료 구역]
-    # 따옴표 충돌 문제를 완벽히 조치하여 인터페이스 바인딩 오류를 완전히 제거했습니다.
+    # 👑 [오리지날 본진 직통 초고속 매싱 레이아웃]
+    # 파이썬 문법 에러의 원인이었던 문자열 꼬임 문제를 완벽하게 수정하여 싱크를 복원했습니다.
     main_card_layout_html = (
         "<div id='promoPage' class='hidden w-full h-full flex flex-col relative bg-[#1a1c1e]'>"
         "    <div style='display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: #1a1c1e; z-index: 100;'>"
