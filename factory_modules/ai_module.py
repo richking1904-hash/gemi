@@ -277,7 +277,6 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
 
     # 👑 [개미 아카이브 지붕 유지] 움직임 없이 외곽틀 위에 우아하게 수평 고정되는 브랜드 텍스트
-
     portfolio_main_title_html = (
 
         "<div style='text-align:center; padding:10px 0 2px 0; background:transparent; width:100%; max-width:410px; margin:0 auto;'>"
@@ -514,6 +513,22 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
 
 
+    # 👑 [하이브리드 포트폴리오 버튼 자동 치환 및 분기 엔진 주입 세팅]
+
+    if theme_key == "sync":
+
+        portfolio_btn_html = '<button onclick="switchPage(\'promoPage\')" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors text-center block w-full">Portfolio</button>'
+
+    else:
+
+        portfolio_btn_html = '<a href="./pages/portfolio.html" target="_blank" class="bg-stone-800 text-stone-200 font-bold text-[11px] py-3 rounded-2xl border border-white/5 tracking-widest uppercase hover:bg-stone-700 transition-colors text-center block w-full">Portfolio</a>'
+
+    
+
+    rendered_code = rendered_code.replace("${PORTFOLIO_BUTTON}", portfolio_btn_html)
+
+
+
     # 연락처 및 기타 정보
 
     rendered_code = rendered_code.replace("${PHONE}", contact_info.get("phone", ""))
@@ -592,11 +607,16 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
 
 
+    # 👑 [수정의 핵심 가벨 포인트] 
+
+    # 리모컨 설정 테마가 오리지널('sync') 상태이면 'portfolio_html'을 빈 문자열("")로 반환하여 별도 물리 파일 생성을 완벽히 차단하고,
+
+    # 외부 테마일 때만 정상적으로 'final_portfolio_html' 소스코드를 태워 배송 공정으로 넘깁니다.
+
     return {
 
         "main_html": rendered_code,
 
-        "portfolio_html": final_portfolio_html
+        "portfolio_html": "" if theme_key == "sync" else final_portfolio_html
 
-    } 
-
+    }
