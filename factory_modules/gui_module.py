@@ -35,12 +35,12 @@ def browse_files_manual():
             if path not in dropped_files:
                 dropped_files.append(path)
         drop_zone_label.configure(text=f"📊 총 {len(dropped_files)}개의 자산이 안전하게 로드되었습니다.", text_color="#64B5F6")
-       
+        
         # 👑 [동기화 마스터 패치]
         # 통합 자산 버튼을 누르면 대문 이미지뿐만 아니라, 아래 동적 생성된 포트폴리오 모든 칸의 드롭다운 메뉴에도 파일 이름이 실시간 동기화됩니다.
         file_names = [os.path.basename(f) for f in dropped_files]
         main_image_combobox.configure(values=file_names)
-       
+        
         # 포트폴리오 칸들의 드롭다운 목록도 한꺼번에 갱신
         img_nodes = [f for f in file_names if not f.endswith('.txt')]
         for item in portfolio_items:
@@ -48,66 +48,66 @@ def browse_files_manual():
             # 만약 기존 선택값이 비어있었다면 첫 이미지로 자동 임시 세팅
             if item._combobox.get() == "먼저 하단 자산을 추가해 주세요" and img_nodes:
                 item._combobox.set(img_nodes[0])
-       
+        
         if img_nodes:
             main_image_combobox.set(img_nodes[-1])
         elif file_names:
             main_image_combobox.set(file_names[-1])
-           
+            
         status_label.configure(text=f"➕ {len(file_paths)}개의 파일이 시스템 자산에 추가되었습니다.", text_color="#A5D6A7")
 
 def reset_file_list():
     global dropped_files
     dropped_files.clear()
     drop_zone_label.configure(text="아래 버튼을 눌러 파일들을 추가하세요\n(png, jpg, txt 다중 선택 지원)", text_color="#888888")
-   
+    
     main_image_combobox.configure(values=["먼저 파일을 추가해 주세요"])
     main_image_combobox.set("먼저 파일을 추가해 주세요")
-   
+    
     for item in portfolio_items:
         item._combobox.configure(values=["먼저 하단 자산을 추가해 주세요"])
         item._combobox.set("먼저 하단 자산을 추가해 주세요")
-       
+        
     status_label.configure(text="🧹 로드된 파일 목록이 초기화되었습니다.", text_color="#FFB74D")
 
 # 👑 포트폴리오 아이템을 우측 프레임에 동적으로 추가하는 함수 (드롭다운 버전)
 def add_portfolio_item_ui():
     item_idx = len(portfolio_items) + 1
-   
+    
     # 개별 포트폴리오를 감싸는 서브 프레임 테두리
     item_frame = ctk.CTkFrame(portfolio_scroll_inner, fg_color="#1E1E1E", border_width=1, border_color="#333333")
     item_frame.pack(fill="x", pady=6, padx=5)
-   
+    
     # 상단 헤더 라인
     header_label = ctk.CTkLabel(item_frame, text=f"🖼️ 포트폴리오 프로젝트 {item_idx}번", font=("Helvetica", 11, "bold"), text_color="#C5A059")
     header_label.pack(anchor="w", padx=10, pady=(6, 2))
-   
+    
     # 👑 [개조 핵심] 파일 탐색기 버튼을 지우고 대표사진 지정과 똑같은 "선택 드롭다운(ComboBox)" 배치
     ctk.CTkLabel(item_frame, text="📸 작품 이미지 파일 선택:", font=("Helvetica", 10), text_color="#AAAAAA").pack(anchor="w", padx=10)
-   
+    
     # 현재 로드된 이미지 에셋이 있다면 가져오고 없으면 안내 문구 출력
     file_names = [os.path.basename(f) for f in dropped_files]
     img_nodes = [f for f in file_names if not f.endswith('.txt')]
     initial_values = img_nodes if img_nodes else ["먼저 하단 자산을 추가해 주세요"]
-   
+    
     item_combobox = ctk.CTkComboBox(item_frame, values=initial_values, width=380, fg_color="#2A2A2A")
     item_combobox.pack(fill="x", padx=10, pady=(2, 6))
     if img_nodes:
         item_combobox.set(img_nodes[0])
     else:
         item_combobox.set("먼저 하단 자산을 추가해 주세요")
-   
+    
     # 2단계: 기획 서사 입력란
     ctk.CTkLabel(item_frame, text="✍️ 디자인 기획 서사 및 의도 (서사 생략 시 미니멀 갤러리로 자동 전환):", font=("Helvetica", 10), text_color="#AAAAAA").pack(anchor="w", padx=10, pady=(4, 0))
     desc_textbox = ctk.CTkTextbox(item_frame, height=45, fg_color="#121314", border_width=1, border_color="#2A2A2A", font=("Noto Sans KR", 10))
     desc_textbox.pack(fill="x", padx=10, pady=(2, 8))
-   
+    
     # 데이터 매칭용 속성 바인딩 수집 장부 개조
     item_frame._combobox = item_combobox
     item_frame._desc_widget = desc_textbox
     portfolio_items.append(item_frame)
 
-# 👑 [신설 구역] 리모컨에서 직접 텔레그램 동적 연동 함수를 호출하는 파이프라인 브릿지
+# 👑 [양방향 정밀 수정 제어 구역]: 리모컨에서 직접 텔레그램 동적 연동 및 중복 방어 팝업 연동
 def on_telegram_save_click():
     b_name = brand_name_entry.get().strip()
     tg_token = tg_token_entry.get().strip()
@@ -120,16 +120,36 @@ def on_telegram_save_click():
         messagebox.showwarning("입력 누락", "동적 알림 연동을 위한 텔레그램 봇 토큰과 사용자 ID(Chat ID)를 입력해주세요.")
         return
         
-    status_label.configure(text=f"✈️ Supabase 장부에 [{b_name}]의 텔레그램 연동 설정을 동적 업데이트 중...", text_color="#64B5F6")
+    status_label.configure(text=f"✈️ Supabase 장부에 [{b_name.lower()}]의 텔레그램 연동 설정을 동적 업데이트 중...", text_color="#64B5F6")
     app.update_idletasks()
     
-    # 앞서 업데이트한 db_module의 함수 호출 및 결과 검증
-    success = update_telegram_settings(b_name, tg_token, tg_id)
+    # 1차 시도: 일반 업서트 진행 (내부적으로 중복 체크 작동)
+    success = update_telegram_settings(b_name, tg_token, tg_id, force_upsert=False)
+    
+    # 👑 [중복 감지 필터 브릿지 연동]
+    # 만약 기존에 동일 이름 장부가 존재해 False가 리턴되었다면 유저에게 직접 의사를 묻습니다.
+    if not success:
+        # 혹시 진짜 DB 에러일 수도 있으므로, 기존 장부 중복 여부를 묻는 팝업 가동
+        confirm_overwrite = messagebox.askyesno(
+            "브랜드 중복 경고",
+            f"⚠️ [{b_name.lower()}] 브랜드 설정 장부가 데이터베이스에 이미 존재합니다.\n\n"
+            f"기존에 저장된 텔레그램 알림용 자물쇠(토큰 및 Chat ID)를 이번에 입력한 최신 값으로 강제 덮어쓰시겠습니까?"
+        )
+        if confirm_overwrite:
+            status_label.configure(text=f"🔄 [{b_name.lower()}] 장부 기존 데이터 강제 갱신 중...", text_color="#FFB74D")
+            app.update_idletasks()
+            # 2차 시도: force_upsert를 True로 강제 발동시켜 안전핀을 풀고 갱신 통과시킴
+            success = update_telegram_settings(b_name, tg_token, tg_id, force_upsert=True)
+        else:
+            status_label.configure(text="⚠️ 사용자가 기존 데이터 유지를 선택하여 동기화 취소.", text_color="#FFB74D")
+            return
+
+    # 최종 결과 보고 트랙
     if success:
-        messagebox.showinfo("연동 완료", f"🎉 [{b_name}] 브랜드의 실시간 텔레그램 알림 무선 채널이 완벽하게 업데이트되었습니다!")
-        status_label.configure(text=f"✅ [{b_name}] 텔레그램 파이프라인 개통 성공.", text_color="#A5D6A7")
+        messagebox.showinfo("연동 완료", f"🎉 [{b_name.lower()}] 브랜드의 실시간 텔레그램 알림 무선 채널이 완벽하게 업데이트되었습니다!")
+        status_label.configure(text=f"✅ [{b_name.lower()}] 텔레그램 파이프라인 개통 성공.", text_color="#A5D6A7")
     else:
-        messagebox.showerror("연동 실패", "Supabase 데이터베이스 통신 중 오류가 발생했습니다. 콘솔 창 로그를 확인하세요.")
+        messagebox.showerror("연동 실패", "Supabase 데이터베이스 통신 중 예외 오류가 발생했습니다. 콘솔 로그를 확인하세요.")
         status_label.configure(text="❌ 텔레그램 장부 업로드 실패.", text_color="#FF5252")
 
 def on_submit_click():
@@ -165,7 +185,7 @@ def on_submit_click():
     for item in portfolio_items:
         chosen_file_name = item._combobox.get()
         desc_t = item._desc_widget.get("1.0", "end").strip()
-       
+        
         # 드롭다운에서 선택된 파일 이름을 가지고 진짜 컴퓨터 내부 절대 경로(Absolute Path)를 역 추적합니다.
         img_p = ""
         if chosen_file_name and chosen_file_name != "먼저 하단 자산을 추가해 주세요":
@@ -173,7 +193,7 @@ def on_submit_click():
                 if os.path.basename(path) == chosen_file_name:
                     img_p = path
                     break
-                   
+                    
         if img_p or desc_t:
             final_portfolio_list.append({
                 "image_path": img_p,

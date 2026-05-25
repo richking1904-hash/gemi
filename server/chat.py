@@ -37,7 +37,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 DAILY_TALK_COUNTER = {}
 
 # 👑 [동적 실시간 복호화 알림 엔진으로 개조]
-def send_telegram_alert(text: str, brand_name: str = "GeMi"):
+def send_telegram_alert(text: str, brand_name: str = "gemi"):
     """
     gemi_telegram_config 테이블에서 brand_name에 맞는 암호화된 토큰/채널 ID를 꺼내와
     ENCRYPTION_KEY로 실시간 복호화하여 해당 디렉터의 텔레그램으로 알림을 보냅니다.
@@ -45,11 +45,13 @@ def send_telegram_alert(text: str, brand_name: str = "GeMi"):
     target_token = TELEGRAM_BOT_TOKEN
     target_chat_id = TELEGRAM_CHAT_ID
     
-    # 🔐 [수정 완료]: brand_name != "GeMi" 조건문을 삭제하여 어떤 브랜드명이든 장부에서 조회 및 복호화하도록 잠금 해제
-    if ENCRYPTION_KEY and brand_name:
+    # 👑 [대소문자 철벽 정제]: 리모컨 및 주소창 규격에 맞게 무조건 소문자로 치환
+    clean_brand_name = brand_name.strip().lower() if brand_name else "gemi"
+    
+    if ENCRYPTION_KEY and clean_brand_name:
         try:
-            # 🔥 [대소문자 철벽 방어 수술 완료]: .eq 대신 .ilike를 사용하여 대소문자 매칭 이슈 완벽 조치
-            res = supabase.table("gemi_telegram_config").select("telegram_token", "telegram_chat_id").ilike("brand_name", brand_name.strip()).execute()
+            # 🔥 [배달사고 완벽 조치]: .ilike의 중복 검출 버그를 박멸하고, 100% 소문자 1:1 매칭(.eq)으로 정확히 고유 장부 1건만 조준 사격합니다.
+            res = supabase.table("gemi_telegram_config").select("telegram_token", "telegram_chat_id").eq("brand_name", clean_brand_name).execute()
             if res.data and len(res.data) > 0:
                 config = res.data[0]
                 enc_token = config.get("telegram_token")
@@ -63,9 +65,11 @@ def send_telegram_alert(text: str, brand_name: str = "GeMi"):
                     
                     target_token = decrypted_token
                     target_chat_id = decrypted_chat_id
-                    print(f"🔓 [Security Alert] [{brand_name}] 디렉터 전용 텔레그램 보안 열쇠 해독 성공!")
+                    print(f"🔓 [Security Alert] [{clean_brand_name}] 디렉터 전용 텔레그램 보안 열쇠 해독 성공!")
+            else:
+                print(f"⚠️ [Security Alert] [{clean_brand_name}] 소문자 설정 장부가 DB에 없어 마스터 계정으로 우회합니다.")
         except Exception as decrypt_err:
-            print(f"ℹ️ [Security Alert] [{brand_name}] 전용 키 해독 실패 (마스터 계정으로 대체 전송): {decrypt_err}")
+            print(f"ℹ️ [Security Alert] [{clean_brand_name}] 전용 키 해독 실패 (마스터 계정으로 대체 전송): {decrypt_err}")
 
     if not target_token:
         print("❌ [Telegram] 에러: 발송할 TELEGRAM_TOKEN이 존재하지 않습니다.")
@@ -77,7 +81,7 @@ def send_telegram_alert(text: str, brand_name: str = "GeMi"):
     try:
         response = requests.post(url, json=payload, timeout=5)
         if response.status_code == 200:
-            print(f"✅ [Telegram] [{brand_name}] 알림 전송 성공.")
+            print(f"✅ [Telegram] [{clean_brand_name}] 알림 전송 성공.")
         else:
             print(f"❌ [Telegram] 전송 실패 (상태코드 {response.status_code}): {response.text}")
     except Exception as e:
@@ -96,7 +100,9 @@ def chat():
         body = request.get_json() or {}
         user_message = body.get("message", "").strip()
         guideline_data = body.get("guideline_txt", "")
-        brand_name = body.get("brand_name", "GeMi").strip()
+        
+        # 👑 [상담 엔진 대소문자 안전망]: 리모컨 빌드 시 넘어오는 브랜드명을 무조건 소문자로 클렌징하여 캐시 장부 꼬임 차단
+        brand_name = body.get("brand_name", "gemi").strip().lower()
 
         if not user_message:
             return jsonify({"reply": "질문 내용이 비어있습니다."}), 200
@@ -191,21 +197,21 @@ def submit_inquiry():
         i_type = body.get("inquiry_type", "").strip()
         msg = body.get("message", "").strip()
         
-        # 👑 [브랜드명 바인딩 고도화]: Vercel 명함 폼 데이터 우선순위 적용
-        brand_name = body.get("brand_name", "").strip()
+        # 👑 [브랜드명 바인딩 고도화]: 넘어온 브랜드 텍스트를 무조건 '소문자' 필터링하여 매싱 일치화
+        brand_name = body.get("brand_name", "").strip().lower()
         
-        # 👑 [수정 완료]: 명함 폼에서 누락된 경우, 접속 주소창(Referer)에서 원본 글자 그대로(대소문자 유지) 추출하여 연동
+        # 👑 [역추적 엔진 소문자 동기화 완료]: 명함 폼에서 누락된 경우, 접속 주소창(Referer)에서 끝 단어를 추출해 강제로 '소문자' 변환
         if not brand_name:
             referer = request.headers.get("Referer", "")
             if referer:
                 path_parts = referer.rstrip('/').split('/')
-                last_part = path_parts[-1].strip()  # 강제 변환 없이 입력된 주소 글자 그대로 유지
+                last_part = path_parts[-1].strip().lower()  # 대소문자 유지 버그를 지우고 소문자로 강제 정제
                 if last_part and last_part.upper() not in ["VERCEL.APP", "WWW", "GEMISTUDIO", "INDEX.HTML"]:
                     brand_name = last_part
 
         # 주소 역추적으로도 확인이 어려울 때 최종 백업 기본값 처리
         if not brand_name:
-            brand_name = "GeMi"
+            brand_name = "gemi"
         
         budget_val = "미기재 또는 상세 내용 참고"
         if "[예산:" in msg:
@@ -228,7 +234,7 @@ def submit_inquiry():
             f"📝 *상세 요청사항:* {msg}"
         )
         
-        # 🔐 대소문자가 일치하는 장부를 정확히 매칭하여 알림 전송
+        # 🔐 소문자로 100% 매칭이 일치하는 장부를 정확히 찾아 알림 전송 가동
         send_telegram_alert(alert_text, brand_name=brand_name)
         
         supabase.table("gemi_customer_inquiry").insert({

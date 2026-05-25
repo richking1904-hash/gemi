@@ -190,11 +190,30 @@ def save_client_data_v2(payload: dict, image_paths: list) -> dict:
         "portfolio_items": portfolio_items
     }
 
-# 👑 [정밀 수정 구역] 텔레그램 설정값 "암호화 시큐리티" 업서트 파이프라인
-def update_telegram_settings(brand_name: str, token: str, chat_id: str) -> bool:
+
+# 👑 [시큐리티 필터 개조 완료 구역] 
+def check_existing_brand_config(brand_name: str) -> bool:
+    """
+    [신설 제약 엔진]: Supabase 창고에 이미 동일한 브랜드명이 소문자로 등록되어 있는지 사전 조회합니다.
+    """
+    if not brand_name:
+        return False
+    try:
+        clean_name = brand_name.strip().lower()
+        res = supabase.table("gemi_telegram_config").select("brand_name").eq("brand_name", clean_name).execute()
+        if res.data and len(res.data) > 0:
+            return True
+        return False
+    except Exception as e:
+        print(f"ℹ️ [DB Check] 사전 조회 중 패스: {e}")
+        return False
+
+
+def update_telegram_settings(brand_name: str, token: str, chat_id: str, force_upsert: bool = False) -> bool:
     """
     사용자가 리모컨에 입력한 토큰과 ID를 발급받은 ENCRYPTION_KEY로 암호화하여 
-    Supabase에 안전한 암호문 문자열 형태로 적재합니다.
+    Supabase에 안전한 암호문 문자열 형태로 적재합니다. 
+    (대소문자 강제 정제 조치 및 중복 방어 엔진 탑재 버전)
     """
     if not brand_name:
         print("❌ [DB Telegram] 에러: brand_name이 누락되었습니다.")
@@ -202,6 +221,15 @@ def update_telegram_settings(brand_name: str, token: str, chat_id: str) -> bool:
 
     if not ENCRYPTION_KEY:
         print("❌ [DB Telegram] 에러: 시스템에 ENCRYPTION_KEY 열쇠가 등록되지 않았습니다.")
+        return False
+
+    # 👑 [대소문자 철벽 방어 수술]: 들어온 문자열을 무조건 소문자로 일괄 클렌징
+    clean_brand_name = brand_name.strip().lower()
+
+    # GUI 연동용 안전장치: 강제 덮어쓰기가 아니고 장부에 이미 이름이 존재한다면 
+    # 무작정 에러를 내지 않고 False를 반환하여 GUI가 팝업(Yes/No)을 띄우게 제어권을 넘김
+    if not force_upsert and check_existing_brand_config(clean_brand_name):
+        print(f"⚠️ [DB Block] [{clean_brand_name}] 장부가 이미 존재하여 동기화를 임시 제한합니다.")
         return False
 
     try:
@@ -212,16 +240,16 @@ def update_telegram_settings(brand_name: str, token: str, chat_id: str) -> bool:
         encrypted_token = f.encrypt(token.strip().encode('utf-8')).decode('utf-8')
         encrypted_chat_id = f.encrypt(chat_id.strip().encode('utf-8')).decode('utf-8')
         
-        # 3. 암호화된 보정본 데이터 패키지 생성
+        # 3. 암호화된 보정본 데이터 패키지 생성 (소문자로 통일된 brand_name 바인딩)
         config_data = {
-            "brand_name": brand_name.strip(),
+            "brand_name": clean_brand_name,
             "telegram_token": encrypted_token,      # 🔐 암호문 투하
             "telegram_chat_id": encrypted_chat_id    # 🔐 암호문 투하
         }
         
-        # Supabase Upsert 문법 적용 (동일 브랜드명이 있으면 덮어쓰기)
+        # Supabase Upsert 문법 적용 (소문자 brand_name 기준으로 중복 없이 깔끔하게 덮어쓰기)
         supabase.table("gemi_telegram_config").upsert(config_data, on_conflict="brand_name").execute()
-        print(f"✈️ [DB Security Telegram] [{brand_name}] 서랍에 '암호화 세탁된 보안 장부' 갱신 완공!")
+        print(f"✈️ [DB Security Telegram] [{clean_brand_name}] 서랍에 '소문자 변환된 보안 장부' 최종 동기화 완료!")
         return True
     except Exception as e:
         print(f"❌ [DB Telegram] 보안 암호화 장부 동기화 실패 우회: {e}")
