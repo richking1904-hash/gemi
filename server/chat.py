@@ -199,17 +199,12 @@ def submit_inquiry():
         
         brand_name = body.get("brand_name", "").strip().lower()
         
-        # 🔴 [형규님 종속성 버그 해결책 반영 구역]
-        # 버셀 주소가 종속되어 상위 gemi의 파일이 강제로 실행되더라도, 
-        # 사용자가 현재 타고 들어온 브라우저 주소창(Referer)에 'stellar' 단어가 찍혀있다면 
-        # 버셀 라우팅을 씹어버리고 브랜드를 무조건 'stellar'로 고정해버립니다.
         referer = request.headers.get("Referer", "").lower()
         if "stellar" in referer:
             brand_name = "stellar"
         elif "jeonga" in referer:
             brand_name = "jeonga"
         
-        # 최종 백업 안전장치
         if not brand_name:
             brand_name = "gemi"
         
@@ -225,7 +220,6 @@ def submit_inquiry():
         if not c_name or not c_contact:
             return jsonify({"success": False, "error": "필수 입력 데이터가 누락되었습니다."}), 400
 
-        # 여기서 콘솔창(Render Logs)에 브랜드 이름과 화살표가 선명하게 찍히도록 프린트문을 철저히 심었습니다.
         print(f"🔔 [알림 엔진 포착] 브랜드명: {brand_name} / 유입 경로: {referer}")
 
         alert_text = (
@@ -252,6 +246,68 @@ def submit_inquiry():
     except Exception as e:
         print(f"❌ [Inquiry Error]: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+# 🛡️ [A안] 스텔라 전용 독립 우체통 신설 (토큰 보안 메커니즘 100% 보존 구역)
+@app.route('/api/submit-stellar-inquiry', methods=['POST', 'OPTIONS'])
+def submit_stellar_inquiry():
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+        
+    try:
+        body = request.get_json(silent=True) or {}
+        if not body:
+            body = request.form.to_dict()
+
+        c_name = body.get("customer_name", "").strip()
+        c_contact = body.get("customer_contact", "").strip()
+        i_type = body.get("inquiry_type", "").strip()
+        msg = body.get("message", "").strip()
+        
+        # 🎯 주소창 분석 필요 없음: 이 우체통 주소로 오면 묻지도 따지지도 않고 무조건 스텔라입니다.
+        brand_name = "stellar"
+        
+        budget_val = "미기재 또는 상세 내용 참고"
+        if "[예산:" in msg:
+            try:
+                parts = msg.split("]", 1)
+                budget_val = parts[0].replace("[예산:", "").strip()
+                msg = parts[1].strip()
+            except Exception:
+                pass
+
+        if not c_name or not c_contact:
+            return jsonify({"success": False, "error": "필수 입력 데이터가 누락되었습니다."}), 400
+
+        print(f"🚀 [스텔라 전용 알림 엔진 작동] 브랜드 고정: {brand_name}")
+
+        alert_text = (
+            f"🔔 *[{brand_name} 명함 신규 견적 문의]*\n\n"
+            f"👤 *고객/기업명:* {c_name}\n"
+            f"📞 *연락처:* {c_contact}\n"
+            f"📂 *프로젝트 유형:* {i_type}\n"
+            f"💰 *희망 예산 범위:* {budget_val}\n"
+            f"📝 *상세 요청사항:* {msg}"
+        )
+        
+        # 🔐 안전하게 숨겨진 스텔라 암호 장부를 렌더 마스터 키로 결합하여 다이렉트 전송
+        send_telegram_alert(alert_text, brand_name=brand_name)
+        
+        # 슈파베이스 백업 장부 저장
+        supabase.table("gemi_customer_inquiry").insert({
+            "brand_name": brand_name, 
+            "customer_name": c_name,
+            "customer_contact": c_contact,
+            "inquiry_type": i_type,
+            "message": f"[예산: {budget_val}] {msg}"
+        }).execute()
+        
+        return jsonify({"success": True, "message": "Stellar Inquiry submitted and saved successfully"}), 200
+        
+    except Exception as e:
+        print(f"❌ [Stellar Inquiry Error]: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
