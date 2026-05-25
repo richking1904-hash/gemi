@@ -29,7 +29,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 # 🔐 [시큐리티 마스터 설정] 기본 마스터 설정값 및 해독용 마스터 키 로드
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = "859745575"
-ENCRYPTION_KEY = "HaH7XnfEcvYDP0ZdCyOTE9wrTzQCd13yKu4IL49Sqaw="  # 🔥 마스터 비밀 열쇠 직결 패치 완료
+ENCRYPTION_KEY = "gzA_LSFto4ku9w8gBtMSxuDLHGpjNh7y4M1eBN5bw1Q="  # 🔥 마스터 비밀 열쇠 직결 패치 완료
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
