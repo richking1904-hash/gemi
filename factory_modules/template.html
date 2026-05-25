@@ -83,7 +83,7 @@
             height: 24px;
             background-color: #FEE500;
             border-radius: 6px;
-            padding: 4.5px;
+           padding: 4.5px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
         /* 👑 [신설: 유튜브 공식 브라이트 레드 스퀘어 프레임 장착] */
@@ -241,7 +241,7 @@
                     </div>
                 `;
                 msgZone.insertAdjacentHTML('beforeend', welcomeHtml);
-                isWelcomeInserted = true;
+               isWelcomeInserted = true;
                 msgZone.scrollTop = msgZone.scrollHeight;
             }
         });
@@ -349,7 +349,8 @@
                     })
                 });
 
-                fetch('https://gemi-5vfl.onrender.com/api/submit-inquiry', { 
+                /* 👑 [주소 자동화 칩 완공] 기존의 하드코딩된 주소를 파이썬 replace 연동용 변수 구멍으로 개조했습니다. */
+                fetch(`https://gemi-5vfl.onrender.com/api/submit-${brand_url_name}-inquiry`, { 
                     method: "POST", 
                     headers: { "Content-Type": "application/json" }, 
                     body: JSON.stringify({ 

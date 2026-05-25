@@ -27,6 +27,91 @@ def init_supabase_tables_automatically():
     except Exception as e:
         print(f"ℹ️ [Supabase] 진단 중 참조 오류 발생: {e}")
 
+# 👑 [서버 우체통 실시간 완전 자동 조립 가동 엔진]
+# - 리모컨에 입력된 영문 브랜드명을 추적하여 chat.py에 독립 우체통 코드가 없을 경우 맨 아래에 자동으로 코드를 작성합니다.
+def auto_append_chat_server_code(brand_url_name):
+    clean_name = brand_url_name.strip().lower()
+    if not clean_name or clean_name in ["gemi", "stellar", "jeonga"]:
+        return
+
+    chat_file_path = "chat.py"
+    if not os.path.exists(chat_file_path):
+        return
+
+    # 이미 우체통이 생성되어 있는지 중복 검사
+    with open(chat_file_path, "r", encoding="utf-8") as f:
+        chat_content = f.read()
+
+    target_route = f"'/api/submit-{clean_name}-inquiry'"
+    if target_route in chat_content or f'"/api/submit-{clean_name}-inquiry"' in chat_content:
+        print(f"ℹ️ [Server Factory] chat.py 내부에 {clean_name} 우체통이 이미 존재하여 조립을 패스합니다.")
+        return
+
+    print(f"⚡ [Server Factory] {clean_name} 전용 백엔드 우체통 독립 개통 공정 시작...")
+    
+    server_code_block = f"""
+
+# 🛡️ [리모컨 자동 생성] {clean_name} 전용 독립 우체통 신설
+@app.route('/api/submit-{clean_name}-inquiry', methods=['POST', 'OPTIONS'])
+def submit_{clean_name}_inquiry():
+    if request.method == 'OPTIONS':
+        return jsonify({{"success": True}}), 200
+        
+    try:
+        body = request.get_json(silent=True) or {{}}
+        if not body:
+            body = request.form.to_dict()
+
+        c_name = body.get("customer_name", "").strip()
+        c_contact = body.get("customer_contact", "").strip()
+        i_type = body.get("inquiry_type", "").strip()
+        msg = body.get("message", "").strip()
+        
+        brand_name = "{clean_name}"
+        
+        budget_val = "미기재 또는 상세 내용 참고"
+        if "[예산:" in msg:
+            try:
+                parts = msg.split("]", 1)
+                budget_val = parts[0].replace("[예산:", "").strip()
+                msg = parts[1].strip()
+            except Exception:
+                pass
+
+        if not c_name or not c_contact:
+            return jsonify({{"success": False, "error": "필수 입력 데이터가 누락되었습니다."}}), 400
+
+        print(f"🚀 [{clean_name} 전용 알림 엔진 작동] 브랜드 고정: {{brand_name}}")
+
+        alert_text = (
+            f"🔔 *[{{brand_name}} 명함 신규 견적 문의]*\\n\\n"
+            f"👤 *고객/기업명:* {{c_name}}\\n"
+            f"📞 *연락처:* {{c_contact}}\\n"
+            f"📂 *프로젝트 유형:* {{i_type}}\\n"
+            f"💰 *희망 예산 범위:* {{budget_val}}\\n"
+            f"📝 *상세 요청사항:* {{msg}}"
+        )
+        
+        send_telegram_alert(alert_text, brand_name=brand_name)
+        
+        supabase.table("gemi_customer_inquiry").insert({{
+            "brand_name": brand_name, 
+            "customer_name": c_name,
+            "customer_contact": c_contact,
+            "inquiry_type": i_type,
+            "message": f"[예산: {{budget_val}}] {{msg}}"
+        }}).execute()
+        
+        return jsonify({{"success": True, "message": "{clean_name} Inquiry submitted and saved successfully"}}), 200
+        
+    except Exception as e:
+        print(f"❌ [{clean_name} Inquiry Error]: {{str(e)}}")
+        return jsonify({{"success": False, "error": str(e)}}), 500
+"""
+    with open(chat_file_path, "a", encoding="utf-8") as f:
+        f.write(server_code_block)
+    print(f"✅ [Server Factory] chat.py 백엔드 인프라 확장 조립 완공 완료.")
+
 # 👑 [배송 엔진 고도화 패치 - JSON 프리 서브경로 안전 배포 버전 완공]
 # - 버셀의 dist 고정 설정을 100% 사수하면서, 브랜치를 가르지 않고 main 브랜치 하위 폴더 구조로 깃허브에 안전 배송합니다.
 def auto_git_push_hybrid(url_name, html_payload):
@@ -58,6 +143,9 @@ def auto_git_push_hybrid(url_name, html_payload):
 
         print(f"📦 [팩토리 서브폴더 완공] 물리 파일 분리 저장 완료:\n  -> {main_path}\n  -> {portfolio_path}")
 
+        # 👑 [서버 소스 자동 추적 연동 장치 가동] 배송 출발 직전 chat.py 우체통 동적 업데이트 자동 집도
+        auto_append_chat_server_code(clean_url)
+
         # 👑 [깃 안전 공정]: 유령 브랜치 조작을 전부 청소하고, 무조건 main 브랜치 단일 통로로 안전하게 푸시합니다.
         subprocess.run(["git", "add", "."], check=True)
         
@@ -66,7 +154,7 @@ def auto_git_push_hybrid(url_name, html_payload):
             subprocess.run(["git", "commit", "-m", "feat: 메인 주소 덮어쓰기 빌드"], check=False)
         else:
             print(f"\n🚚 5단계: [서브 폴더 확장 빌드] 주소명: {final_deployed_url} 전송 시작...")
-            subprocess.run(["git", "commit", "-m", f"feat: 새 독립 서브 사이트 추가 ({clean_url})"], check=False)
+            subprocess.run(["git", "commit", "-m", f"feat: 새 독립 서브 사이트 추가 ({clean_url}) 및 백엔드 라우터 자동 완공"], check=False)
         
         # 👑 브랜치 변경이나 도망 없이 무조건 메인 본선선박(main)에 실어서 원격 깃허브로 밀어 넣습니다.
         subprocess.run(["git", "branch", "-M", "main"], check=False)

@@ -54,7 +54,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     guideline_txt_url = gui_payload.get("guideline_txt_url", "")
 
-   
+    
 
     # 가이드라인을 Base64로 인코딩하여 JS 문법 오류 완벽 차단
 
@@ -136,7 +136,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     rendered_code = rendered_code.replace("${GUIDELINE_TXT_URL}", guideline_text)
 
-   
+    
 
     # 대문 이미지 바인딩
 
@@ -144,13 +144,13 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     rendered_code = rendered_code.replace("${main_image_url}", main_image_url if main_image_url else default_img)
 
-   
+    
 
     # 하이브리드 가변형 포트폴리오 소스코드 마스터 빌더
 
     portfolio_items = gui_payload.get("portfolio_items", [])
 
-   
+    
 
     # 외부 테마 주입 파이프라인 엔진 가동
 
@@ -212,13 +212,13 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
         desc_text = item.get("description", "").strip()
 
-       
+        
 
         if not img_url:
 
             img_url = default_img
 
-           
+            
 
         raw_name = item.get("image_name", "")
 
@@ -500,7 +500,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     rendered_code = rendered_code.replace("${main_image_url}", main_image_url if main_image_url else default_img)
 
-   
+    
 
     rendered_code = rendered_code.replace("${PORTFOLIO_CUSTOM_CSS}", "")
 
@@ -534,7 +534,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     rendered_code = rendered_code.replace("${EMAIL}", contact_info.get("email", ""))
 
-   
+    
 
     # 👑 [4대 SNS 프리미엄 동적 치환 마스킹 파이프라인 엔진 가동]
 
@@ -548,7 +548,7 @@ def generate_webcard_code(gui_payload: dict) -> dict:
 
     sns4_url = contact_info.get("telegram_url", "").strip() or "#" # 형규님 매핑 규칙: 유튜브 주소 바인딩
 
-   
+    
 
     rendered_code = rendered_code.replace("${SNS1_TYPE}", "INSTAGRAM")
 
@@ -621,6 +621,14 @@ def generate_webcard_code(gui_payload: dict) -> dict:
     rendered_code = rendered_code.replace("${FAQ2_DISPLAY}", "display: block;" if f1_q else "display: none !important;")
 
     rendered_code = rendered_code.replace("${FAQ3_DISPLAY}", "display: block;" if f3_q else "display: none !important;")
+
+
+
+    # 👑 [신설: 주소 자동화 칩 주입 엔진 파이프라인]
+
+    # - 템플릿 코드에 파놓은 ${brand_url_name} 구멍을 실시간 브랜드 영문명(소문자)으로 자동 바꿔치기합니다.
+
+    rendered_code = rendered_code.replace("${brand_url_name}", brand_name.strip().lower())
 
 
 

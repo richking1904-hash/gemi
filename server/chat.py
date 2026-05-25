@@ -309,6 +309,67 @@ def submit_stellar_inquiry():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+# 🛡️ [신설] richjung 전용 독립 우체통 신설 (토큰 보안 메커니즘 100% 보존 구역)
+@app.route('/api/submit-richjung-inquiry', methods=['POST', 'OPTIONS'])
+def submit_richjung_inquiry():
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+        
+    try:
+        body = request.get_json(silent=True) or {}
+        if not body:
+            body = request.form.to_dict()
+
+        c_name = body.get("customer_name", "").strip()
+        c_contact = body.get("customer_contact", "").strip()
+        i_type = body.get("inquiry_type", "").strip()
+        msg = body.get("message", "").strip()
+        
+        # 🎯 주소창 분석 필요 없음: 이 우체통 주소로 오면 묻지도 따지지도 않고 무조건 richjung입니다.
+        brand_name = "richjung"
+        
+        budget_val = "미기재 또는 상세 내용 참고"
+        if "[예산:" in msg:
+            try:
+                parts = msg.split("]", 1)
+                budget_val = parts[0].replace("[예산:", "").strip()
+                msg = parts[1].strip()
+            except Exception:
+                pass
+
+        if not c_name or not c_contact:
+            return jsonify({"success": False, "error": "필수 입력 데이터가 누락되었습니다."}), 400
+
+        print(f"🚀 [richjung 전용 알림 엔진 작동] 브랜드 고정: {brand_name}")
+
+        alert_text = (
+            f"🔔 *[{brand_name} 명함 신규 견적 문의]*\n\n"
+            f"👤 *고객/기업명:* {c_name}\n"
+            f"📞 *연락처:* {c_contact}\n"
+            f"📂 *프로젝트 유형:* {i_type}\n"
+            f"💰 *희망 예산 범위:* {budget_val}\n"
+            f"📝 *상세 요청사항:* {msg}"
+        )
+        
+        # 🔐 안전하게 숨겨진 richjung 암호 장부를 렌더 마스터 키로 결합하여 다이렉트 전송
+        send_telegram_alert(alert_text, brand_name=brand_name)
+        
+        # 슈파베이스 백업 장부 저장
+        supabase.table("gemi_customer_inquiry").insert({
+            "brand_name": brand_name, 
+            "customer_name": c_name,
+            "customer_contact": c_contact,
+            "inquiry_type": i_type,
+            "message": f"[예산: {budget_val}] {msg}"
+        }).execute()
+        
+        return jsonify({"success": True, "message": "Richjung Inquiry submitted and saved successfully"}), 200
+        
+    except Exception as e:
+        print(f"❌ [Richjung Inquiry Error]: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
