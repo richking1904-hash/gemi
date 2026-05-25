@@ -197,11 +197,19 @@ def submit_inquiry():
         i_type = body.get("inquiry_type", "").strip()
         msg = body.get("message", "").strip()
         
-        # 👑 [호스팅/버셀 맹점 탈피 완료]: 주소창 분할 역추적 로직을 100% 제거했습니다.
-        # 웹명함 화면에서 넘어온 'brand_name' 이름표 자체를 렌더 서버가 직접적으로 가장 신뢰하여 읽어냅니다.
         brand_name = body.get("brand_name", "").strip().lower()
         
-        # 명함 데이터 자체에서 이름표가 감지되지 않았을 때 작동하는 안전장치
+        # 🔴 [형규님 종속성 버그 해결책 반영 구역]
+        # 버셀 주소가 종속되어 상위 gemi의 파일이 강제로 실행되더라도, 
+        # 사용자가 현재 타고 들어온 브라우저 주소창(Referer)에 'stellar' 단어가 찍혀있다면 
+        # 버셀 라우팅을 씹어버리고 브랜드를 무조건 'stellar'로 고정해버립니다.
+        referer = request.headers.get("Referer", "").lower()
+        if "stellar" in referer:
+            brand_name = "stellar"
+        elif "jeonga" in referer:
+            brand_name = "jeonga"
+        
+        # 최종 백업 안전장치
         if not brand_name:
             brand_name = "gemi"
         
@@ -217,6 +225,9 @@ def submit_inquiry():
         if not c_name or not c_contact:
             return jsonify({"success": False, "error": "필수 입력 데이터가 누락되었습니다."}), 400
 
+        # 여기서 콘솔창(Render Logs)에 브랜드 이름과 화살표가 선명하게 찍히도록 프린트문을 철저히 심었습니다.
+        print(f"🔔 [알림 엔진 포착] 브랜드명: {brand_name} / 유입 경로: {referer}")
+
         alert_text = (
             f"🔔 *[{brand_name} 명함 신규 견적 문의]*\n\n"
             f"👤 *고객/기업명:* {c_name}\n"
@@ -226,7 +237,6 @@ def submit_inquiry():
             f"📝 *상세 요청사항:* {msg}"
         )
         
-        # 🔐 주소창에 방해받지 않고 명함이 보내준 고유 브랜드 이름으로 슈파베이스 장부에서 매칭 한 줄을 찾아 직발송 가동
         send_telegram_alert(alert_text, brand_name=brand_name)
         
         supabase.table("gemi_customer_inquiry").insert({
