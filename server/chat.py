@@ -152,12 +152,36 @@ def chat():
             f"[Guidelines]:\n{guideline_data}"
         )
 
+        # =========================================================
+        # 🛡️ [토큰 철벽 방어선] 슈파베이스 캐시 장부에서 최근 대화 딱 2세트(최신 데이터 4개)만 추출
+        # =========================================================
+        history_messages = []
+        try:
+            # 해당 브랜드에서 누적된 최근 대화 내역 4개 역순 정렬 호출
+            hist_res = supabase.table("gemi_chat_cache") \
+                               .select("question, answer") \
+                               .eq("brand_name", brand_name) \
+                               .order("created_at", desc=True) \
+                               .limit(4) \
+                               .execute()
+            
+            # 대화 시간 연대순(과거 -> 현재)으로 재정렬하여 오픈라우터 규격 포맷 빌드
+            if hist_res.data:
+                for chat in reversed(hist_res.data):
+                    if chat.get("question") and chat.get("answer"):
+                        history_messages.append({"role": "user", "content": chat["question"]})
+                        history_messages.append({"role": "assistant", "content": chat["answer"]})
+        except Exception as hist_err:
+            print(f"ℹ️ 대화 이력 메모리 로드 생략: {hist_err}")
+
+        # 오픈라우터용 메시지 파이프라인 결합 (시스템 지침 + 과거 맥락 4개 + 현재 질문)
+        final_messages = [{"role": "system", "content": system_instruction}]
+        final_messages.extend(history_messages)
+        final_messages.append({"role": "user", "content": user_message})
+
         payload = {
             "model": "google/gemini-2.0-flash-001",
-            "messages": [
-                {"role": "system", "content": system_instruction},
-                {"role": "user", "content": user_message}
-            ]
+            "messages": final_messages
         }
         
         req = urllib.request.Request(
