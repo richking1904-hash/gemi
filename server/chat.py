@@ -197,19 +197,11 @@ def submit_inquiry():
         i_type = body.get("inquiry_type", "").strip()
         msg = body.get("message", "").strip()
         
-        # 👑 [브랜드명 바인딩 고도화]: 넘어온 브랜드 텍스트를 무조건 '소문자' 필터링하여 매싱 일치화
+        # 👑 [호스팅/버셀 맹점 탈피 완료]: 주소창 분할 역추적 로직을 100% 제거했습니다.
+        # 웹명함 화면에서 넘어온 'brand_name' 이름표 자체를 렌더 서버가 직접적으로 가장 신뢰하여 읽어냅니다.
         brand_name = body.get("brand_name", "").strip().lower()
         
-        # 👑 [역추적 엔진 소문자 동기화 완료]: 명함 폼에서 누락된 경우, 접속 주소창(Referer)에서 끝 단어를 추출해 강제로 '소문자' 변환
-        if not brand_name:
-            referer = request.headers.get("Referer", "")
-            if referer:
-                path_parts = referer.rstrip('/').split('/')
-                last_part = path_parts[-1].strip().lower()  # 대소문자 유지 버그를 지우고 소문자로 강제 정제
-                if last_part and last_part.upper() not in ["VERCEL.APP", "WWW", "GEMISTUDIO", "INDEX.HTML"]:
-                    brand_name = last_part
-
-        # 주소 역추적으로도 확인이 어려울 때 최종 백업 기본값 처리
+        # 명함 데이터 자체에서 이름표가 감지되지 않았을 때 작동하는 안전장치
         if not brand_name:
             brand_name = "gemi"
         
@@ -234,7 +226,7 @@ def submit_inquiry():
             f"📝 *상세 요청사항:* {msg}"
         )
         
-        # 🔐 소문자로 100% 매칭이 일치하는 장부를 정확히 찾아 알림 전송 가동
+        # 🔐 주소창에 방해받지 않고 명함이 보내준 고유 브랜드 이름으로 슈파베이스 장부에서 매칭 한 줄을 찾아 직발송 가동
         send_telegram_alert(alert_text, brand_name=brand_name)
         
         supabase.table("gemi_customer_inquiry").insert({
